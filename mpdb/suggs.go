@@ -1,14 +1,48 @@
 package mpdb
 
+import (
+	"database/sql"
+	"fmt"
+	"github.com/kierdavis/mealplanner/mpdata"
+	"time"
+)
+
+const CreateScoreTableSQL =
+	"CREATE TEMPORARY TABLE score ( " +
+	"  mealid BIGINT UNSIGNED NOT NULL, " +
+	"  score FLOAT NOT NULL " +
+	")"
+
+const DropScoreTableSQL =
+	"DROP TABLE score"
+
+const FindCsdSQL =
+	"SELECT ABS(DATEDIFF(serving.dateserved, ?)) " +
+	"FROM serving " +
+	"WHERE serving.mealid = ? " +
+	"AND serving.dateserved != ? " +
+	"ORDER BY ABS(DATEDIFF(serving.dateserved, ?)) ASC " +
+	"LIMIT 1"
+
+const InsertScoreSQL =
+	"INSERT INTO score " +
+	"VALUES (?, ?)"
+
+const ListMealsByScoreSQL =
+	"SELECT meal.id, meal.name, meal.recipe, meal.favourite, score.score " +
+	"FROM meal " +
+	"INNER JOIN score ON score.mealid = meal.id " +
+	"ORDER BY score.score DESC"
+
+/*
 // A pair consisting of a meal identifier and a corresponding score
 type MealScore struct {
 	MealID uint64
 	Score float32
 }
+*/
 
-const SuggestionBatchSize = 10
-
-func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err error) {
+func (db DB) GenerateSuggestions(date time.Time) (suggs []mpdata.MealScore, err error) {
 	// Create temporary table
 	err = db.createScoreTable()
 	if err != nil {
@@ -25,21 +59,18 @@ func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err erro
 	}
 	
 	// Prepare findClosestServingDistance query for repeated use
-	csdStmt, err := db.prepareCsdStmt()
+	csdStmt, err := db.conn.Prepare(FindCsdSQL)
 	if err != nil {
 		return nil, err
 	}
 	defer csdStmt.Close() // Defer cleanup of the prepared statement
 	
-	// Prepare findNearbyTagDists query for repeated use
-	ntdStmt, err := db.prepareNtdStmt()
+	// Prepare insertScore query for repeated use
+	insertStmt, err := db.conn.Prepare(InsertScoreSQL)
 	if err != nil {
 		return nil, err
 	}
-	defer ntdStmt.Close() // Defer cleanup of the prepared statement
-	
-	// Create buffer to hold current batch in
-	scorePairs := make([]MealScore, 0, SuggestionBatchSize)
+	defer insertStmt.Close() // Defer cleanup of the prepared statement
 	
 	for _, meal := range meals {
 		// Find closest serving distance
@@ -48,17 +79,20 @@ func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err erro
 			return nil, err
 		}
 		
-		// Find nearby tag distances
-		tds, err := db.findNearbyTagDists(ntdStmt, date)
+		fmt.Println("Suggs tags!!!!!!!")
+		
+		// Calculate score and insert
+		score := mpdata.CalculateScore(meal.Favourite, dist)
+		
+		err = db.insertScore(insertStmt, meal.ID, score)
 		if err != nil {
 			return nil, err
 		}
 		
-		// Calculate score and add to current batch
-		score := mpdata.CalculateScore(meal.Favourite, dist, tds)
-		scorePair := MealScore{meal.ID, score}
-		scorePairs = append(scorePairs, scorePair)
+		//scorePair := MealScore{meal.ID, score}
+		//scorePairs = append(scorePairs, scorePair)
 		
+		/*
 		// If batch is full,
 		if len(scorePairs) == cap(scorePairs) {
 			// Insert batch into score table
@@ -70,8 +104,10 @@ func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err erro
 			// Truncate batch buffer to be empty
 			scorePairs = scorePairs[:0]
 		}
+		*/
 	}
 	
+	/*
 	// If there are scores not yet inserted,
 	if len(scorePairs) > 0 {
 		// Insert them
@@ -80,6 +116,7 @@ func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err erro
 			return nil, err
 		}
 	}
+	*/
 	
 	// List all meals, but sorted by score
 	suggs, err = db.listMealsByScore()
@@ -90,21 +127,50 @@ func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err erro
 	return suggs, nil
 }
 
-const CreateScoreTableSQL =
-	"CREATE TEMPORARY TABLE score (" +
-	"  mealid BIGINT UNSIGNED NOT NULL, " +
-	"  score FLOAT NOT NULL" +
-	")"
-
 func (db DB) createScoreTable() (err error) {
-	_, err = db.Exec(CreateScoreTableSQL)
+	_, err = db.conn.Exec(CreateScoreTableSQL)
 	return err
 }
 
-const DropScoreTableSQL =
-	"DROP TABLE score"
-
 func (db DB) dropScoreTable() (err error) {
-	_, err = db.Exec(DropScoreTableSQL)
+	_, err = db.conn.Exec(DropScoreTableSQL)
 	return err
+}
+
+func (db DB) findClosestServingDistance(stmt *sql.Stmt, mealID uint64, date time.Time) (dist int, err error) {
+	err = stmt.QueryRow(date, mealID, date, date).Scan(&dist)
+	return dist, err
+}
+
+func (db DB) insertScore(stmt *sql.Stmt, mealID uint64, score float32) (err error) {
+	_, err = stmt.Exec(mealID, score)
+	return err
+}
+
+func (db DB) listMealsByScore() (results []mpdata.MealScore, err error) {
+	rows, err := db.conn.Query(ListMealsByScoreSQL)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	
+	for rows.Next() {
+		ms := mpdata.MealScore{
+			Meal: &mpdata.Meal{},
+		}
+		
+		err = rows.Scan(&ms.Meal.ID, &ms.Meal.Name, &ms.Meal.RecipeURL, &ms.Meal.Favourite, &ms.Score)
+		if err != nil {
+			return nil, err
+		}
+		
+		results = append(results, ms)
+	}
+	
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	
+	return results, nil
 }

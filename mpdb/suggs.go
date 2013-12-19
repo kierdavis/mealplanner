@@ -6,7 +6,7 @@ type MealScore struct {
 	Score float32
 }
 
-const SUGGESTION_BATCH_SIZE = 10
+const SuggestionBatchSize = 10
 
 func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err error) {
 	// Create temporary table
@@ -39,7 +39,7 @@ func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err erro
 	defer ntdStmt.Close() // Defer cleanup of the prepared statement
 	
 	// Create buffer to hold current batch in
-	scorePairs := make([]MealScore, 0, SUGGESTION_BATCH_SIZE)
+	scorePairs := make([]MealScore, 0, SuggestionBatchSize)
 	
 	for _, meal := range meals {
 		// Find closest serving distance
@@ -88,4 +88,23 @@ func (db DB) GenerateSuggestions(date time.Time) (suggs []*mpdata.Meal, err erro
 	}
 	
 	return suggs, nil
+}
+
+const CreateScoreTableSQL =
+	"CREATE TEMPORARY TABLE score (" +
+	"  mealid BIGINT UNSIGNED NOT NULL, " +
+	"  score FLOAT NOT NULL" +
+	")"
+
+func (db DB) createScoreTable() (err error) {
+	_, err = db.Exec(CreateScoreTableSQL)
+	return err
+}
+
+const DropScoreTableSQL =
+	"DROP TABLE score"
+
+func (db DB) dropScoreTable() (err error) {
+	_, err = db.Exec(DropScoreTableSQL)
+	return err
 }

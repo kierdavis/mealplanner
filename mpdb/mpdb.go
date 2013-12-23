@@ -1,3 +1,5 @@
+// Package mpdb provides routines for manipulating the database whilst
+// preserving referential integrity as best as possible.
 package mpdb
 
 import (
@@ -5,17 +7,33 @@ import (
 	"fmt"
 )
 
+// Database connection constants.
 const (
+	// The name of the driver to use.
 	DB_DRIVER = "mysql"
+
+	// The username to connect with.
 	DB_USER = "mealplanner"
+
+	// The password to connect with.
 	DB_PASSWORD = "1Ny9IF7WYA6jvSiBXHku"
+
+	// The address of the server to connect to.
 	DB_ADDRESS = "unix(/var/run/mysqld/mysqld.sock)"
+
+	// The database on the server to connect to.
 	DB_DATABASE = "mealplanner"
+
+	// Additional parameters to use.
 	DB_PARAMS = "parseTime=true"
 )
 
+// DB_SOURCE is the constructed datasource string built from the above constants.
 var DB_SOURCE = fmt.Sprintf("%s:%s@%s/%s?%s", DB_USER, DB_PASSWORD, DB_ADDRESS, DB_DATABASE, DB_PARAMS)
 
+// Interface Queryable represents a type that can be queried (either a *sql.DB
+// or *sql.Tx). See documentation on 'database/sql#DB' for information on the
+// methods in this interface.
 type Queryable interface {
 	Exec(string, ...interface{}) (sql.Result, error)
 	Prepare(string) (*sql.Stmt, error)
@@ -23,50 +41,68 @@ type Queryable interface {
 	QueryRow(string, ...interface{}) *sql.Row
 }
 
+// Connect creates a new connection to the database using DB_DRIVER and
+// DB_SOURCE.
 func Connect() (db *sql.DB, err error) {
 	return sql.Open(DB_DRIVER, DB_SOURCE)
 }
 
+// Type FailedCloseError contains information regarding a situation where an
+// error occurs when closing a resource in response to an earlier error.
 type FailedCloseError struct {
-	What string
-	CloseError error
-	OriginalError error
+	What          string // A string used in the error message to identify what resource was being closed.
+	CloseError    error  // The error returned when the resource was closed.
+	OriginalError error  // The original error that triggered the closing of the resource.
 }
 
+// Error formats the information contained in 'err' into an error message.
 func (err *FailedCloseError) Error() (msg string) {
-	return fmt.Sprintf("%s (when attempting to %s after: %s)", err.CloseError.Error(), err.What, err.OriginalError.Error())
+	return fmt.Sprintf("%s (when attempting to %s after a previous error: %s)", err.CloseError.Error(), err.What, err.OriginalError.Error())
 }
 
+// Type WithConnectionFunc represents a function that can be used with
+// WithConnection.
 type WithConnectionFunc func(*sql.DB) error
 
+// Type WithTransactionFunc represents a function that can be used with
+// WithTransaction.
 type WithTransactionFunc func(*sql.Tx) error
 
+// WithConnection opens a connection to the database, calls 'f' with the
+// database as a parameter, then ensures the database is closed even in the
+// event of an error. If an error occurs when closing the database, a
+// 'FailedCloseError' is returned.
 func WithConnection(f WithConnectionFunc) (err error) {
 	db, err := Connect()
 	if err != nil {
 		return err
 	}
-	
+
 	defer func() {
 		err2 := db.Close()
 		if err2 != nil {
 			err = &FailedCloseError{"close connection", err2, err}
 		}
 	}()
-	
+
 	return f(db)
 }
 
+// WithTransaction begins a transaction on the given database connection, calls
+// 'f' with the transaction as a parameter, then ensures the transaction is
+// committed if 'f' completes successfully or rolled back in the event of an
+// error. If an error occurs when committing or rolling back the transaction, a
+// 'FailedCloseError' is returned.
 func WithTransaction(db *sql.DB, f WithTransactionFunc) (err error) {
 	tx, err := db.Begin()
 	if err != nil {
 		return err
 	}
-	
+
 	defer func() {
 		var err2 error
 		var what string
-		
+
 		if err != nil {
 			err2 = tx.Rollback()
 			what = "rollback transaction"
@@ -74,11 +110,11 @@ func WithTransaction(db *sql.DB, f WithTransactionFunc) (err error) {
 			err2 = tx.Commit()
 			what = "commit transaction"
 		}
-		
+
 		if err2 != nil {
 			err = &FailedCloseError{what, err2, err}
 		}
 	}()
-	
+
 	return f(tx)
 }

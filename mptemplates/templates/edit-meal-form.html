@@ -35,7 +35,7 @@
     
     <body>
         {{if .}}
-            <h1>Edit meal: {{.Name}}</h1>
+            <h1>Edit meal: {{.Meal.Name}}</h1>
         {{else}}
             <h1>Create meal</h1>
         {{end}}
@@ -43,14 +43,14 @@
         <form action="" method="post" id="form">
             <p>
                 <label for="name">Name of meal:</label>
-                <input type="text" name="name" id="name" size="50" value="{{.Name}}"/>
+                <input type="text" name="name" id="name" size="50" value="{{.Meal.Name}}"/>
             </p>
             <p>
                 <label for="recipe">Link to recipe (optional):</label>
-                <input type="text" name="recipe" id="recipe" size="80" value="{{.RecipeURL}}"/>
+                <input type="text" name="recipe" id="recipe" size="80" value="{{.Meal.RecipeURL}}"/>
             </p>
             <p>
-                <input type="checkbox" name="favourite" id="favourite" value="yes" {{if .Favourite}}checked="checked"{{end}} />
+                <input type="checkbox" name="favourite" id="favourite" value="yes" {{if .Meal.Favourite}}checked="checked"{{end}} />
                 <label for="favourite">Favourite</label>
             </p>
             

@@ -10,19 +10,13 @@ const (
 	DB_SOURCE = "mp:mp@/mp" + DB_PARAMS
 )
 
-type DB struct {
-	conn *sql.DB
+type Queryable interface {
+	Exec(string, ...interface{}) (sql.Result, error)
+	Prepare(string) (*sql.Stmt, error)
+	Query(string, ...interface{}) (*sql.Rows, error)
+	QueryRow(string, ...interface{}) *sql.Row
 }
 
-func Connect() (db DB, err error) {
-	conn, err := sql.Open(DB_DRIVER, DB_SOURCE)
-	if err != nil {
-		return DB{}, err
-	}
-	
-	return DB{conn}, nil
-}
-
-func (db DB) Close() (err error) {
-	return db.conn.Close()
+func Connect() (db *sql.DB, err error) {
+	return sql.Open(DB_DRIVER, DB_SOURCE)
 }

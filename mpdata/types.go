@@ -5,9 +5,11 @@ type Meal struct {
 	Name string
 	RecipeURL string
 	Favourite bool
+	Tags []string
+	HasTags bool
 }
 
-type MealScore struct {
+type MealWithScore struct {
 	Meal *Meal
 	Score float32
 }

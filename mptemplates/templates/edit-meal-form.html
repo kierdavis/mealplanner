@@ -1,0 +1,84 @@
+<html>
+    <head>
+        {{if .}}
+            <title>Edit Meal :: Meal Planner</title>
+        {{else}}
+            <title>Create Meal :: Meal Planner</title>
+        {{end}}
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                // Select all tags on form submission
+                $("#form").submit(function() {
+                    $("#tags option").attr("selected", "selected");
+                });
+                
+                // Implement adding new tags
+                $("#add-new-tag").click(function() {
+                    var tag = $("#new-tag").val();
+                    $("#new-tag").val("");
+                    $("#tags").append($("<option>").val(tag).text(tag));
+                });
+                
+                // Implement tag removal
+                $("#remove-tag").click(function() {
+                    $("#tags option:selected").remove();
+                });
+            });
+        </script>
+    </head>
+    
+    <body>
+        {{if .}}
+            <h1>Edit meal: {{.Name}}</h1>
+        {{else}}
+            <h1>Create meal</h1>
+        {{end}}
+        
+        <form action="" method="post" id="form">
+            <p>
+                <label for="name">Name of meal:</label>
+                <input type="text" name="name" id="name" size="50" value="{{.Name}}"/>
+            </p>
+            <p>
+                <label for="recipe">Link to recipe (optional):</label>
+                <input type="text" name="recipe" id="recipe" size="80" value="{{.RecipeURL}}"/>
+            </p>
+            <p>
+                <input type="checkbox" name="favourite" id="favourite" value="yes" {{if .Favourite}}checked="checked"{{end}} />
+                <label for="favourite">Favourite</label>
+            </p>
+            
+            <fieldset>
+                <legend>Tags</legend>
+                <div> <!-- left column -->
+                    <select name="tags" id="tags" size="6" multiple="multiple">
+                        {{range .Tags}}
+                            <option value="{{.}}">{{.}}</option>
+                        {{end}}
+                    </select>
+                </div>
+                <div> <!-- right column -->
+                    <p>
+                        Add an existing tag:
+                        <select id="existing-tags"></select>
+                        <button id="add-existing-tag">Add</button>
+                    </p>
+                    <p>
+                        or add a new tag:
+                        <input type="text" id="new-tag" size="15"/>
+                        <button id="add-new-tag">Add</button>
+                    </p>
+                    <p>
+                        <button id="remove-tag">Remove selected tag</button>
+                    </p>
+                </div>
+            </fieldset>
+            
+            <p>
+                <input type="reset" value="Reset"/>
+                <input type="submit" value="Save"/>
+            </p>
+        </form>
+    </body>
+</html>

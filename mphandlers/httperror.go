@@ -6,10 +6,10 @@ type HttpError struct {
 	LongDesc string
 }
 
-var InvalidMethodError = &HttpError{
-	Status: 405,
-	ShortDesc: "Invalid Method",
-	LongDesc: "This page does not support the HTTP method that was used to request it.",
+var BadRequestError = &HttpError{
+	Status: 400,
+	ShortDesc: "Bad Request",
+	LongDesc: "We're sorry, there was an error when processing your request.",
 }
 
 var InternalServerError = &HttpError{

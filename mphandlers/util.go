@@ -2,6 +2,7 @@ package mphandlers
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/kierdavis/mealplanner/mptemplates"
 	"net/http"
 	"os"
@@ -41,4 +42,19 @@ func renderTemplate(w http.ResponseWriter, name string, data interface{}) {
 	if err != nil {
 		serverError(w, err)
 	}
+}
+
+func getUint64Var(r *http.Request, name string) (value uint64, ok bool) {
+	vars := mux.Vars(r)
+	str, ok := vars[name]
+	if !ok {
+		return 0, false
+	}
+	
+	value, err := strconv.ParseUint(str, 10, 64)
+	if err != nil {
+		return 0, false
+	}
+	
+	return value, true
 }

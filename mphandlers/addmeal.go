@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-func handleGetAddMeal(w http.ResponseWriter, r *http.Request) {
+func handleAddMealForm(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "edit-meal-form.html", nil)
 }
 
-func handlePostAddMeal(w http.ResponseWriter, r *http.Request) {
+func handleAddMealAction(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		serverError(w, err)

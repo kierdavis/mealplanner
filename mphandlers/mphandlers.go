@@ -5,13 +5,17 @@ import (
 )
 
 func CreateMux() (m *mux.Router) {
-	m := mux.NewRouter()
+	m = mux.NewRouter()
 	
-	m.Path("").Method("GET").HandleFunc(handlehome)
+	m.Path("/").Methods("GET", "HEAD").HandlerFunc(handleHome)
 	
 	addMeal := m.Path("/meals/new").Subrouter()
-	addMeal.Method("GET").HandleFunc(handleGetAddMeal)
-	addMeal.Method("POST").HandleFunc(handlePostAddMeal)
+	addMeal.Methods("GET", "HEAD").HandlerFunc(handleAddMealForm)
+	addMeal.Methods("POST").HandlerFunc(handleAddMealAction)
+	
+	editMeal := m.Path("/meals/{mealid:[0-9]+}/edit").Subrouter()
+	editMeal.Methods("GET", "HEAD").HandlerFunc(handleEditMealForm)
+	//editMeal.Methods("POST").HandlerFunc(handleEditMealAction)
 	
 	return m
 }

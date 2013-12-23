@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"strconv"
 )
 
 func httpError(w http.ResponseWriter, h *HttpError) {
@@ -28,11 +29,6 @@ func serverError(w http.ResponseWriter, err error) {
 	}
 	
 	httpError(w, InternalServerError)
-}
-
-func invalidMethod(w http.ResponseWriter, methods string) {
-	w.Header().Set("Allow", methods)
-	httpError(w, InvalidMethodError)
 }
 
 func renderTemplate(w http.ResponseWriter, name string, data interface{}) {

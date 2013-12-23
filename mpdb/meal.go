@@ -1,6 +1,7 @@
 package mpdb
 
 import (
+	"fmt"
 	"github.com/kierdavis/mealplanner/mpdata"
 )
 
@@ -117,7 +118,7 @@ func GetMealTags(q Queryable, mealID uint64) (tags []string, err error) {
 func GetMealWithTags(q Queryable, mealID uint64) (meal *mpdata.Meal, err error) {
 	meal, err = GetMeal(q, mealID)
 	if err != nil {
-		return nil, rer
+		return nil, err
 	}
 	
 	meal.Tags, err = GetMealTags(q, mealID)
@@ -175,7 +176,7 @@ func AddMealWithTags(q Queryable, meal *mpdata.Meal) (mealID uint64, err error) 
 		return 0, err
 	}
 	
-	return mealID
+	return mealID, nil
 }
 
 func UpdateMeal(q Queryable, meal *mpdata.Meal) (err error) {
@@ -199,7 +200,7 @@ func UpdateMealTags(q Queryable, mealID uint64, tags []string) (err error) {
 
 func UpdateMealWithTags(q Queryable, meal *mpdata.Meal) (err error) {
 	if !meal.HasTags {
-		return 0, fmt.Errorf("meal argument does not have an attached tag list")
+		return fmt.Errorf("meal argument does not have an attached tag list")
 	}
 	
 	err = UpdateMeal(q, meal)

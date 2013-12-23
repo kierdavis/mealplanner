@@ -5,6 +5,8 @@ import (
 	"github.com/kierdavis/mealplanner/mphandlers"
 	"net/http"
 	"os"
+	
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {

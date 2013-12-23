@@ -3,6 +3,8 @@ package mphandlers
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/kierdavis/mealplanner/mpresources"
+	"net/http"
 )
 
 // CreateMux creates a *mux.Router and attaches the application's HTTP handlers
@@ -11,6 +13,8 @@ func CreateMux() (m *mux.Router) {
 	m = mux.NewRouter()
 	
 	// Handle static files
+	staticHandler := http.FileServer(http.Dir(mpresources.StaticDir))
+	m.Path("/static/").Handler(http.StripPrefix("/static/", staticHandler))
 
 	m.Path("/").Methods("GET", "HEAD").HandlerFunc(handleHome)
 

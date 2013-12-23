@@ -3,7 +3,7 @@ package mphandlers
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/kierdavis/mealplanner/mptemplates"
+	"github.com/kierdavis/mealplanner/mpresources"
 	"net/http"
 	"os"
 	"runtime"
@@ -16,7 +16,7 @@ func httpError(w http.ResponseWriter, h *HttpError) {
 	w.Header().Set("Content-Type", "text/html; charset=utf8")
 	w.WriteHeader(h.Status)
 
-	err := mptemplates.Templates.ExecuteTemplate(w, "error.html", h)
+	err := mpresources.Templates.ExecuteTemplate(w, "error.html", h)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Internal error when rendering error.html: %s\n", err.Error())
 	}
@@ -49,7 +49,7 @@ func redirect(w http.ResponseWriter, status int, url string) {
 func renderTemplate(w http.ResponseWriter, name string, data interface{}) {
 	w.Header().Set("Content-Type", "text/html; charset=utf8")
 
-	err := mptemplates.Templates.ExecuteTemplate(w, name, data)
+	err := mpresources.Templates.ExecuteTemplate(w, name, data)
 	if err != nil {
 		serverError(w, err)
 	}

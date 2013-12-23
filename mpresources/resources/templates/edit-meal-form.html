@@ -1,3 +1,10 @@
+{{/*
+    edit-meal-form.html contains the form used for adding and editing meals.
+    
+    Dot is expected to be of type mpdata.MealWithTags. If empty, the "add meal"
+    form is displayed, else the "edit meal" form is displayed.
+*/}}
+
 <html>
     <head>
         {{if .}}
@@ -16,18 +23,14 @@
                 });
                 
                 // Implement adding new tags
-                $("#add-new-tag").click(function(event) {
-                    event.preventDefault();
-                    
+                $("#add-new-tag").click(function() {
                     var tag = $("#new-tag").val();
                     $("#new-tag").val("");
                     $("#tags").append($("<option>").val(tag).text(tag));
                 });
                 
                 // Implement tag removal
-                $("#remove-tag").click(function(event) {
-                    event.preventDefault();
-                    
+                $("#remove-tag").click(function() {
                     $("#tags option:selected").remove();
                 });
             });

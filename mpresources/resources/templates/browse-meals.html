@@ -1,0 +1,27 @@
+{{/*
+    browse-meals.html contains the list of meals page.
+    
+    Dot is expected to be of type []mpdata.MealWithTags.
+*/}}
+
+<html>
+    <head>
+        <title>Browse Meals :: Meal Planner</title>
+        
+        {{template "common-head.html"}}
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#add-meal").click(function() {
+                    location.href = "/meals/new";
+                });
+            });
+        </script>
+    </head>
+    
+    <body>
+        <h1>Browse Meals</h1>
+        
+        <button id="add-meal">Add new meal</button>
+    </body>
+</html>

@@ -43,7 +43,7 @@ const DeleteAllMealTagsSQL = "DELETE FROM tag " +
 const AddMealTagSQL = "INSERT INTO tag " +
 	"VALUES (?, ?)"
 
-// ListMeals fetches and returns a list of all meals in the database. If its
+// ListMeals fetches and returns a list of all meals in the database. If the
 // parameter 'sortByName' is true, the meals are sorted in alphabetical order
 // by name.
 func ListMeals(q Queryable, sortByName bool) (meals []*mpdata.Meal, err error) {
@@ -79,6 +79,53 @@ func ListMeals(q Queryable, sortByName bool) (meals []*mpdata.Meal, err error) {
 	return meals, nil
 }
 
+// ListMealsWithTags fetches and returns a list of all meals in the database
+// with their associated tags. If the parameter 'sortByName' is true, the meals
+// are sorted in alphabetical order by name.
+func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags, err error) {
+	var query string
+	if sortByName {
+		query = ListMealsByNameSQL
+	} else {
+		query = ListMealsSQL
+	}
+
+	getTagsStmt, err := q.Prepare(GetMealTagsSQL)
+	if err != nil {
+		return nil, err
+	}
+	defer getTagsStmt.Close()
+
+	rows, err := q.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var mt mpdata.MealWithTags
+
+		err = rows.Scan(&mt.Meal.ID, &mt.Meal.Name, &mt.Meal.RecipeURL, &mt.Meal.Favourite)
+		if err != nil {
+			return nil, err
+		}
+		
+		mt.Tags, err = getMealTagsPrepared(q, getTagsStmt, mt.Meal.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		mts = append(mts, mt)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return mts, nil
+}
+
 // GetMeal fetches information from the database about the meal identified by
 // 'mealID'.
 func GetMeal(q Queryable, mealID uint64) (meal *mpdata.Meal, err error) {
@@ -104,6 +151,25 @@ func GetMealTags(q Queryable, mealID uint64) (tags []string, err error) {
 	}
 	defer rows.Close()
 
+	return getMealTagsReadRows(rows)
+}
+
+// getMealTagsPrepared fetches the list of tags associated with the meal
+// identified by 'mealID'. 'stmt' is assumed to be a prepared statement compiled
+// from GetMealTagsSQL.
+func getMealTagsPrepared(q Queryable, stmt *sql.Stmt, mealID uint64) (tags []string, err error) {
+	rows, err := stmt.Query(mealID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	
+	return getMealTagsReadRows(rows)
+}
+
+// getMealTagsReadRows reads a *sql.Rows as produced by GetMealTags or
+// getMealTagsPrepared and converts it into a slice of tags.
+func getMealTagsReadRows(rows *sql.Rows) (tags []string, err error) {
 	var tag string
 
 	for rows.Next() {
@@ -119,7 +185,7 @@ func GetMealTags(q Queryable, mealID uint64) (tags []string, err error) {
 	if err != nil {
 		return nil, err
 	}
-
+	
 	return tags, nil
 }
 

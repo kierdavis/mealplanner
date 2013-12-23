@@ -12,11 +12,13 @@ import (
 func CreateMux() (m *mux.Router) {
 	m = mux.NewRouter()
 	
-	// Handle static files
-	staticHandler := http.FileServer(http.Dir(mpresources.StaticDir))
-	m.Path("/static/").Handler(http.StripPrefix("/static/", staticHandler))
+	// Static files
+	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(mpresources.StaticDir)))
+	m.PathPrefix("/static/").Handler(staticHandler)
 
+	// Dynamic handlers
 	m.Path("/").Methods("GET", "HEAD").HandlerFunc(handleHome)
+	m.Path("/meals").Methods("GET", "HEAD").HandlerFunc(handleBrowseMeals)
 
 	addMeal := m.Path("/meals/new").Subrouter()
 	addMeal.Methods("GET", "HEAD").HandlerFunc(handleAddMealForm)

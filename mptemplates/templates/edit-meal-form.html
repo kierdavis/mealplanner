@@ -6,6 +6,7 @@
             <title>Create Meal :: Meal Planner</title>
         {{end}}
         
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 // Select all tags on form submission
@@ -14,14 +15,18 @@
                 });
                 
                 // Implement adding new tags
-                $("#add-new-tag").click(function() {
+                $("#add-new-tag").click(function(event) {
+                    event.preventDefault();
+                    
                     var tag = $("#new-tag").val();
                     $("#new-tag").val("");
                     $("#tags").append($("<option>").val(tag).text(tag));
                 });
                 
                 // Implement tag removal
-                $("#remove-tag").click(function() {
+                $("#remove-tag").click(function(event) {
+                    event.preventDefault();
+                    
                     $("#tags option:selected").remove();
                 });
             });

@@ -1,10 +1,17 @@
 package mphandlers
 
 import (
-	"net/http"
+	"github.com/gorilla/mux"
 )
 
-func AttachHandlers(m *http.ServeMux) {
-	m.HandleFunc("/", handleHome)
-	m.HandleFunc("/meals/new", handleAddMeal)
+func CreateMux() (m *mux.Router) {
+	m := mux.NewRouter()
+	
+	m.Path("").Method("GET").HandleFunc(handlehome)
+	
+	addMeal := m.Path("/meals/new").Subrouter()
+	addMeal.Method("GET").HandleFunc(handleGetAddMeal)
+	addMeal.Method("POST").HandleFunc(handlePostAddMeal)
+	
+	return m
 }

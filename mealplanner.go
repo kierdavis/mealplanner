@@ -8,8 +8,7 @@ import (
 )
 
 func main() {
-	m := http.NewServeMux()
-	mphandlers.AttachHandlers(m)
+	m := mphandlers.CreateMux()
 	
 	err := http.ListenAndServe(":8080", m)
 	if err != nil {

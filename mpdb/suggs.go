@@ -138,6 +138,9 @@ func dropScoreTable(q Queryable) (err error) {
 // statement compiled from FindCsdSQL.
 func findClosestServingDistance(q Queryable, stmt *sql.Stmt, mealID uint64, date time.Time) (dist int, err error) {
 	err = stmt.QueryRow(date, mealID, date, date).Scan(&dist)
+	if err == sql.ErrNoRows {
+		return -1, nil
+	}
 	return dist, err
 }
 

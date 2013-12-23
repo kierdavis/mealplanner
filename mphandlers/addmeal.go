@@ -1,8 +1,10 @@
 package mphandlers
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/kierdavis/mealplanner/mpdata"
+	"github.com/kierdavis/mealplanner/mpdb"
 	"net/http"
 )
 
@@ -14,13 +16,15 @@ func handleAddMealForm(w http.ResponseWriter, r *http.Request) {
 // handleAddMealAction handles HTTP requests for submission of the "new meal"
 // form.
 func handleAddMealAction(w http.ResponseWriter, r *http.Request) {
+	// Parse the POST request body
 	err := r.ParseForm()
 	if err != nil {
 		serverError(w, err)
 		return
 	}
 
-	mt := &mpdata.MealWithTags{
+	// Create a MealWithTags value from the form fields
+	mt := mpdata.MealWithTags{
 		Meal: &mpdata.Meal{
 			Name:      r.FormValue("name"),
 			RecipeURL: r.FormValue("recipe"),
@@ -28,6 +32,20 @@ func handleAddMealAction(w http.ResponseWriter, r *http.Request) {
 		},
 		Tags: r.Form["tags"],
 	}
-
-	fmt.Printf("%#v\n", mt)
+	
+	// Add the record to the database
+	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
+		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
+			return mpdb.AddMealWithTags(tx, mt)
+		})
+	})
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+	
+	fmt.Printf("ID: %d\n", mt.Meal.ID)
+	
+	// Redirect to list of meals
+	redirect(w, http.StatusSeeOther, "/meals")
 }

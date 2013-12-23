@@ -35,6 +35,15 @@ func serverError(w http.ResponseWriter, err error) {
 	httpError(w, InternalServerError)
 }
 
+// redirect sends a redirection response to the client with the given status
+// code.
+func redirect(w http.ResponseWriter, status int, url string) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf8")
+	w.Header().Set("Location", url)
+	w.WriteHeader(status)
+	fmt.Fprintf(w, "Redirecting to %s...\n", url)
+}
+
 // renderTemplate renders the named template and returns the rendered HTML to
 // the client.
 func renderTemplate(w http.ResponseWriter, name string, data interface{}) {

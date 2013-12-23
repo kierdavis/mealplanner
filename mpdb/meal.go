@@ -1,6 +1,7 @@
 package mpdb
 
 import (
+	"database/sql"
 	"github.com/kierdavis/mealplanner/mpdata"
 )
 
@@ -39,7 +40,7 @@ const DeleteAllMealTagsSQL = "DELETE FROM tag " +
 	"WHERE tag.mealid = ?"
 
 // SQL statement for adding a tag to a meal.
-const AddMealTagSQL = "INSERT INTO taS" +
+const AddMealTagSQL = "INSERT INTO tag " +
 	"VALUES (?, ?)"
 
 // ListMeals fetches and returns a list of all meals in the database. If its
@@ -84,6 +85,10 @@ func GetMeal(q Queryable, mealID uint64) (meal *mpdata.Meal, err error) {
 	meal = &mpdata.Meal{ID: mealID}
 	err = q.QueryRow(GetMealSQL, mealID).Scan(&meal.Name, &meal.RecipeURL, &meal.Favourite)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		
 		return nil, err
 	}
 

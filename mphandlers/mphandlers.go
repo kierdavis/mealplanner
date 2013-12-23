@@ -9,6 +9,8 @@ import (
 // to it.
 func CreateMux() (m *mux.Router) {
 	m = mux.NewRouter()
+	
+	// Handle static files
 
 	m.Path("/").Methods("GET", "HEAD").HandlerFunc(handleHome)
 

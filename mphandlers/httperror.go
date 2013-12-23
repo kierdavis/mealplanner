@@ -1,5 +1,9 @@
 package mphandlers
 
+import (
+	"net/http"
+)
+
 // Type HttpError holds related information about an HTTP status code used by
 // the application.
 type HttpError struct {
@@ -9,13 +13,13 @@ type HttpError struct {
 }
 
 var BadRequestError = &HttpError{
-	Status:    400,
+	Status:    http.StatusBadRequest,
 	ShortDesc: "Bad Request",
 	LongDesc:  "We're sorry, there was an error when processing your request.",
 }
 
 var InternalServerError = &HttpError{
-	Status:    500,
+	Status:    http.StatusInternalServerError,
 	ShortDesc: "Internal Server Error",
 	LongDesc:  "We're sorry, the server encountered an unexpected error and was unable to complete the request.",
 }

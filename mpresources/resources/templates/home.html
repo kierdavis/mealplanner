@@ -7,6 +7,30 @@
         <title>Home :: Meal Planner</title>
         
         {{template "common-head.html"}}
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#create-meal-plan").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/mealplans/new";
+                });
+                
+                $("#browse-meal-plans").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/mealplans";
+                });
+                
+                $("#add-meal").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/meals/new";
+                });
+                
+                $("#browse-meals").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/meals";
+                });
+            });
+        </script>
     </head>
     <body>
         <h1>Home</h1>

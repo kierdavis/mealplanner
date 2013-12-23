@@ -103,7 +103,9 @@ func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags,
 	defer rows.Close()
 
 	for rows.Next() {
-		var mt mpdata.MealWithTags
+		mt := mpdata.MealWithTags{
+			Meal: &mpdata.Meal{},
+		}
 
 		err = rows.Scan(&mt.Meal.ID, &mt.Meal.Name, &mt.Meal.RecipeURL, &mt.Meal.Favourite)
 		if err != nil {

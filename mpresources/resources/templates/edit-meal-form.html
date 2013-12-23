@@ -23,14 +23,18 @@
                 });
                 
                 // Implement adding new tags
-                $("#add-new-tag").click(function() {
+                $("#add-new-tag").click(function(event) {
+                    event.preventDefault();
+                    
                     var tag = $("#new-tag").val();
                     $("#new-tag").val("");
                     $("#tags").append($("<option>").val(tag).text(tag));
                 });
                 
                 // Implement tag removal
-                $("#remove-tag").click(function() {
+                $("#remove-tag").click(function(event) {
+                    event.preventDefault();
+                    
                     $("#tags option:selected").remove();
                 });
             });

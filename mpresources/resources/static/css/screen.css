@@ -1,0 +1,24 @@
+button.header-button {
+    font-size: large;
+    margin-top: 20px;
+}
+
+button.homepage-button {
+    font-size: x-large;
+}
+
+button.action-button {
+    margin-right: 10px;
+}
+
+.homepage-cell {
+    text-align: center;
+}
+
+.row {
+    margin-bottom: 20px;
+}
+
+td, th {
+    padding-right: 20px;
+}

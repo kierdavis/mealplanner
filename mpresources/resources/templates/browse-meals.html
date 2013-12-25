@@ -1,10 +1,9 @@
 {{/*
     browse-meals.html contains the list of meals page.
-    
-    Dot is expected to be of type []mpdata.MealWithTags.
 */}}
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>Browse Meals :: Meal Planner</title>
         
@@ -15,13 +14,28 @@
                 $("#add-meal").click(function() {
                     location.href = "/meals/new";
                 });
+                
+                MPAjax.fetchMealList(document.getElementById("results"));
             });
         </script>
     </head>
     
     <body>
-        <h1>Browse Meals</h1>
-        
-        <button id="add-meal">Add new meal</button>
+        <div class="container">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>Browse Meals</h1>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="header-button" id="add-meal">Add new meal</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="results">
+                Loading results...
+            </div>
+        </div>
     </body>
 </html>

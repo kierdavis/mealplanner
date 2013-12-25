@@ -36,12 +36,23 @@ const UpdateMealSQL = "UPDATE meal " +
 	"WHERE meal.id = ?"
 
 // SQL statement for deletting all tags associated with a meal.
-const DeleteAllMealTagsSQL = "DELETE FROM tag " +
+const DeleteMealTagsSQL = "DELETE FROM tag " +
 	"WHERE tag.mealid = ?"
 
 // SQL statement for adding a tag to a meal.
 const AddMealTagSQL = "INSERT INTO tag " +
 	"VALUES (?, ?)"
+
+const IsFavouriteSQL = "SELECT meal.favourite " +
+	"FROM meal " +
+	"WHERE meal.id = ?"
+
+const SetFavouriteSQL = "UPDATE meal " +
+	"SET meal.favourite = ? " +
+	"WHERE meal.id = ?"
+
+const DeleteMealSQL = "DELETE FROM meal " +
+	"WHERE meal.id = ?"
 
 // ListMeals fetches and returns a list of all meals in the database. If the
 // parameter 'sortByName' is true, the meals are sorted in alphabetical order
@@ -260,17 +271,17 @@ func UpdateMeal(q Queryable, meal *mpdata.Meal) (err error) {
 	return err
 }
 
-// DeleteAllMealTags deletes all tags in the database associated with the meal
+// DeleteMealTags deletes all tags in the database associated with the meal
 // identified by 'mealID'.
-func DeleteAllMealTags(q Queryable, mealID uint64) (err error) {
-	_, err = q.Exec(DeleteAllMealTagsSQL, mealID)
+func DeleteMealTags(q Queryable, mealID uint64) (err error) {
+	_, err = q.Exec(DeleteMealTagsSQL, mealID)
 	return err
 }
 
 // UpdateMealTags replaces the tags associated with the meal identified by
 // 'mealID' with the list given by 'tags'.
 func UpdateMealTags(q Queryable, mealID uint64, tags []string) (err error) {
-	err = DeleteAllMealTags(q, mealID)
+	err = DeleteMealTags(q, mealID)
 	if err != nil {
 		return err
 	}
@@ -286,4 +297,29 @@ func UpdateMealWithTags(q Queryable, mt mpdata.MealWithTags) (err error) {
 	}
 
 	return UpdateMealTags(q, mt.Meal.ID, mt.Tags)
+}
+
+func ToggleFavourite(q Queryable, mealID uint64) (isFavourite bool, err error) {
+	err = q.QueryRow(IsFavouriteSQL, mealID).Scan(&isFavourite)
+	if err != nil {
+		return false, err
+	}
+	
+	isFavourite = !isFavourite
+	_, err = q.Exec(SetFavouriteSQL, isFavourite, mealID)
+	return isFavourite, err
+}
+
+func DeleteMeal(q Queryable, mealID uint64) (err error) {
+	_, err = q.Exec(DeleteMealSQL, mealID)
+	return err
+}
+
+func DeleteMealWithTags(q Queryable, mealID uint64) (err error) {
+	err = DeleteMeal(q, mealID)
+	if err != nil {
+		return err
+	}
+	
+	return DeleteMealTags(q, mealID)
 }

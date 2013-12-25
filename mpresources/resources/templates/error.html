@@ -4,20 +4,23 @@
     Dot is expected to be of type *mphandlers.HttpError.
 */}}
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>{{.ShortDesc}} :: Meal Planner</title>
         
         {{template "common-head.html"}}
     </head>
     <body>
-        <h1>{{.ShortDesc}}</h1>
-        <p>
-            {{.LongDesc}}
-        </p>
-        
-        <p>
-            Please use your browser's Back button to go back and try again.
-        </p>
+        <div class="container">
+            <h1>{{.ShortDesc}}</h1>
+            <p>
+                {{.LongDesc}}
+            </p>
+            
+            <p>
+                Please use your browser's Back button to go back and try again.
+            </p>
+        </div>
     </body>
 </html>

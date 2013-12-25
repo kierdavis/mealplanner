@@ -18,6 +18,12 @@ var BadRequestError = &HttpError{
 	LongDesc:  "We're sorry, there was an error when processing your request.",
 }
 
+var NotFoundError = &HttpError{
+	Status: http.StatusNotFound,
+	ShortDesc: "Not Found",
+	LongDesc: "We're sorry, the page you were looking for was not found on ther server.",
+}
+
 var InternalServerError = &HttpError{
 	Status:    http.StatusInternalServerError,
 	ShortDesc: "Internal Server Error",

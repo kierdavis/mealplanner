@@ -3,6 +3,7 @@ package mphandlers
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/kierdavis/mealplanner/mpapi"
 	"github.com/kierdavis/mealplanner/mpresources"
 	"net/http"
 )
@@ -19,6 +20,7 @@ func CreateMux() (m *mux.Router) {
 	// Dynamic handlers
 	m.Path("/").Methods("GET", "HEAD").HandlerFunc(handleHome)
 	m.Path("/meals").Methods("GET", "HEAD").HandlerFunc(handleBrowseMeals)
+	m.Path("/api").Methods("POST").HandlerFunc(mpapi.HandleApiCall)
 
 	addMeal := m.Path("/meals/new").Subrouter()
 	addMeal.Methods("GET", "HEAD").HandlerFunc(handleAddMealForm)
@@ -26,7 +28,7 @@ func CreateMux() (m *mux.Router) {
 
 	editMeal := m.Path("/meals/{mealid:[0-9]+}/edit").Subrouter()
 	editMeal.Methods("GET", "HEAD").HandlerFunc(handleEditMealForm)
-	//editMeal.Methods("POST").HandlerFunc(handleEditMealAction)
+	editMeal.Methods("POST").HandlerFunc(handleEditMealAction)
 
 	return m
 }

@@ -44,8 +44,6 @@ func handleAddMealAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	fmt.Printf("ID: %d\n", mt.Meal.ID)
-	
 	// Redirect to list of meals
 	redirect(w, http.StatusSeeOther, "/meals")
 }

@@ -2,7 +2,8 @@
     home.html contains the homepage.
 */}}
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>Home :: Meal Planner</title>
         
@@ -33,20 +34,26 @@
         </script>
     </head>
     <body>
-        <h1>Home</h1>
-        <ul>
-            <li>
-                <button id="create-meal-plan">Create a meal plan</button>
-            </li>
-            <li>
-                <button id="browse-meal-plans">Browse meal plans</button>
-            </li>
-            <li>
-                <button id="add-meal">Add a meal</button>
-            </li>
-            <li>
-                <button id="browse-meals">Browse meals</button>
-            </li>
-        </ul>
+        <div class="container">
+            <div class="page-header">
+                <h1>Home</h1>
+            </div>
+            <div class="row">
+                <div class="col-md-6 homepage-cell">
+                    <button class="homepage-button" id="create-meal-plan">Create a meal plan</button>
+                </div>
+                <div class="col-md-6 homepage-cell">
+                    <button class="homepage-button" id="browse-meal-plans">Browse meal plans</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 homepage-cell">
+                    <button class="homepage-button" id="add-meal">Add a meal</button>
+                </div>
+                <div class="col-md-6 homepage-cell">
+                    <button class="homepage-button" id="browse-meals">Browse meals</button>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

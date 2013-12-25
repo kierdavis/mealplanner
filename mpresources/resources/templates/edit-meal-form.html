@@ -5,7 +5,8 @@
     form is displayed, else the "edit meal" form is displayed.
 */}}
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         {{if .}}
             <title>Edit Meal :: Meal Planner</title>
@@ -20,6 +21,11 @@
                 // Select all tags on form submission
                 $("#form").submit(function() {
                     $("#tags option").attr("selected", "selected");
+                });
+                
+                // Implement fetching all tags in database.
+                $("#existing-tags").click(function(event) {
+                    
                 });
                 
                 // Implement adding new tags
@@ -42,56 +48,96 @@
     </head>
     
     <body>
-        {{if .}}
-            <h1>Edit meal: {{.Meal.Name}}</h1>
-        {{else}}
-            <h1>Create meal</h1>
-        {{end}}
-        
-        <form action="" method="post" id="form">
-            <p>
-                <label for="name">Name of meal:</label>
-                <input type="text" name="name" id="name" size="50" value="{{.Meal.Name}}"/>
-            </p>
-            <p>
-                <label for="recipe">Link to recipe (optional):</label>
-                <input type="text" name="recipe" id="recipe" size="80" value="{{.Meal.RecipeURL}}"/>
-            </p>
-            <p>
-                <input type="checkbox" name="favourite" id="favourite" value="yes" {{if .Meal.Favourite}}checked="checked"{{end}} />
-                <label for="favourite">Favourite</label>
-            </p>
+        <div class="container">
+            {{if .}}
+                <h1>Edit meal: {{.Meal.Name}}</h1>
+            {{else}}
+                <h1>Create meal</h1>
+            {{end}}
             
-            <fieldset>
-                <legend>Tags</legend>
-                <div> <!-- left column -->
-                    <select name="tags" id="tags" size="6" multiple="multiple">
-                        {{range .Tags}}
-                            <option value="{{.}}">{{.}}</option>
-                        {{end}}
-                    </select>
+            <form action="" method="post" id="form">
+                <div style="margin-bottom: 40px">
+                    <table>
+                        <tr>
+                            <td>
+                                <label for="name">Name of meal:</label>
+                            </td>
+                            <td>
+                                <input type="text" name="name" id="name" size="50" value="{{.Meal.Name}}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="recipe">Link to recipe (optional):</label>
+                            </td>
+                            <td>
+                                <input type="text" name="recipe" id="recipe" size="80" value="{{.Meal.RecipeURL}}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="favourite">Favourite:</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="favourite" id="favourite" value="yes" {{if .Meal.Favourite}}checked="checked"{{end}} />
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-                <div> <!-- right column -->
-                    <p>
-                        Add an existing tag:
-                        <select id="existing-tags"></select>
-                        <button id="add-existing-tag">Add</button>
-                    </p>
-                    <p>
-                        or add a new tag:
-                        <input type="text" id="new-tag" size="15"/>
-                        <button id="add-new-tag">Add</button>
-                    </p>
-                    <p>
-                        <button id="remove-tag">Remove selected tag</button>
-                    </p>
+                
+                <div style="margin-bottom: 40px">
+                    <fieldset>
+                        <legend>Tags</legend>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select name="tags" id="tags" size="6" multiple="multiple" style="min-width: 200px">
+                                    {{range .Tags}}
+                                        <option value="{{.}}">{{.}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            Add an existing tag:
+                                        </td>
+                                        <td>
+                                            <select id="existing-tags" style="min-width: 100px"></select>
+                                        </td>
+                                        <td>
+                                            <button id="add-existing-tag">Add</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            or add a new tag:
+                                        </td>
+                                        <td>
+                                            <input type="text" id="new-tag" size="15"/>
+                                        </td>
+                                        <td>
+                                            <button id="add-new-tag">Add</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <button id="remove-tag">Remove selected tag</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
-            </fieldset>
-            
-            <p>
-                <input type="reset" value="Reset"/>
-                <input type="submit" value="Save"/>
-            </p>
-        </form>
+                
+                <p>
+                    <input type="reset" value="Reset"/>
+                    <input type="submit" value="Save"/>
+                </p>
+            </form>
+        </div>
     </body>
 </html>

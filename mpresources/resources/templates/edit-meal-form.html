@@ -18,14 +18,27 @@
         
         <script type="text/javascript">
             $(document).ready(function() {
+                // Bind event handlers
+                
                 // Select all tags on form submission
                 $("#form").submit(function() {
                     $("#tags option").attr("selected", "selected");
                 });
                 
-                // Implement fetching all tags in database.
-                $("#existing-tags").click(function(event) {
+                // Implement fetching all tags in database when drop-down is
+                // opened.
+                $("#existing-tag").click(function(event) {
+                    if (!MPAjax.tagsFetched) {
+                        MPAjax.fetchAllTags(this);
+                    }
+                });
+                
+                // Implement adding existing tags
+                $("#add-existing-tag").click(function(event) {
+                    event.preventDefault();
                     
+                    var tag = $("#existing-tag").val();
+                    $("<option>").val(tag).text(tag).appendTo($("#tags"));
                 });
                 
                 // Implement adding new tags
@@ -34,7 +47,7 @@
                     
                     var tag = $("#new-tag").val();
                     $("#new-tag").val("");
-                    $("#tags").append($("<option>").val(tag).text(tag));
+                    $("<option>").val(tag).text(tag).appendTo($("#tags"));
                 });
                 
                 // Implement tag removal
@@ -42,6 +55,15 @@
                     event.preventDefault();
                     
                     $("#tags option:selected").remove();
+                });
+                
+                // Implement resetting the tags list on reset
+                $("#reset").click(function() {
+                    var tagsList = $("#tags").empty();
+                    
+                    {{range .Tags}}
+                        $("<option>").val("{{. | js}}").text("{{. | js}}").appendTo(tagsList);
+                    {{end}}
                 });
             });
         </script>
@@ -105,7 +127,7 @@
                                             Add an existing tag:
                                         </td>
                                         <td>
-                                            <select id="existing-tags" style="min-width: 100px"></select>
+                                            <select id="existing-tag" style="min-width: 100px"></select>
                                         </td>
                                         <td>
                                             <button id="add-existing-tag">Add</button>
@@ -134,7 +156,7 @@
                 </div>
                 
                 <p>
-                    <input type="reset" value="Reset"/>
+                    <input id="reset" type="reset" value="Reset"/>
                     <input type="submit" value="Save"/>
                 </p>
             </form>

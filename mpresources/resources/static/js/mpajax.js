@@ -1,6 +1,11 @@
+// The MPAjax object provides functions for interacting with the server over
+// Ajax.
+
 var MPAjax = (function() {
     var MPAjax = {};
     
+    // Generic function for performing an Ajax call with the given request data
+    // and success callback.
     function doAjax(data, success) {
         $.ajax({
             url: "/api",
@@ -28,6 +33,8 @@ var MPAjax = (function() {
         });
     }
     
+    // Fetch the list of meals and add them in the form of a table to
+    // 'destElement'.
     MPAjax.fetchMealList = function(destElement) {
         var params = {
             "command": "fetch-meal-list",
@@ -42,16 +49,18 @@ var MPAjax = (function() {
             }
             
             var table = $("<table>").appendTo($(destElement).empty());
-            var headerRow = $("<tr>").appendTo(table);
+            var thead = $("<thead>").appendTo(table);
+            var headerRow = $("<tr>").appendTo(thead);
             $("<th>").text("Name").appendTo(headerRow);
             $("<th>").text("Tags").appendTo(headerRow);
             $("<th>").text("Actions").appendTo(headerRow);
+            var tbody = $("<tbody>").appendTo(table);
             
             var i, result, row, actions, favText;
             
             for (i = 0; i < results.length; i++) {
                 result = results[i];
-                row = $("<tr>").appendTo(table);
+                row = $("<tr>").appendTo(tbody);
                 
                 $("<td>").appendTo(row).text(result.meal.name);
                 $("<td>").appendTo(row).text((result.tags || []).join(", "));
@@ -81,6 +90,8 @@ var MPAjax = (function() {
         });
     };
     
+    // Toggle the "favourite" status of the meal identified by 'mealID', and
+    // update the text of 'favButton' to reflect the new status.
     MPAjax.toggleFavourite = function(mealID, favButton) {
         var params = {
             "command": "toggle-favourite",
@@ -97,6 +108,8 @@ var MPAjax = (function() {
         });
     };
     
+    // Delete the meal identified by 'mealID', and delete 'rowElement' if
+    // successful.
     MPAjax.deleteMeal = function(mealID, rowElement) {
         var params = {
             "command": "delete-meal",
@@ -105,6 +118,30 @@ var MPAjax = (function() {
         
         doAjax(params, function(response) {
             $(rowElement).remove();
+        });
+    };
+    
+    MPAjax.tagsFetched = false;
+    
+    // Fetch the list of all tags in the database, and add them as <option>
+    // elements to 'destElement'.
+    MPAjax.fetchAllTags = function(destElement) {
+        destElement = $(destElement);
+        
+        var params = {
+            "command": "fetch-all-tags",
+        };
+        
+        doAjax(params, function(tags) {
+            tags = tags || [];
+            
+            var i, tag;
+            for (i = 0; i < tags.length; i++) {
+                tag = tags[i];
+                $("<option>").val(tag).text(tag).appendTo(destElement);
+            }
+            
+            MPAjax.tagsFetched = true;
         });
     };
     

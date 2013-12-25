@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+// toggleFavourite implements an API call to toggle the "favourite" status of
+// a given meal.
 func toggleFavourite(params url.Values) (response JsonResponse) {
 	mealID, err := strconv.ParseUint(params.Get("mealid"), 10, 64)
 	if err != nil {
@@ -28,24 +30,4 @@ func toggleFavourite(params url.Values) (response JsonResponse) {
 	}
 	
 	return JsonResponse{Success: isFavourite}
-}
-
-func deleteMeal(params url.Values) (response JsonResponse) {
-	mealID, err := strconv.ParseUint(params.Get("mealid"), 10, 64)
-	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'mealid' parameter"}
-	}
-	
-	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
-		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
-			return mpdb.DeleteMealWithTags(tx, mealID)
-		})
-	})
-	
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
-		return JsonResponse{Error: "Database error"}
-	}
-	
-	return JsonResponse{Success: nil}
 }

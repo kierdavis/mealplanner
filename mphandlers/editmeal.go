@@ -35,6 +35,8 @@ func handleEditMealForm(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "edit-meal-form.html", mt)
 }
 
+// handleEditMealAction handles HTTP requests for submission of the "edit meal"
+// form.
 func handleEditMealAction(w http.ResponseWriter, r *http.Request) {
 	// Get the meal ID from the URL
 	mealID, ok := getUint64Var(r, "mealid")

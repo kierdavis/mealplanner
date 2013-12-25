@@ -30,12 +30,12 @@ const AddMealSQL = "INSERT INTO meal " +
 
 // SQL statement for updating the information about a meal.
 const UpdateMealSQL = "UPDATE meal " +
-	"SET meal.name = ? " +
-	"    meal.recipe = ? " +
+	"SET meal.name = ?, " +
+	"    meal.recipe = ?, " +
 	"    meal.favourite = ? " +
 	"WHERE meal.id = ?"
 
-// SQL statement for deletting all tags associated with a meal.
+// SQL statement for deleting all tags associated with a meal.
 const DeleteMealTagsSQL = "DELETE FROM tag " +
 	"WHERE tag.mealid = ?"
 
@@ -43,16 +43,28 @@ const DeleteMealTagsSQL = "DELETE FROM tag " +
 const AddMealTagSQL = "INSERT INTO tag " +
 	"VALUES (?, ?)"
 
+// SQL statement for testing whether a meal is marked as a favourite.
 const IsFavouriteSQL = "SELECT meal.favourite " +
 	"FROM meal " +
 	"WHERE meal.id = ?"
 
+// SQL statement to set the "favourite" status of a meal.
 const SetFavouriteSQL = "UPDATE meal " +
 	"SET meal.favourite = ? " +
 	"WHERE meal.id = ?"
 
+// SQL statement to delete a meal.
 const DeleteMealSQL = "DELETE FROM meal " +
 	"WHERE meal.id = ?"
+
+// SQL statement to list all tags in the database.
+const ListAllTagsSQL = "SELECT DISTINCT tag.tag " +
+	"FROM tag"
+
+// SQL statement to list all tags in the database sorted by name.
+const ListAllTagsByNameSQL = "SELECT DISTINCT tag.tag " +
+	"FROM tag " +
+	"ORDER BY tag.tag ASC"
 
 // ListMeals fetches and returns a list of all meals in the database. If the
 // parameter 'sortByName' is true, the meals are sorted in alphabetical order
@@ -164,7 +176,7 @@ func GetMealTags(q Queryable, mealID uint64) (tags []string, err error) {
 	}
 	defer rows.Close()
 
-	return getMealTagsReadRows(rows)
+	return readTags(rows)
 }
 
 // getMealTagsPrepared fetches the list of tags associated with the meal
@@ -177,29 +189,7 @@ func getMealTagsPrepared(q Queryable, stmt *sql.Stmt, mealID uint64) (tags []str
 	}
 	defer rows.Close()
 	
-	return getMealTagsReadRows(rows)
-}
-
-// getMealTagsReadRows reads a *sql.Rows as produced by GetMealTags or
-// getMealTagsPrepared and converts it into a slice of tags.
-func getMealTagsReadRows(rows *sql.Rows) (tags []string, err error) {
-	var tag string
-
-	for rows.Next() {
-		err = rows.Scan(&tag)
-		if err != nil {
-			return nil, err
-		}
-
-		tags = append(tags, tag)
-	}
-
-	err = rows.Err()
-	if err != nil {
-		return nil, err
-	}
-	
-	return tags, nil
+	return readTags(rows)
 }
 
 // GetMealWithTags combines GetMeal and GetMealTags.
@@ -299,6 +289,8 @@ func UpdateMealWithTags(q Queryable, mt mpdata.MealWithTags) (err error) {
 	return UpdateMealTags(q, mt.Meal.ID, mt.Tags)
 }
 
+// ToggleFavourite toggles the "favourite" status of the meal identified by
+// 'mealID', and returns the new favourite status.
 func ToggleFavourite(q Queryable, mealID uint64) (isFavourite bool, err error) {
 	err = q.QueryRow(IsFavouriteSQL, mealID).Scan(&isFavourite)
 	if err != nil {
@@ -310,11 +302,14 @@ func ToggleFavourite(q Queryable, mealID uint64) (isFavourite bool, err error) {
 	return isFavourite, err
 }
 
+// DeleteMeal deletes the meal record identified by 'mealID'.
 func DeleteMeal(q Queryable, mealID uint64) (err error) {
 	_, err = q.Exec(DeleteMealSQL, mealID)
 	return err
 }
 
+// DeleteMealWithTags deletes the meal record identified by 'mealID', and all
+// tag records associated with it.
 func DeleteMealWithTags(q Queryable, mealID uint64) (err error) {
 	err = DeleteMeal(q, mealID)
 	if err != nil {
@@ -322,4 +317,46 @@ func DeleteMealWithTags(q Queryable, mealID uint64) (err error) {
 	}
 	
 	return DeleteMealTags(q, mealID)
+}
+
+// ListAllTags returns a list (without duplicates) of all tags that appear in
+// the database. If the 'sortByName' parameter is true, the tags are sorted into
+// alphabetical order.
+func ListAllTags(q Queryable, sortByName bool) (tags []string, err error) {
+	var query string
+	if sortByName {
+		query = ListAllTagsByNameSQL
+	} else {
+		query = ListAllTagsSQL
+	}
+	
+	rows, err := q.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	
+	return readTags(rows)
+}
+
+// readTags reads a *sql.Rows as produced by GetMealTags or
+// getMealTagsPrepared and converts it into a slice of tags.
+func readTags(rows *sql.Rows) (tags []string, err error) {
+	var tag string
+
+	for rows.Next() {
+		err = rows.Scan(&tag)
+		if err != nil {
+			return nil, err
+		}
+
+		tags = append(tags, tag)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	
+	return tags, nil
 }

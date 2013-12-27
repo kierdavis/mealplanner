@@ -24,3 +24,11 @@ button.action-button {
 td, th {
     padding-right: 20px;
 }
+
+table.tags-list {
+    border: 1px solid black;
+}
+
+button.remove-tag {
+    font-size: small;
+}

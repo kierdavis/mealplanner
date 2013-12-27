@@ -20,7 +20,7 @@ func main() {
 	}
 	
 	m := mphandlers.CreateMux()
-	err = http.ListenAndServe(":8080", m)
+	err = http.ListenAndServe("localhost:8080", m)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Server Error: %s\n", err)
 		os.Exit(1)

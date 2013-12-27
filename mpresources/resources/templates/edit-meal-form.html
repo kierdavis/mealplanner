@@ -17,12 +17,33 @@
         {{template "common-head.html"}}
         
         <script type="text/javascript">
+            function addTag(tag) {
+                var row = $("<tr>").data("tag", tag).appendTo($("#tags"));
+                $("<td>").text(tag).appendTo(row);
+                
+                $("<button>")
+                    .text("Remove")
+                    .addClass("remove-tag")
+                    .appendTo($("<td>").appendTo(row))
+                    .click(function(event) {
+                        event.preventDefault();
+                        row.remove();
+                    });
+            }
+            
             $(document).ready(function() {
                 // Bind event handlers
                 
-                // Select all tags on form submission
+                // Send tags on form submission
                 $("#form").submit(function() {
-                    $("#tags option").attr("selected", "selected");
+                    $("#tags tr").each(function() {
+                        var tag = $(this).data("tag");
+                        $("<input>")
+                            .attr("type", "hidden")
+                            .attr("name", "tags")
+                            .attr("value", tag)
+                            .appendTo($("#form"));
+                    });
                 });
                 
                 // Implement fetching all tags in database when drop-down is
@@ -37,32 +58,32 @@
                 $("#add-existing-tag").click(function(event) {
                     event.preventDefault();
                     
-                    var tag = $("#existing-tag").val();
-                    $("<option>").val(tag).text(tag).appendTo($("#tags"));
+                    addTag($("#existing-tag").val());
                 });
                 
                 // Implement adding new tags
                 $("#add-new-tag").click(function(event) {
                     event.preventDefault();
                     
-                    var tag = $("#new-tag").val();
+                    addTag($("#new-tag").val());
                     $("#new-tag").val("");
-                    $("<option>").val(tag).text(tag).appendTo($("#tags"));
                 });
                 
+                /*
                 // Implement tag removal
                 $("#remove-tag").click(function(event) {
                     event.preventDefault();
                     
                     $("#tags option:selected").remove();
                 });
+                */
                 
                 // Implement resetting the tags list on reset
                 $("#reset").click(function() {
-                    var tagsList = $("#tags").empty();
+                    $("#tags").empty();
                     
                     {{range .Tags}}
-                        $("<option>").val("{{. | js}}").text("{{. | js}}").appendTo(tagsList);
+                        addTag("{{. | js}}");
                     {{end}}
                 });
             });
@@ -113,11 +134,9 @@
                         
                         <div class="row">
                             <div class="col-md-4">
-                                <select name="tags" id="tags" size="6" multiple="multiple" style="min-width: 200px">
-                                    {{range .Tags}}
-                                        <option value="{{.}}">{{.}}</option>
-                                    {{end}}
-                                </select>
+                                <table class="tags-list">
+                                    <tbody id="tags"></tbody>
+                                </table>
                             </div>
                             
                             <div class="col-md-8">
@@ -130,7 +149,10 @@
                                             <select id="existing-tag" style="min-width: 100px"></select>
                                         </td>
                                         <td>
-                                            <button id="add-existing-tag">Add</button>
+                                            <button id="add-existing-tag">
+                                                <img src="/static/icons/list-add-4.png" height="16" alt=""/>
+                                                Add
+                                            </button>
                                         </td>
                                     </tr>
                                     <tr>
@@ -141,12 +163,10 @@
                                             <input type="text" id="new-tag" size="15"/>
                                         </td>
                                         <td>
-                                            <button id="add-new-tag">Add</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3">
-                                            <button id="remove-tag">Remove selected tag</button>
+                                            <button id="add-new-tag">
+                                                <img src="/static/icons/list-add-4.png" height="16" alt=""/>
+                                                Add
+                                            </button>
                                         </td>
                                     </tr>
                                 </table>

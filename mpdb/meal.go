@@ -6,65 +6,43 @@ import (
 )
 
 // SQL statement for listing meals.
-const ListMealsSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite " +
-	"FROM meal"
+const ListMealsSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite FROM meal"
 
 // SQL statement for listing meals sorted by name.
-const ListMealsByNameSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite " +
-	"FROM meal " +
-	"ORDER BY meal.name ASC"
+const ListMealsByNameSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite FROM meal ORDER BY meal.name ASC"
 
 // SQL statement for fetching information about a meal.
-const GetMealSQL = "SELECT meal.name, meal.recipe, meal.favourite " +
-	"FROM meal " +
-	"WHERE meal.id = ?"
+const GetMealSQL = "SELECT meal.name, meal.recipe, meal.favourite FROM meal WHERE meal.id = ?"
 
 // SQL statement for fetching tags associated with a meal.
-const GetMealTagsSQL = "SELECT tag.tag " +
-	"FROM tag " +
-	"WHERE tag.mealid = ?"
+const GetMealTagsSQL = "SELECT tag.tag FROM tag WHERE tag.mealid = ?"
 
 // SQL statement for adding a meal.
-const AddMealSQL = "INSERT INTO meal " +
-	"VALUES (NULL, ?, ?, ?)"
+const AddMealSQL = "INSERT INTO meal VALUES (NULL, ?, ?, ?)"
 
 // SQL statement for updating the information about a meal.
-const UpdateMealSQL = "UPDATE meal " +
-	"SET meal.name = ?, " +
-	"    meal.recipe = ?, " +
-	"    meal.favourite = ? " +
-	"WHERE meal.id = ?"
+const UpdateMealSQL = "UPDATE meal SET meal.name = ?, meal.recipe = ?, meal.favourite = ? WHERE meal.id = ?"
 
 // SQL statement for deleting all tags associated with a meal.
-const DeleteMealTagsSQL = "DELETE FROM tag " +
-	"WHERE tag.mealid = ?"
+const DeleteMealTagsSQL = "DELETE FROM tag WHERE tag.mealid = ?"
 
 // SQL statement for adding a tag to a meal.
-const AddMealTagSQL = "INSERT INTO tag " +
-	"VALUES (?, ?)"
+const AddMealTagSQL = "INSERT INTO tag VALUES (?, ?)"
 
 // SQL statement for testing whether a meal is marked as a favourite.
-const IsFavouriteSQL = "SELECT meal.favourite " +
-	"FROM meal " +
-	"WHERE meal.id = ?"
+const IsFavouriteSQL = "SELECT meal.favourite FROM meal WHERE meal.id = ?"
 
 // SQL statement to set the "favourite" status of a meal.
-const SetFavouriteSQL = "UPDATE meal " +
-	"SET meal.favourite = ? " +
-	"WHERE meal.id = ?"
+const SetFavouriteSQL = "UPDATE meal SET meal.favourite = ? WHERE meal.id = ?"
 
 // SQL statement to delete a meal.
-const DeleteMealSQL = "DELETE FROM meal " +
-	"WHERE meal.id = ?"
+const DeleteMealSQL = "DELETE FROM meal WHERE meal.id = ?"
 
 // SQL statement to list all tags in the database.
-const ListAllTagsSQL = "SELECT DISTINCT tag.tag " +
-	"FROM tag"
+const ListAllTagsSQL = "SELECT DISTINCT tag.tag FROM tag"
 
 // SQL statement to list all tags in the database sorted by name.
-const ListAllTagsByNameSQL = "SELECT DISTINCT tag.tag " +
-	"FROM tag " +
-	"ORDER BY tag.tag ASC"
+const ListAllTagsByNameSQL = "SELECT DISTINCT tag.tag FROM tag ORDER BY tag.tag ASC"
 
 // ListMeals fetches and returns a list of all meals in the database. If the
 // parameter 'sortByName' is true, the meals are sorted in alphabetical order

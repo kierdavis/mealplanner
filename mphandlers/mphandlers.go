@@ -29,6 +29,10 @@ func CreateMux() (m *mux.Router) {
 	editMeal := m.Path("/meals/{mealid:[0-9]+}/edit").Subrouter()
 	editMeal.Methods("GET", "HEAD").HandlerFunc(handleEditMealForm)
 	editMeal.Methods("POST").HandlerFunc(handleEditMealAction)
+	
+	createMP := m.Path("/mealplans/new").Subrouter()
+	createMP.Methods("GET", "HEAD").HandlerFunc(handleCreateMealPlanForm)
+	createMP.Methods("POST").HandlerFunc(handleCreateMealPlanAction)
 
 	return m
 }

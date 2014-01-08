@@ -31,11 +31,34 @@
                     });
             }
             
+            function validateMealName(input) {
+                var ok = true, msg = "";
+                
+                if (input.length < 1 || input.length > 255) {
+                    ok = false;
+                    msg = "Meal name must be between 1 and 255 characters in length (inclusive)";
+                }
+                
+                if (ok) {
+                    $("#name-validation").slideUp();
+                }
+                else {
+                    $("#name-validation td").text(msg);
+                    $("#name-validation").slideDown();
+                }
+                
+                return ok;
+            }
+            
             $(document).ready(function() {
                 // Bind event handlers
                 
-                // Send tags on form submission
                 $("#form").submit(function() {
+                    // Validate inputs
+                    if (!validateMealName($("#name").val())) return false;
+                    //if (!validateRecipeLink($("#recipe").val())) return false;
+                    
+                    // Send tags on form submission
                     $("#tags tr").each(function() {
                         var tag = $(this).data("tag");
                         $("<input>")
@@ -65,7 +88,11 @@
                 $("#add-new-tag").click(function(event) {
                     event.preventDefault();
                     
-                    addTag($("#new-tag").val());
+                    var tag = $("#new-tag").val();
+                    
+                    if (!validateTag(tag)) return false;
+                    
+                    addTag(tag);
                     $("#new-tag").val("");
                 });
                 
@@ -109,12 +136,15 @@
                                 <input type="text" name="name" id="name" size="50" value="{{.Meal.Name}}"/>
                             </td>
                         </tr>
+                        <tr id="name-validation">
+                            <td></td>
+                        </tr>
                         <tr>
                             <td>
                                 <label for="recipe">Link to recipe (optional):</label>
                             </td>
                             <td>
-                                <input type="text" name="recipe" id="recipe" size="80" value="{{.Meal.RecipeURL}}"/>
+                                <input type="text" name="recipe" id="recipe" size="50" value="{{.Meal.RecipeURL}}"/>
                             </td>
                         </tr>
                         <tr>
@@ -150,7 +180,7 @@
                                         </td>
                                         <td>
                                             <button id="add-existing-tag">
-                                                <img src="/static/icons/list-add-4.png" height="16" alt=""/>
+                                                <img src="/static/icons/add_16x16.png" height="16" alt=""/>
                                                 Add
                                             </button>
                                         </td>
@@ -164,7 +194,7 @@
                                         </td>
                                         <td>
                                             <button id="add-new-tag">
-                                                <img src="/static/icons/list-add-4.png" height="16" alt=""/>
+                                                <img src="/static/icons/add_16x16.png" height="16" alt=""/>
                                                 Add
                                             </button>
                                         </td>
@@ -176,8 +206,15 @@
                 </div>
                 
                 <p>
-                    <input id="reset" type="reset" value="Reset"/>
-                    <input type="submit" value="Save"/>
+                    <button id="reset" type="reset">
+                        <img src="/static/icons/reset_16x16.png" height="16" alt=""/>
+                        Reset
+                    </button>
+                    
+                    <button type="submit">
+                        <img src="/static/icons/save_16x16.png" height="16" alt=""/>
+                        Save
+                    </button>
                 </p>
             </form>
         </div>

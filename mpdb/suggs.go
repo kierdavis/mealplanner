@@ -10,7 +10,8 @@ import (
 // SQL to create the temporary score table.
 const CreateScoreTableSQL = "CREATE TEMPORARY TABLE score ( " +
 	"  mealid BIGINT UNSIGNED NOT NULL, " +
-	"  score FLOAT NOT NULL " +
+	"  score FLOAT NOT NULL, " +
+	"  PRIMARY KEY (mealid) " +
 	")"
 
 // SQL to drop the temporary score table.
@@ -25,8 +26,7 @@ const FindCsdSQL = "SELECT ABS(DATEDIFF(serving.dateserved, ?)) " +
 	"LIMIT 1"
 
 // SQL to insert a meal identifier and score into the temporary score table.
-const InsertScoreSQL = "INSERT INTO score " +
-	"VALUES (?, ?)"
+const InsertScoreSQL = "INSERT INTO score VALUES (?, ?)"
 
 // SQL to list meals sorted by score.
 const ListMealsByScoreSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite, score.score " +

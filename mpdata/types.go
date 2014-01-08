@@ -19,3 +19,10 @@ type MealWithScore struct {
 	Meal  *Meal   `json:"meal"` // The meal.
 	Score float32 `json:"score"` // The meal's score.
 }
+
+type MealPlan struct {
+	ID uint64 `json:"id"`
+	Notes string `json:"notes"`
+	StartDate time.Time `json:"start"`
+	EndDate time.Time `json:"end"`
+}

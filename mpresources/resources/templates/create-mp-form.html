@@ -1,0 +1,54 @@
+{{/*
+    create-mp-form.html contains the form used for creating meal plans.
+*/}}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Create Meal Plan :: Meal Planner</title>
+        
+        {{template "common-head.html"}}
+    </head>
+    
+    <body>
+        <div class="container">
+            <h1>Create Meal Plan</h1>
+            
+            <form action="" method="post">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <label for="start">From:</label>
+                            </td>
+                            <td>
+                                <input type="text" name="start" id="start" size="15" class="datepicker"/>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <label for="end">To:</label>
+                            </td>
+                            <td>
+                                <input type="text" name="end" id="end" size="15" class="datepicker"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                    
+                <p>
+                    <button id="reset" type="reset">
+                        <img src="/static/icons/reset_16x16.png" height="16" alt=""/>
+                        Reset
+                    </button>
+                    
+                    <button type="submit">
+                        <img src="/static/icons/save_16x16.png" height="16" alt=""/>
+                        Create
+                    </button>
+                </p>
+            </form>
+        </div>
+    </body>
+</html>

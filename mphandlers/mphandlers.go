@@ -20,6 +20,9 @@ func CreateMux() (m *mux.Router) {
 	// Dynamic handlers
 	m.Path("/").Methods("GET", "HEAD").HandlerFunc(handleHome)
 	m.Path("/meals").Methods("GET", "HEAD").HandlerFunc(handleBrowseMeals)
+	//m.Path("/mealplans").Methods("GET", "HEAD").HandlerFunc(handleBrowseMealPlans)
+	//m.Path("/mealplans/{mealplanid:[0-9]+}").Methods("GET", "HEAD").HandlerFunc(handleViewMealPlan)
+	//m.Path("/mealplans/{mealplanid:[0-9]+}/edit").Methods("GET", "HEAD").HandlerFunc(handleEditMealPlan)
 	m.Path("/api").Methods("POST").HandlerFunc(mpapi.HandleApiCall)
 
 	addMeal := m.Path("/meals/new").Subrouter()

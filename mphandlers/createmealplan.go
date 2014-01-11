@@ -6,6 +6,7 @@ import (
 	"github.com/kierdavis/mealplanner/mpdb"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func handleCreateMealPlanForm(w http.ResponseWriter, r *http.Request) {
@@ -20,15 +21,27 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
+	startDate, err := time.Parse(mpdata.DatepickerFormat, r.FormValue("start"))
+	if err != nil {
+		httpError(w, BadRequestError)
+		return
+	}
+	
+	endDate, err := time.Parse(mpdata.DatepickerFormat, r.FormValue("end"))
+	if err != nil {
+		httpError(w, BadRequestError)
+		return
+	}
+	
 	// Create a MealPlan
 	mp := &mpdata.MealPlan{
-		Start: time.Parse(mpdata.DatepickerFormat, r.FormValue("start")),
-		End: time.Parse(mpdata.DatepickerFormat, r.FormValue("end")),
+		StartDate: startDate,
+		EndDate: endDate,
 	}
 	
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
-			return mpdb.CreateMealPlan(tx, mp)
+			return mpdb.AddMealPlan(tx, mp)
 		})
 	})
 	if err != nil {

@@ -1,6 +1,7 @@
 package mpdb
 
 import (
+	"database/sql"
 	"github.com/kierdavis/mealplanner/mpdata"
 )
 

@@ -1,5 +1,9 @@
 package mpdata
 
+import (
+	"time"
+)
+
 // Type Meal holds information about a meal in the database.
 type Meal struct {
 	ID        uint64 `json:"id"` // The database's unique identifier for the meal.

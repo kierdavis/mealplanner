@@ -20,25 +20,25 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 		serverError(w, err)
 		return
 	}
-	
+
 	startDate, err := time.Parse(mpdata.DatepickerFormat, r.FormValue("start"))
 	if err != nil {
 		httpError(w, BadRequestError)
 		return
 	}
-	
+
 	endDate, err := time.Parse(mpdata.DatepickerFormat, r.FormValue("end"))
 	if err != nil {
 		httpError(w, BadRequestError)
 		return
 	}
-	
+
 	// Create a MealPlan
 	mp := &mpdata.MealPlan{
 		StartDate: startDate,
-		EndDate: endDate,
+		EndDate:   endDate,
 	}
-	
+
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
 			return mpdb.AddMealPlan(tx, mp)
@@ -48,6 +48,6 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 		serverError(w, err)
 		return
 	}
-	
-	redirect(w, http.StatusSeeOther, "/mealplans/" + strconv.FormatUint(mp.ID, 10))
+
+	redirect(w, http.StatusSeeOther, "/mealplans/"+strconv.FormatUint(mp.ID, 10))
 }

@@ -78,18 +78,18 @@ func WithConnection(f WithConnectionFunc) (err error) {
 	if err != nil {
 		return err
 	}
-	
+
 	// Run the passed function
 	err = f(db)
-	
+
 	// Close the database
 	closeErr := db.Close()
-	
+
 	// If closing the database caused an error, return a FailedCloseError
 	if closeErr != nil {
 		err = &FailedCloseError{"close connection", closeErr, err}
 	}
-	
+
 	return err
 }
 
@@ -104,13 +104,13 @@ func WithTransaction(db *sql.DB, f WithTransactionFunc) (err error) {
 	if err != nil {
 		return err
 	}
-	
+
 	// Run the passed function
 	err = f(tx)
-	
+
 	var closeErr error
 	var what string
-	
+
 	// Commit or rollback the transaction
 	if err != nil {
 		closeErr = tx.Rollback()
@@ -119,7 +119,7 @@ func WithTransaction(db *sql.DB, f WithTransactionFunc) (err error) {
 		closeErr = tx.Commit()
 		what = "commit transaction"
 	}
-	
+
 	// If committing/rolling back the transaction caused an error, return a
 	// FailedCloseError
 	if closeErr != nil {

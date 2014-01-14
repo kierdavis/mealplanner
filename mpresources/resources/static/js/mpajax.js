@@ -121,10 +121,9 @@ var MPAjax = (function() {
         });
     };
     
-    MPAjax.tagsFetched = false;
-    
     // Fetch the list of all tags in the database, and add them as <option>
     // elements to 'destElement'.
+    MPAjax.tagsFetched = false;
     MPAjax.fetchAllTags = function(destElement) {
         destElement = $(destElement);
         
@@ -144,6 +143,28 @@ var MPAjax = (function() {
             MPAjax.tagsFetched = true;
         });
     };
+    
+    MPAjax.fetchServings = function(destElement, mpID) {
+        destElement = $(destElement);
+        
+        var params = {
+            "command": "fetch-servings",
+            "mealplanid": mpID,
+        };
+        
+        doAjax(params, function(results) {
+            results = results || [];
+            
+            var i, result, row;
+            for (i = 0; i < results.length; i++) {
+                result = results[i];
+                
+                row = $("<tr>").appendTo(results);
+                $("<td>").text(result.date).appendTo(row);
+                $("<td>").text(result.mealname).appendTo(row);
+            }
+        });
+    }
     
     return MPAjax;
 })();

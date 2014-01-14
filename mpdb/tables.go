@@ -20,25 +20,25 @@ var CreateTablesSQLs = []string{
 		"recipe TEXT, " +
 		"favourite BOOLEAN NOT NULL, " +
 		"PRIMARY KEY (id) " +
-	")",
+		")",
 	"CREATE TABLE IF NOT EXISTS tag ( " +
 		"mealid BIGINT UNSIGNED NOT NULL, " +
 		"tag VARCHAR(64) NOT NULL, " +
 		"PRIMARY KEY (mealid, tag) " +
-	")",
+		")",
 	"CREATE TABLE IF NOT EXISTS mealplan ( " +
 		"id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, " +
 		"notes TEXT, " +
 		"startdate DATE NOT NULL, " +
 		"enddate DATE NOT NULL, " +
 		"PRIMARY KEY (id) " +
-	")",
+		")",
 	"CREATE TABLE IF NOT EXISTS serving ( " +
 		"mealplanid BIGINT UNSIGNED NOT NULL, " +
 		"dateserved DATE NOT NULL, " +
 		"mealid BIGINT UNSIGNED NOT NULL, " +
 		"PRIMARY KEY (mealplanid, dateserved) " +
-	")",
+		")",
 }
 
 // SQL statements to clear tables.
@@ -57,14 +57,14 @@ func execList(q Queryable, queries []string) (err error) {
 			return err
 		}
 	}
-	
+
 	return nil
 }
 
 // DeleteTables drops the database tables if they exist.
 func DeleteTables(q Queryable) (err error) {
 	return execList(q, DeleteTablesSQLs)
-} 
+}
 
 // CreateTables creates the database tables if they do not exist.
 func CreateTables(q Queryable) (err error) {
@@ -85,14 +85,14 @@ func InitDB(clear bool) (err error) {
 			if err != nil {
 				return err
 			}
-			
+
 			if clear {
 				err = ClearTables(tx)
 				if err != nil {
 					return err
 				}
 			}
-			
+
 			return nil
 		})
 	})

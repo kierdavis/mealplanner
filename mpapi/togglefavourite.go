@@ -16,18 +16,18 @@ func toggleFavourite(params url.Values) (response JsonResponse) {
 	if err != nil {
 		return JsonResponse{Error: "Invalid or missing 'mealid' parameter"}
 	}
-	
+
 	var isFavourite bool
-	
+
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		isFavourite, err = mpdb.ToggleFavourite(db, mealID)
 		return err
 	})
-	
+
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
 		return JsonResponse{Error: "Database error"}
 	}
-	
+
 	return JsonResponse{Success: isFavourite}
 }

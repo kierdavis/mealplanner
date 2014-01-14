@@ -26,7 +26,7 @@ func handleEditMealForm(w http.ResponseWriter, r *http.Request) {
 		serverError(w, err)
 		return
 	}
-	
+
 	if mt.Meal == nil {
 		httpError(w, NotFoundError)
 		return
@@ -44,7 +44,7 @@ func handleEditMealAction(w http.ResponseWriter, r *http.Request) {
 		httpError(w, BadRequestError)
 		return
 	}
-	
+
 	// Parse the POST request body
 	err := r.ParseForm()
 	if err != nil {
@@ -62,7 +62,7 @@ func handleEditMealAction(w http.ResponseWriter, r *http.Request) {
 		},
 		Tags: r.Form["tags"],
 	}
-	
+
 	// Update the database record
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
@@ -73,7 +73,7 @@ func handleEditMealAction(w http.ResponseWriter, r *http.Request) {
 		serverError(w, err)
 		return
 	}
-	
+
 	// Redirect to list of meals
 	redirect(w, http.StatusSeeOther, "/meals")
 }

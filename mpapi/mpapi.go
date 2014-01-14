@@ -12,7 +12,7 @@ import (
 // If the 'Error' field is nonempty, the response indicates an error has
 // occurred, else the response is assumed to be a successful one.
 type JsonResponse struct {
-	Error string `json:"error"` // The error message, in the event of an unsuccessful response.
+	Error   string      `json:"error"`   // The error message, in the event of an unsuccessful response.
 	Success interface{} `json:"success"` // The response payload, in the event of a successful response.
 }
 
@@ -21,16 +21,16 @@ type JsonResponse struct {
 // to the client.
 func HandleApiCall(w http.ResponseWriter, r *http.Request) {
 	var response JsonResponse
-	
+
 	err := r.ParseForm()
 	if err != nil {
 		response = JsonResponse{Error: "Could not parse request body."}
 	} else {
 		response = Dispatch(r.Form)
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
-	
+
 	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: Could not write JSON response: %s\n", err.Error())
@@ -49,7 +49,9 @@ func Dispatch(params url.Values) (response JsonResponse) {
 		return deleteMeal(params)
 	case "fetch-all-tags":
 		return fetchAllTags(params)
+	case "fetch-servings":
+		return fetchServings(params)
 	}
-	
+
 	return JsonResponse{Error: "Invalid or missing command"}
 }

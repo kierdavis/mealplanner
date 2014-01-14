@@ -18,7 +18,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Database Error: %s\n", err)
 		os.Exit(1)
 	}
-	
+
 	m := mphandlers.CreateMux()
 	err = http.ListenAndServe("localhost:8080", m)
 	if err != nil {

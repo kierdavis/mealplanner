@@ -112,7 +112,7 @@ func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags,
 		if err != nil {
 			return nil, err
 		}
-		
+
 		mt.Tags, err = getMealTagsPrepared(q, getTagsStmt, mt.Meal.ID)
 		if err != nil {
 			return nil, err
@@ -138,7 +138,7 @@ func GetMeal(q Queryable, mealID uint64) (meal *mpdata.Meal, err error) {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
-		
+
 		return nil, err
 	}
 
@@ -166,7 +166,7 @@ func getMealTagsPrepared(q Queryable, stmt *sql.Stmt, mealID uint64) (tags []str
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	return readTags(rows)
 }
 
@@ -274,7 +274,7 @@ func ToggleFavourite(q Queryable, mealID uint64) (isFavourite bool, err error) {
 	if err != nil {
 		return false, err
 	}
-	
+
 	isFavourite = !isFavourite
 	_, err = q.Exec(SetFavouriteSQL, isFavourite, mealID)
 	return isFavourite, err
@@ -293,7 +293,7 @@ func DeleteMealWithTags(q Queryable, mealID uint64) (err error) {
 	if err != nil {
 		return err
 	}
-	
+
 	return DeleteMealTags(q, mealID)
 }
 
@@ -307,13 +307,13 @@ func ListAllTags(q Queryable, sortByName bool) (tags []string, err error) {
 	} else {
 		query = ListAllTagsSQL
 	}
-	
+
 	rows, err := q.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	return readTags(rows)
 }
 
@@ -335,6 +335,6 @@ func readTags(rows *sql.Rows) (tags []string, err error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return tags, nil
 }

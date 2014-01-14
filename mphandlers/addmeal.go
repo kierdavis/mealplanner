@@ -31,7 +31,7 @@ func handleAddMealAction(w http.ResponseWriter, r *http.Request) {
 		},
 		Tags: r.Form["tags"],
 	}
-	
+
 	// Add the record to the database
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
@@ -42,7 +42,7 @@ func handleAddMealAction(w http.ResponseWriter, r *http.Request) {
 		serverError(w, err)
 		return
 	}
-	
+
 	// Redirect to list of meals
 	redirect(w, http.StatusSeeOther, "/meals")
 }

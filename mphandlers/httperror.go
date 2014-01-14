@@ -21,9 +21,9 @@ var BadRequestError = &HttpError{
 
 // HTTP 404 Not Found
 var NotFoundError = &HttpError{
-	Status: http.StatusNotFound,
+	Status:    http.StatusNotFound,
 	ShortDesc: "Not Found",
-	LongDesc: "We're sorry, the page you were looking for was not found on ther server.",
+	LongDesc:  "We're sorry, the page you were looking for was not found on ther server.",
 }
 
 // HTTP 500 Internal Server Error

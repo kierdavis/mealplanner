@@ -12,7 +12,7 @@ import (
 // to it.
 func CreateMux() (m *mux.Router) {
 	m = mux.NewRouter()
-	
+
 	// Static files
 	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(mpresources.StaticDir)))
 	m.PathPrefix("/static/").Handler(staticHandler)
@@ -22,7 +22,7 @@ func CreateMux() (m *mux.Router) {
 	m.Path("/meals").Methods("GET", "HEAD").HandlerFunc(handleBrowseMeals)
 	//m.Path("/mealplans").Methods("GET", "HEAD").HandlerFunc(handleBrowseMealPlans)
 	//m.Path("/mealplans/{mealplanid:[0-9]+}").Methods("GET", "HEAD").HandlerFunc(handleViewMealPlan)
-	//m.Path("/mealplans/{mealplanid:[0-9]+}/edit").Methods("GET", "HEAD").HandlerFunc(handleEditMealPlan)
+	m.Path("/mealplans/{mealplanid:[0-9]+}/edit").Methods("GET", "HEAD").HandlerFunc(handleEditMealPlan)
 	m.Path("/api").Methods("POST").HandlerFunc(mpapi.HandleApiCall)
 
 	addMeal := m.Path("/meals/new").Subrouter()
@@ -32,7 +32,7 @@ func CreateMux() (m *mux.Router) {
 	editMeal := m.Path("/meals/{mealid:[0-9]+}/edit").Subrouter()
 	editMeal.Methods("GET", "HEAD").HandlerFunc(handleEditMealForm)
 	editMeal.Methods("POST").HandlerFunc(handleEditMealAction)
-	
+
 	createMP := m.Path("/mealplans/new").Subrouter()
 	createMP.Methods("GET", "HEAD").HandlerFunc(handleCreateMealPlanForm)
 	createMP.Methods("POST").HandlerFunc(handleCreateMealPlanAction)

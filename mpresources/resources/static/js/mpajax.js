@@ -33,137 +33,66 @@ var MPAjax = (function() {
         });
     }
     
-    // Fetch the list of meals and add them in the form of a table to
-    // 'destElement'.
-    MPAjax.fetchMealList = function(destElement) {
+    // Fetch the list of meals and pass them to a callback function.
+    MPAjax.fetchMealList = function(callback) {
         var params = {
             "command": "fetch-meal-list",
         };
         
-        doAjax(params, function(results) {
-            results = results || [];
-            
-            if (results.length == 0) {
-                $(destElement).text("No meals to display.");
-                return;
-            }
-            
-            var table = $("<table>").appendTo($(destElement).empty());
-            var thead = $("<thead>").appendTo(table);
-            var headerRow = $("<tr>").appendTo(thead);
-            $("<th>").text("Name").appendTo(headerRow);
-            $("<th>").text("Tags").appendTo(headerRow);
-            $("<th>").text("Actions").appendTo(headerRow);
-            var tbody = $("<tbody>").appendTo(table);
-            
-            var i, result, row, actions, favText;
-            
-            for (i = 0; i < results.length; i++) {
-                result = results[i];
-                row = $("<tr>").appendTo(tbody);
-                
-                $("<td>").appendTo(row).text(result.meal.name);
-                $("<td>").appendTo(row).text((result.tags || []).join(", "));
-                actions = $("<td>").appendTo(row);
-                
-                $("<button>").appendTo(actions).addClass("action-button").text("Open recipe").click(function(event) {
-                    event.preventDefault();
-                    location.href = result.meal.recipe;
-                });
-                
-                favText = result.meal.favourite ? "Unfavourite" : "Favourite";
-                $("<button>").appendTo(actions).addClass("action-button").text(favText).click(function(event) {
-                    event.preventDefault();
-                    MPAjax.toggleFavourite(result.meal.id, this);
-                });
-                
-                $("<button>").appendTo(actions).addClass("action-button").text("Edit").click(function(event) {
-                    event.preventDefault();
-                    location.href = "/meals/" + result.meal.id + "/edit";
-                });
-                
-                $("<button>").appendTo(actions).addClass("action-button").text("Delete").click(function(event) {
-                    event.preventDefault();
-                    MPAjax.deleteMeal(result.meal.id, row[0]);
-                });
-            }
-        });
+        doAjax(params, callback);
     };
     
-    // Toggle the "favourite" status of the meal identified by 'mealID', and
-    // update the text of 'favButton' to reflect the new status.
-    MPAjax.toggleFavourite = function(mealID, favButton) {
+    // Toggle the "favourite" status of the meal identified by 'mealID' and pass
+    // the updated "favourite" status to a callback function.
+    MPAjax.toggleFavourite = function(mealID, callback) {
         var params = {
             "command": "toggle-favourite",
             "mealid": mealID,
         };
         
-        doAjax(params, function(isFavourite) {
-            if (isFavourite) {
-                $(favButton).text("Unfavourite");
-            }
-            else {
-                $(favButton).text("Favourite");
-            }
-        });
+        doAjax(params, callback);
     };
     
-    // Delete the meal identified by 'mealID', and delete 'rowElement' if
-    // successful.
-    MPAjax.deleteMeal = function(mealID, rowElement) {
+    // Delete the meal identified by 'mealID' and call the callback function
+    // when done.
+    MPAjax.deleteMeal = function(mealID, callback) {
         var params = {
             "command": "delete-meal",
             "mealid": mealID,
         };
         
-        doAjax(params, function(response) {
-            $(rowElement).remove();
-        });
+        doAjax(params, callback);
     };
     
-    // Fetch the list of all tags in the database, and add them as <option>
-    // elements to 'destElement'.
-    MPAjax.tagsFetched = false;
-    MPAjax.fetchAllTags = function(destElement) {
-        destElement = $(destElement);
-        
+    // Fetch the list of all tags in the database and pass them to a callback
+    // function.
+    MPAjax.fetchAllTags = function(callback) {
         var params = {
             "command": "fetch-all-tags",
         };
         
-        doAjax(params, function(tags) {
-            tags = tags || [];
-            
-            var i, tag;
-            for (i = 0; i < tags.length; i++) {
-                tag = tags[i];
-                $("<option>").val(tag).text(tag).appendTo(destElement);
-            }
-            
-            MPAjax.tagsFetched = true;
-        });
+        doAjax(params, callback);
     };
     
-    MPAjax.fetchServings = function(destElement, mpID) {
-        destElement = $(destElement);
-        
+    // The first time this function is called, it is identical to 'fetchAllTags'.
+    // After that, it does nothing.
+    MPAjax.tagsFetched = false;
+    MPAjax.fetchAllTagsOnce = function(callback) {
+        if (!MPAjax.tagsFetched) {
+            MPAjax.fetchAllTags(callback);
+            MPAjax.tagsFetched = true;
+        }
+    }
+    
+    // Fetch a list of servings for the meal plan identified by 'mpID' and pass
+    // them to a callback function.
+    MPAjax.fetchServings = function(mpID, callback) {
         var params = {
             "command": "fetch-servings",
             "mealplanid": mpID,
         };
         
-        doAjax(params, function(results) {
-            results = results || [];
-            
-            var i, result, row;
-            for (i = 0; i < results.length; i++) {
-                result = results[i];
-                
-                row = $("<tr>").appendTo(results);
-                $("<td>").text(result.date).appendTo(row);
-                $("<td>").text(result.mealname).appendTo(row);
-            }
-        });
+        doAjax(params, callback);
     }
     
     return MPAjax;

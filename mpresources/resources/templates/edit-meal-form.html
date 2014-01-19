@@ -73,7 +73,9 @@
                 // opened.
                 $("#existing-tag").click(function(event) {
                     if (!MPAjax.tagsFetched) {
-                        MPAjax.fetchAllTags(this);
+                        MPAjax.fetchAllTagsOnce(function(tags) {
+                            MPUtil.renderExistingTagsList(tags, $(this));
+                        });
                     }
                 });
                 

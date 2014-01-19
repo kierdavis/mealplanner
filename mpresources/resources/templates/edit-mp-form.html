@@ -1,5 +1,7 @@
 {{/*
     edit-mp-form.html contains the form used for editing meal plans.
+    
+    Dot is expected to be the ID of the meal plan to be edited.
 */}}
 
 <!DOCTYPE html>
@@ -11,7 +13,18 @@
         
         <script type="text/javascript">
             $(document).ready(function() {
-                MPAjax.fetchServings("#servings", {{.}});
+                MPAjax.fetchServings({{.}}, function(results) {
+                    results = results || [];
+                    
+                    var i, result, row;
+                    for (i = 0; i < results.length; i++) {
+                        result = results[i];
+                        
+                        row = $("<tr>").appendTo(results);
+                        $("<td>").text(result.date).appendTo(row);
+                        $("<td>").text(result.mealname).appendTo(row);
+                    }
+                });
             });
         </script>
     </head>

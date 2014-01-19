@@ -15,7 +15,9 @@
                     location.href = "/meals/new";
                 });
                 
-                MPAjax.fetchMealList(document.getElementById("results"));
+                MPAjax.fetchMealList(function(meals) {
+                    MPUtil.renderMealList(meals, $("#container"));
+                });
             });
         </script>
     </head>

@@ -10,9 +10,9 @@ const GetMealPlanSQL = "SELECT mealplan.notes, mealplan.startdate, mealplan.endd
 
 const AddMealPlanSQL = "INSERT INTO mealplan VALUES (NULL, ?, ?, ?)"
 
-const GetServingSQL = "SELECT serving.mealid WHERE serving.mealplanid = ? AND serving.dateserved = ?"
+const GetServingSQL = "SELECT serving.mealid FROM serving WHERE serving.mealplanid = ? AND serving.dateserved = ?"
 
-const GetServingsSQL = "SELECT serving.dateserved, serving.mealid WHERE serving.mealplanid = ?"
+const GetServingsSQL = "SELECT serving.dateserved, serving.mealid FROM serving WHERE serving.mealplanid = ?"
 
 const DeleteServingSQL = "DELETE FROM serving WHERE serving.mealid = ? AND serving.dateserved = ?"
 

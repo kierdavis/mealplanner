@@ -38,6 +38,7 @@ func handleAddMealAction(w http.ResponseWriter, r *http.Request) {
 			return mpdb.AddMealWithTags(tx, mt)
 		})
 	})
+	
 	if err != nil {
 		serverError(w, err)
 		return

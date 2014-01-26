@@ -35,3 +35,22 @@ table.tags-list {
 button.remove-tag {
     font-size: small;
 }
+
+ul.navigation {
+    border-bottom: 1px solid #eee;
+}
+
+ul.navigation li {
+    display: inline;
+    background-image: url("/static/icons/nav-sep.png");
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: 3px 2px;
+    background-size: 12px 12px;
+    padding-left: 20px;
+}
+
+ul.navigation li.home {
+    padding-left: 0px;
+    background-image: none;
+}

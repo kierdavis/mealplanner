@@ -1,6 +1,9 @@
 package mphandlers
 
 import (
+	"database/sql"
+	"github.com/kierdavis/mealplanner/mpdata"
+	"github.com/kierdavis/mealplanner/mpdb"
 	"net/http"
 )
 
@@ -11,5 +14,24 @@ func handleEditMealPlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	renderTemplate(w, "edit-mp-form.html", mpID)
+	var mp *mpdata.MealPlan
+
+	err := mpdb.WithConnection(func(db *sql.DB) (err error) {
+		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
+			mp, err = mpdb.GetMealPlan(db, mpID)
+			return err
+		})
+	})
+	
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	if mp == nil {
+		httpError(w, NotFoundError)
+		return
+	}
+	
+	renderTemplate(w, "edit-mp-form.html", mp)
 }

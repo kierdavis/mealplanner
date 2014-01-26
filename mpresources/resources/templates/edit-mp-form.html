@@ -1,7 +1,7 @@
 {{/*
     edit-mp-form.html contains the form used for editing meal plans.
     
-    Dot is expected to be the ID of the meal plan to be edited.
+    Dot is expected to be of type *mpdata.MealPlan.
 */}}
 
 <!DOCTYPE html>
@@ -27,7 +27,7 @@
                     resizable: true,
                 });
                 
-                MPAjax.fetchServings({{.}}, function(results) {
+                MPAjax.fetchServings({{.ID}}, function(results) {
                     results = results || [];
                     
                     var i, result, row;
@@ -56,6 +56,17 @@
     <body>
         <div class="container">
             <div class="page-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <ul class="navigation">
+                            <li class="home"><a href="/">Home</a></li>
+                            <li><a href="/mealplans">Meal plans</a></li>
+                            <li><a href="/mealplans/{{.ID}}">{{.StartDate.Format "02 Jan"}} - {{.EndDate.Format "02 Jan"}}</a></li>
+                            <li>Edit</li>
+                        </ul>
+                    </div>
+                </div>
+                
                 <h1>Edit Meal Plan</h1>
             </div>
             

@@ -123,8 +123,30 @@
         <div class="container">
             <div class="page-header">
                 {{if .}}
+                    <div class="row">
+                        <div class="col-md-8">
+                            <ul class="navigation">
+                                <li class="home"><a href="/">Home</a></li>
+                                <li><a href="/meals">Meals</a></li>
+                                <li><a href="/meals?highlight={{.Meal.ID}}">{{.Meal.Name}}</a></li>
+                                <li>Edit</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
                     <h1>Edit meal: {{.Meal.Name}}</h1>
+                
                 {{else}}
+                    <div class="row">
+                        <div class="col-md-8">
+                            <ul class="navigation">
+                                <li class="home"><a href="/">Home</a></li>
+                                <li><a href="/meals">Meals</a></li>
+                                <li>Create new</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
                     <h1>Create meal</h1>
                 {{end}}
             </div>

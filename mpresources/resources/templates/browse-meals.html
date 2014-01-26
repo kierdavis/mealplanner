@@ -16,7 +16,7 @@
                 });
                 
                 MPAjax.fetchMealList(function(meals) {
-                    MPUtil.renderMealList(meals, $("#container"));
+                    MPUtil.renderMealList(meals, $("#results"));
                 });
             });
         </script>
@@ -39,6 +39,7 @@
             </div>
             
             <div id="results">
+                <img src="/static/icons/loading.gif" alt=""/>
                 Loading results...
             </div>
         </div>

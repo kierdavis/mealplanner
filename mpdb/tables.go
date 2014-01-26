@@ -2,6 +2,7 @@ package mpdb
 
 import (
 	"database/sql"
+	"github.com/kierdavis/mealplanner/mpdata"
 )
 
 // SQL statements to delete tables.
@@ -92,8 +93,62 @@ func InitDB(clear bool) (err error) {
 					return err
 				}
 			}
-
-			return nil
+			
+			return InsertTestData(tx)
 		})
 	})
+}
+
+func InsertTestData(q Queryable) (err error) {
+	err = AddMealWithTags(q, mpdata.MealWithTags{
+		Meal: &mpdata.Meal{
+			Name: "Chilli con carne",
+			RecipeURL: "http://example.net/chilli",
+			Favourite: false,
+		},
+		Tags: []string{
+			"spicy",
+			"lentil",
+			"rice",
+		},
+	})
+	
+	if err != nil {
+		return err
+	}
+	
+	err = AddMealWithTags(q, mpdata.MealWithTags{
+		Meal: &mpdata.Meal{
+			Name: "Carrot and lentil soup",
+			RecipeURL: "http://example.net/soup",
+			Favourite: false,
+		},
+		Tags: []string{
+			"lentil",
+			"soup",
+			"quick",
+		},
+	})
+	
+	if err != nil {
+		return err
+	}
+	
+	err = AddMealWithTags(q, mpdata.MealWithTags{
+		Meal: &mpdata.Meal{
+			Name: "Nachos",
+			RecipeURL: "http://example.net/nachos",
+			Favourite: true,
+		},
+		Tags: []string{
+			"spicy",
+			"mexican",
+		},
+	})
+	
+	if err != nil {
+		return err
+	}
+	
+	return nil
 }

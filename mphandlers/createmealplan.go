@@ -21,13 +21,13 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	startDate, err := time.Parse(mpdata.DatepickerFormat, r.FormValue("start"))
+	startDate, err := time.Parse(mpdata.DatepickerDateFormat, r.FormValue("start"))
 	if err != nil {
 		httpError(w, BadRequestError)
 		return
 	}
 
-	endDate, err := time.Parse(mpdata.DatepickerFormat, r.FormValue("end"))
+	endDate, err := time.Parse(mpdata.DatepickerDateFormat, r.FormValue("end"))
 	if err != nil {
 		httpError(w, BadRequestError)
 		return

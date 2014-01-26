@@ -51,6 +51,10 @@ func Dispatch(params url.Values) (response JsonResponse) {
 		return fetchAllTags(params)
 	case "fetch-servings":
 		return fetchServings(params)
+	case "update-serving":
+		return updateServing(params)
+	case "delete-serving":
+		return deleteServing(params)
 	}
 
 	return JsonResponse{Error: "Invalid or missing command"}

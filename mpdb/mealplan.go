@@ -10,9 +10,13 @@ const GetMealPlanSQL = "SELECT mealplan.notes, mealplan.startdate, mealplan.endd
 
 const AddMealPlanSQL = "INSERT INTO mealplan VALUES (NULL, ?, ?, ?)"
 
-const GetServingSQL = "SELECT serving.mealid WHERE serving.mealplanid = ? AND serving.date = ?"
+const GetServingSQL = "SELECT serving.mealid WHERE serving.mealplanid = ? AND serving.dateserved = ?"
 
-const GetServingsSQL = "SELECT serving.date, serving.mealid WHERE serving.mealplanid = ?"
+const GetServingsSQL = "SELECT serving.dateserved, serving.mealid WHERE serving.mealplanid = ?"
+
+const DeleteServingSQL = "DELETE FROM serving WHERE serving.mealid = ? AND serving.dateserved = ?"
+
+const InsertServingSQL = "INSERT INTO serving VALUES (?, ?, ?)"
 
 func GetMealPlan(q Queryable, mpID uint64) (mp *mpdata.MealPlan, err error) {
 	mp = &mpdata.MealPlan{ID: mpID}
@@ -100,4 +104,14 @@ func GetMealPlanWithServings(q Queryable, mpID uint64) (mps *mpdata.MealPlanWith
 		Servings: servings,
 	}
 	return mps, nil
+}
+
+func DeleteServing(q Queryable, mpID uint64, date time.Time) (err error) {
+	_, err = q.Exec(DeleteServingSQL, mpID, date)
+	return err
+}
+
+func AddServing(q Queryable, serving *mpdata.Serving) (err error) {
+	_, err = q.Exec(InsertServingSQL, serving.MealPlanID, serving.Date, serving.MealID)
+	return err
 }

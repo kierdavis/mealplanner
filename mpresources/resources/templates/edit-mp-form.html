@@ -12,7 +12,21 @@
         {{template "common-head.html"}}
         
         <script type="text/javascript">
+            function openDialog(servingDate) {
+                MPAjax.fetchMealList(function(meals) {
+                    MPUtil.renderMealList(meals, $("#meal-list"));
+                    $("#dialog").dialog("open");
+                });
+            }
+            
             $(document).ready(function() {
+                $("#dialog").dialog({
+                    autoOpen: false,
+                    draggable: true,
+                    modal: true,
+                    resizable: true,
+                });
+                
                 MPAjax.fetchServings({{.}}, function(results) {
                     results = results || [];
                     
@@ -21,8 +35,18 @@
                         result = results[i];
                         
                         row = $("<tr>").appendTo(results);
-                        $("<td>").text(result.date).appendTo(row);
-                        $("<td>").text(result.mealname).appendTo(row);
+                        
+                        $("<td>")
+                            .text(result.date)
+                            .appendTo(row);
+                        
+                        $("<td>")
+                            .text(result.hasmeal ? result.mealname : "(click to add meal)")
+                            .appendTo(row)
+                            .click(function(event) {
+                                event.preventDefault();
+                                openDialog(result.date);
+                            });
                     }
                 });
             });
@@ -31,7 +55,9 @@
     
     <body>
         <div class="container">
-            <h1>Edit Meal Plan</h1>
+            <div class="page-header">
+                <h1>Edit Meal Plan</h1>
+            </div>
             
             <table>
                 <thead>
@@ -42,6 +68,10 @@
                 </thead>
                 <tbody id="servings"></tbody>
             </table>
+        </div>
+        
+        <div id="dialog">
+            <div id="meal-list"></div>
         </div>
     </body>
 </html>

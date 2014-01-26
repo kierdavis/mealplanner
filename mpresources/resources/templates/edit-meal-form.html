@@ -121,11 +121,13 @@
     
     <body>
         <div class="container">
-            {{if .}}
-                <h1>Edit meal: {{.Meal.Name}}</h1>
-            {{else}}
-                <h1>Create meal</h1>
-            {{end}}
+            <div class="page-header">
+                {{if .}}
+                    <h1>Edit meal: {{.Meal.Name}}</h1>
+                {{else}}
+                    <h1>Create meal</h1>
+                {{end}}
+            </div>
             
             <form action="" method="post" id="form">
                 <div style="margin-bottom: 40px">

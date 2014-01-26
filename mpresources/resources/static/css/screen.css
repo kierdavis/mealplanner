@@ -10,9 +10,11 @@ button.homepage-button {
     padding: 10px;
 }
 
-.action-buttons button {
+/*
+button.action-button {
     margin-right: 10px;
 }
+*/
 
 .homepage-cell {
     text-align: center;

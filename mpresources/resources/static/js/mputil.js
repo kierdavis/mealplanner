@@ -12,45 +12,63 @@ var MPUtil = (function() {
         
         $("<td>").appendTo(row).text(result.meal.name);
         $("<td>").appendTo(row).text((result.tags || []).join(", "));
-        var actions = $("<td>").addClass("action-buttons").appendTo(row);
         
-        $("<button>")
-            .appendTo(actions)
-            .text("Open recipe")
+        $("<td><button class='action-button'><img src='/static/icons/open-recipe_16x16.png' height='16' alt=''/> Open recipe</button></td>")
+            .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
                 location.href = result.meal.recipe;
             });
         
-        var favText = result.meal.favourite ? "Unfavourite" : "Favourite";
-        $("<button>")
-            .appendTo(actions)
-            .text(favText)
-            .click(function(event) {
-                event.preventDefault();
-                var favButton = $(this);
-                
-                MPAjax.toggleFavourite(result.meal.id, function(isFavourite) {
-                    if (isFavourite) {
-                        favButton.text("Unfavourite");
-                    }
-                    else {
-                        favButton.text("Favourite");
-                    }
-                });
-            });
+        var favButton   = $("<button class='action-button'><img src='/static/icons/favourite_16x16.png' height='16' alt=''/> Favourite</button>");
+        var unfavButton = $("<button class='action-button'><img src='/static/icons/unfavourite_16x16.png' height='16' alt=''/> Unfavourite</button>");
         
-        $("<button>")
-            .appendTo(actions)
-            .text("Edit")
+        favButton.click(function(event) {
+            event.preventDefault();
+            
+            MPAjax.toggleFavourite(result.meal.id, function(isFavourite) {
+                if (isFavourite) {
+                    favButton.hide();
+                    unfavButton.show();
+                }
+                else {
+                    alert("Unexpected: 'favourite' button did not favourite the meal!");
+                }
+            });
+        });
+        
+        unfavButton.click(function(event) {
+            event.preventDefault();
+            
+            MPAjax.toggleFavourite(result.meal.id, function(isFavourite) {
+                if (!isFavourite) {
+                    unfavButton.hide();
+                    favButton.show();
+                }
+                else {
+                    alert("Unexpected: 'unfavourite' button did not unfavourite the meal!");
+                }
+            })
+        });
+        
+        if (result.meal.favourite) {
+            favButton.hide();
+        }
+        else {
+            unfavButton.hide();
+        }
+        
+        $("<td>").appendTo(row).append(favButton).append(unfavButton);
+        
+        $("<td><button class='action-button'><img src='/static/icons/edit-meal_16x16.png' height='16' alt=''/> Edit</button></td>")
+            .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
                 location.href = "/meals/" + result.meal.id + "/edit";
             });
         
-        $("<button>")
-            .appendTo(actions)
-            .text("Delete")
+        $("<td><button class='action-button'><img src='/static/icons/delete_16x16.png' height='16' alt=''/> Delete</button></td>")
+            .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
                 var row = $(this);
@@ -76,9 +94,9 @@ var MPUtil = (function() {
         var table = $("<table>").appendTo(container.empty());
         var thead = $("<thead>").appendTo(table);
         var headerRow = $("<tr>").appendTo(thead);
-        $("<th>").text("Name").appendTo(headerRow);
-        $("<th>").text("Tags").appendTo(headerRow);
-        $("<th>").text("Actions").appendTo(headerRow);
+        $("<th>Name</th>").appendTo(headerRow);
+        $("<th>Tags</th>").appendTo(headerRow);
+        $("<th colspan='4'>Actions</th>").appendTo(headerRow);
         var tbody = $("<tbody>").appendTo(table);
         
         var i, result, row;

@@ -16,22 +16,22 @@ func deleteServing(params url.Values) (response JsonResponse) {
 	if err != nil {
 		return JsonResponse{Error: "Invalid or missing 'mealplanid' parameter"}
 	}
-	
+
 	servingDate, err := time.Parse(mpdata.JsonDateFormat, params.Get("date"))
 	if err != nil {
 		return JsonResponse{Error: "Invalid or missing 'date' parameter"}
 	}
-	
+
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
 			return mpdb.DeleteServing(tx, mpID, servingDate)
 		})
 	})
-	
+
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
 		return JsonResponse{Error: "Database error"}
 	}
-	
+
 	return JsonResponse{Success: nil}
 }

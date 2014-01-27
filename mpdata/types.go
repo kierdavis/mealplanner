@@ -32,10 +32,10 @@ type MealPlan struct {
 }
 
 type mealPlanJson struct {
-	ID uint64 `json:"id"`
-	Notes string `json:"notes"`
+	ID        uint64 `json:"id"`
+	Notes     string `json:"notes"`
 	StartDate string `json:"startdate"`
-	EndDate string `json:"enddate"`
+	EndDate   string `json:"enddate"`
 }
 
 func (mp *MealPlan) Days() (days []time.Time) {

@@ -47,7 +47,7 @@ func fetchServings(params url.Values) (response JsonResponse) {
 						if err != nil {
 							return err
 						}
-						
+
 						if meal == nil {
 							fmt.Fprintf(os.Stderr, "Warning: meal plan %d -> serving %s points to nonexistent meal %d\n", mpID, date.Format("2006-01-02"), serving.MealID)
 							ts.MealName = "???"

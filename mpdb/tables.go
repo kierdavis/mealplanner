@@ -93,7 +93,7 @@ func InitDB(clear bool) (err error) {
 					return err
 				}
 			}
-			
+
 			return InsertTestData(tx)
 		})
 	})
@@ -102,7 +102,7 @@ func InitDB(clear bool) (err error) {
 func InsertTestData(q Queryable) (err error) {
 	err = AddMealWithTags(q, mpdata.MealWithTags{
 		Meal: &mpdata.Meal{
-			Name: "Chilli con carne",
+			Name:      "Chilli con carne",
 			RecipeURL: "http://example.net/chilli",
 			Favourite: false,
 		},
@@ -112,14 +112,14 @@ func InsertTestData(q Queryable) (err error) {
 			"rice",
 		},
 	})
-	
+
 	if err != nil {
 		return err
 	}
-	
+
 	err = AddMealWithTags(q, mpdata.MealWithTags{
 		Meal: &mpdata.Meal{
-			Name: "Carrot and lentil soup",
+			Name:      "Carrot and lentil soup",
 			RecipeURL: "http://example.net/soup",
 			Favourite: false,
 		},
@@ -129,14 +129,14 @@ func InsertTestData(q Queryable) (err error) {
 			"quick",
 		},
 	})
-	
+
 	if err != nil {
 		return err
 	}
-	
+
 	err = AddMealWithTags(q, mpdata.MealWithTags{
 		Meal: &mpdata.Meal{
-			Name: "Nachos",
+			Name:      "Nachos",
 			RecipeURL: "http://example.net/nachos",
 			Favourite: true,
 		},
@@ -145,10 +145,10 @@ func InsertTestData(q Queryable) (err error) {
 			"mexican",
 		},
 	})
-	
+
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }

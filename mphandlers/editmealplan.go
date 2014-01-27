@@ -13,7 +13,7 @@ func handleEditMealPlan(w http.ResponseWriter, r *http.Request) {
 		httpError(w, BadRequestError)
 		return
 	}
-	
+
 	var mp *mpdata.MealPlan
 
 	err := mpdb.WithConnection(func(db *sql.DB) (err error) {
@@ -22,7 +22,7 @@ func handleEditMealPlan(w http.ResponseWriter, r *http.Request) {
 			return err
 		})
 	})
-	
+
 	if err != nil {
 		serverError(w, err)
 		return
@@ -32,6 +32,6 @@ func handleEditMealPlan(w http.ResponseWriter, r *http.Request) {
 		httpError(w, NotFoundError)
 		return
 	}
-	
+
 	renderTemplate(w, "edit-mp-form.html", mp)
 }

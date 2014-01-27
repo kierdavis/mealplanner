@@ -55,10 +55,10 @@ func GetServing(q Queryable, mpID uint64, date time.Time) (serving *mpdata.Servi
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
-		
+
 		return nil, err
 	}
-	
+
 	return serving, nil
 }
 
@@ -68,23 +68,23 @@ func GetServings(q Queryable, mpID uint64) (servings []*mpdata.Serving, err erro
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	for rows.Next() {
 		serving := &mpdata.Serving{MealPlanID: mpID}
-		
+
 		err = rows.Scan(&serving.Date, &serving.MealID)
 		if err != nil {
 			return nil, err
 		}
-		
+
 		servings = append(servings, serving)
 	}
-	
+
 	err = rows.Err()
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return servings, nil
 }
 
@@ -93,12 +93,12 @@ func GetMealPlanWithServings(q Queryable, mpID uint64) (mps *mpdata.MealPlanWith
 	if err != nil {
 		return nil, err
 	}
-	
+
 	servings, err := GetServings(q, mpID)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	mps = &mpdata.MealPlanWithServings{
 		MealPlan: mp,
 		Servings: servings,

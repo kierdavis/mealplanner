@@ -12,9 +12,13 @@
         {{template "common-head.html"}}
         
         <script type="text/javascript">
+            function f(result) {
+                alert(result.meal.name);
+            }
+        
             function openDialog(servingDate) {
                 MPAjax.fetchMealList(function(meals) {
-                    MPUtil.renderMealList(meals, $("#meal-list"));
+                    MPUtil.renderMealList(meals, $("#meal-list"), f);
                     $("#dialog").dialog("open");
                 });
             }
@@ -30,11 +34,13 @@
                 MPAjax.fetchServings({{.ID}}, function(results) {
                     results = results || [];
                     
+                    var container = $("#servings");
+                    
                     var i, result, row;
                     for (i = 0; i < results.length; i++) {
                         result = results[i];
                         
-                        row = $("<tr>").appendTo(results);
+                        row = $("<tr>").appendTo(container);
                         
                         $("<td>")
                             .text(result.date)

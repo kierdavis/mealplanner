@@ -7,10 +7,20 @@ var MPUtil = (function() {
     
     // Renders a single meal/tag result and returns the created <tr> element.
     // Used by MPUtil.renderMealList.
-    function renderMealResult(result) {
+    function renderMealResult(result, callback) {
         var row = $("<tr>");
+        var nameCell = $("<td>").appendTo(row);
         
-        $("<td>").appendTo(row).text(result.meal.name);
+        if (typeof callback !== "undefined" && callback !== null) {
+            $("<a>").text(result.meal.name).appendTo(nameCell).click(function(event) {
+                event.preventDefault();
+                callback(result);
+            });
+        }
+        else {
+            nameCell.text(result.meal.name);
+        }
+        
         $("<td>").appendTo(row).text((result.tags || []).join(", "));
         
         $("<td><button class='action-button'><img src='/static/icons/open-recipe_16x16.png' height='16' alt=''/> Open recipe</button></td>")
@@ -82,8 +92,10 @@ var MPUtil = (function() {
     }
     
     // Takes a list of meal/tag results (as returned by MPAjax.fetchMealList)
-    // and renders them to a table created inside 'container'.
-    MPUtil.renderMealList = function(results, container) {
+    // and renders them to a table created inside 'container'. 'callback', if
+    // not null, is a function that will be called when the meal name is clicked.
+    // It is passed the meal-with-tags object.
+    MPUtil.renderMealList = function(results, container, callback) {
         results = results || [];
         
         if (results.length == 0) {
@@ -102,7 +114,7 @@ var MPUtil = (function() {
         var i, result, row;
         
         for (i = 0; i < results.length; i++) {
-            row = renderMealResult(results[i]);
+            row = renderMealResult(results[i], callback);
             row.appendTo(tbody);
         }
     };

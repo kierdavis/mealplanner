@@ -25,10 +25,17 @@ type MealWithScore struct {
 }
 
 type MealPlan struct {
-	ID        uint64    `json:"id"`
-	Notes     string    `json:"notes"`
-	StartDate time.Time `json:"start"`
-	EndDate   time.Time `json:"end"`
+	ID        uint64
+	Notes     string
+	StartDate time.Time
+	EndDate   time.Time
+}
+
+type mealPlanJson struct {
+	ID uint64 `json:"id"`
+	Notes string `json:"notes"`
+	StartDate string `json:"startdate"`
+	EndDate string `json:"enddate"`
 }
 
 func (mp *MealPlan) Days() (days []time.Time) {
@@ -42,9 +49,15 @@ func (mp *MealPlan) Days() (days []time.Time) {
 }
 
 type Serving struct {
-	MealPlanID uint64    `json:"mealplanid"`
-	Date       time.Time `json:"date"`
-	MealID     uint64    `json:"mealid"`
+	MealPlanID uint64
+	Date       time.Time
+	MealID     uint64
+}
+
+type servingJson struct {
+	MealPlanID uint64 `json:"mealplanid"`
+	Date       string `json:"date"`
+	MealID     uint64 `json:"mealid"`
 }
 
 type MealPlanWithServings struct {

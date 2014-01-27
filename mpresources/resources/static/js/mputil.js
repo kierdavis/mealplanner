@@ -3,6 +3,31 @@
 // as returned by MPAjax into HTML.
 
 var MPUtil = (function() {
+    var shortWeekdays = [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+    ];
+    
+    var shortMonths = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    
     var MPUtil = {};
     
     // Renders a single meal/tag result and returns the created <tr> element.
@@ -129,6 +154,10 @@ var MPUtil = (function() {
             tag = tags[i];
             $("<option>").val(tag).text(tag).appendTo(container);
         }
+    }
+    
+    MPUtil.formatDateHumanReadable = function(date) {
+        return shortWeekdays[date.getDay()] + " " + date.getDate() + " " + shortMonths[date.getMonth()];
     }
     
     return MPUtil;

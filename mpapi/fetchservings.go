@@ -1,18 +1,17 @@
 package mpapi
 
 import (
-	//"github.com/kierdavis/mealplanner/mpdata"
 	"database/sql"
 	"fmt"
+	"github.com/kierdavis/mealplanner/mpdata"
 	"github.com/kierdavis/mealplanner/mpdb"
 	"net/url"
 	"os"
 	"strconv"
-	"time"
 )
 
 type fetchServingsRecord struct {
-	Date     time.Time `json:"date"`
+	Date     string `json:"date"`
 	HasMeal  bool      `json:"hasmeal"`
 	MealID   uint64    `json:"mealid"`
 	MealName string    `json:"mealname"`
@@ -35,7 +34,7 @@ func fetchServings(params url.Values) (response JsonResponse) {
 
 			for _, date := range mps.MealPlan.Days() {
 				ts := &fetchServingsRecord{
-					Date: date,
+					Date: date.Format(mpdata.JsonDateFormat),
 				}
 
 				for _, serving := range mps.Servings {

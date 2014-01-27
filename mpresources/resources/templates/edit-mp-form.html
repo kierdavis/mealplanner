@@ -36,14 +36,17 @@
                     
                     var container = $("#servings");
                     
-                    var i, result, row;
+                    var i, result, row, date;
                     for (i = 0; i < results.length; i++) {
                         result = results[i];
+                        date = Date.parse(result.date);
+                        console.log(result.date);
+                        console.log(date);
                         
                         row = $("<tr>").appendTo(container);
                         
                         $("<td>")
-                            .text(result.date)
+                            .text(MPUtil.formatDateHumanReadable(date))
                             .appendTo(row);
                         
                         $("<td>")

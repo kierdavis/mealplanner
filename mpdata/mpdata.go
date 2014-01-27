@@ -6,4 +6,4 @@ package mpdata
 // See also: documentation on 'time.Parse'.
 const DatepickerDateFormat = "02/01/2006"
 
-const JsonDateFormat = "02-01-2006"
+const JsonDateFormat = "2006-01-02"

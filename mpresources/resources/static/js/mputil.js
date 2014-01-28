@@ -30,13 +30,21 @@ var MPUtil = (function() {
     
     var MPUtil = {};
     
+    function zeroPad(str, length) {
+        str = "" + str;
+        while (str.length < length) {
+            str = "0" + str;
+        }
+        return str;
+    }
+    
     // Renders a single meal/tag result and returns the created <tr> element.
     // Used by MPUtil.renderMealList.
     function renderMealResult(result, callback) {
         var row = $("<tr>");
         var nameCell = $("<td>").appendTo(row);
         
-        if (MPUtil.nonnull(callback)) {
+        if (MPUtil.nonNull(callback)) {
             $("<a href='#'>").text(result.meal.name).appendTo(nameCell).click(function(event) {
                 event.preventDefault();
                 callback(result);
@@ -160,11 +168,11 @@ var MPUtil = (function() {
         return shortWeekdays[date.getDay()] + " " + date.getDate() + " " + shortMonths[date.getMonth()];
     };
     
-    MPUtil.formatDateJSON = function(data) {
-        return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+    MPUtil.formatDateJSON = function(date) {
+        return zeroPad(date.getFullYear(), 4) + "-" + zeroPad(date.getMonth() + 1, 2) + "-" + zeroPad(date.getDate(), 2);
     };
     
-    MPUtil.nonnull = function(value) {
+    MPUtil.nonNull = function(value) {
         return typeof value !== "undefined" && value !== null;
     };
     

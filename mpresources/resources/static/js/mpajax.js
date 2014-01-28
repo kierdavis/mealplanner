@@ -27,7 +27,7 @@ var MPAjax = (function() {
                 }
                 
                 else {
-                    if (MPUtil.nonnull(success)) {
+                    if (MPUtil.nonNull(success)) {
                         success(resp.success);
                     }
                 }

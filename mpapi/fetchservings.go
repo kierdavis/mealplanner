@@ -10,6 +10,8 @@ import (
 	"strconv"
 )
 
+// A structure to hold the result objects returned by the fetch servings API
+// call.
 type fetchServingsRecord struct {
 	Date     string `json:"date"`
 	HasMeal  bool      `json:"hasmeal"`
@@ -17,6 +19,8 @@ type fetchServingsRecord struct {
 	MealName string    `json:"mealname"`
 }
 
+// fetchServings handles an API call to list all the servings for a given meal
+// plan.
 func fetchServings(params url.Values) (response JsonResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {
@@ -31,12 +35,12 @@ func fetchServings(params url.Values) (response JsonResponse) {
 			if err != nil {
 				return err
 			}
-
+			
 			for _, date := range mps.MealPlan.Days() {
 				ts := &fetchServingsRecord{
 					Date: date.Format(mpdata.JsonDateFormat),
 				}
-
+			
 				for _, serving := range mps.Servings {
 					if serving.Date == date {
 						ts.HasMeal = true

@@ -12,30 +12,55 @@
         {{template "common-head.html"}}
         
         <script type="text/javascript">
-            function clickServing(event) {
-                event.preventDefault();
+            function addServingRow(result) {
+                var date = new Date(Date.parse(result.date));
+                var row = $("<tr>");
                 
-                var date = $(this).data("servingdate");
+                $("<td>")
+                    .text(MPUtil.formatDateHumanReadable(date))
+                    .appendTo(row);
                 
-                MPAjax.fetchMealList(function(meals) {
-                    MPUtil.renderMealList(meals, $("#meal-list"), function(mt) {
-                        MPAjax.updateServing({{.ID}}, date, mt.meal.id);
-                        $("#dialog").dialog("close");
+                var a = $("<a href='#'>")
+                    .text(result.hasmeal ? result.mealname : "(click to add meal)")
+                    .appendTo($("<td>").appendTo(row))
+                    .click(function(event) {
+                        event.preventDefault();
+                        
+                        MPAjax.fetchMealList(function(meals) {
+                            MPUtil.renderMealList(meals, $("#meal-list"), function(mt) {
+                                MPAjax.updateServing({{.ID}}, date, mt.meal.id, function() {
+                                    a.text(mt.meal.name);
+                                });
+                                
+                                $("#dialog").dialog("close");
+                            });
+                            
+                            $("#dialog").dialog("open");
+                        });
                     });
-                    
-                    $("#dialog").dialog("open");
-                });
+                
+                $("<button><img src='/static/icons/delete_16x16.png' height='16' alt='Delete'/></button>")
+                    .appendTo($("<td>").appendTo(row))
+                    .click(function(event) {
+                        event.preventDefault();
+                        
+                        MPAjax.deleteServing({{.ID}}, date, function() {
+                            a.text("(click to add meal)");
+                        });
+                    });
+                
+                return row;
             }
             
             $(document).ready(function() {
                 $("#dialog").dialog({
                     autoOpen: false,
                     draggable: true,
+                    height: 600,
                     modal: true,
                     resizable: true,
-                    width: 800,
-                    height: 600,
                     title: "Edit serving",
+                    width: 800,
                 });
                 
                 MPAjax.fetchServings({{.ID}}, function(results) {
@@ -43,22 +68,9 @@
                     
                     var container = $("#servings");
                     
-                    var i, result, row, date;
+                    var i;
                     for (i = 0; i < results.length; i++) {
-                        result = results[i];
-                        date = new Date(Date.parse(result.date));
-                        
-                        row = $("<tr>").appendTo(container);
-                        
-                        $("<td>")
-                            .text(MPUtil.formatDateHumanReadable(date))
-                            .appendTo(row);
-                        
-                        $("<a href='#'>")
-                            .text(result.hasmeal ? result.mealname : "(click to add meal)")
-                            .appendTo($("<td>").appendTo(row))
-                            .data("servingdate", date)
-                            .click(clickServing);
+                        container.append(addServingRow(results[i]));
                     }
                 });
             });
@@ -87,6 +99,7 @@
                     <tr>
                         <th>Date</th>
                         <th>Serving</th>
+                        <th>
                     </tr>
                 </thead>
                 <tbody id="servings"></tbody>

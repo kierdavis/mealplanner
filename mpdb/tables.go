@@ -155,7 +155,7 @@ func InsertTestData(q Queryable) (err error) {
 	mp := &mpdata.MealPlan{
 		Notes: "some notes",
 		StartDate: time.Date(2014, time.January, 27, 0, 0, 0, 0, time.UTC),
-		EndDate: time.Date(2014, time.January, 3, 0, 0, 0, 0, time.UTC),
+		EndDate: time.Date(2014, time.February, 3, 0, 0, 0, 0, time.UTC),
 	}
 	
 	err = AddMealPlan(q, mp)

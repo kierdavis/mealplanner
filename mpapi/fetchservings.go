@@ -14,9 +14,9 @@ import (
 // call.
 type fetchServingsRecord struct {
 	Date     string `json:"date"`
-	HasMeal  bool      `json:"hasmeal"`
-	MealID   uint64    `json:"mealid"`
-	MealName string    `json:"mealname"`
+	HasMeal  bool   `json:"hasmeal"`
+	MealID   uint64 `json:"mealid"`
+	MealName string `json:"mealname"`
 }
 
 // fetchServings handles an API call to list all the servings for a given meal
@@ -35,12 +35,12 @@ func fetchServings(params url.Values) (response JsonResponse) {
 			if err != nil {
 				return err
 			}
-			
+
 			for _, date := range mps.MealPlan.Days() {
 				ts := &fetchServingsRecord{
 					Date: date.Format(mpdata.JsonDateFormat),
 				}
-			
+
 				for _, serving := range mps.Servings {
 					if serving.Date == date {
 						ts.HasMeal = true

@@ -27,7 +27,9 @@ var MPAjax = (function() {
                 }
                 
                 else {
-                    success(resp.success);
+                    if (MPUtil.nonnull(success)) {
+                        success(resp.success);
+                    }
                 }
             },
         });
@@ -82,7 +84,7 @@ var MPAjax = (function() {
             MPAjax.fetchAllTags(callback);
             MPAjax.tagsFetched = true;
         }
-    }
+    };
     
     // Fetch a list of servings for the meal plan identified by 'mpID' and pass
     // them to a callback function.
@@ -93,7 +95,28 @@ var MPAjax = (function() {
         };
         
         doAjax(params, callback);
-    }
+    };
+    
+    MPAjax.updateServing = function(mpID, date, mealID, callback) {
+        var params = {
+            "command": "update-serving",
+            "mealplanid": mpID,
+            "date": MPUtil.formatDateJSON(date),
+            "mealid": mealID,
+        };
+        
+        doAjax(params, callback);
+    };
+    
+    MPAjax.deleteServing = function(mpID, date, callback) {
+        var params = {
+            "command": "delete-serving",
+            "mealplanid": mpID,
+            "date": MPUtil.formatDateJSON(date),
+        };
+        
+        doAjax(params, callback);
+    };
     
     return MPAjax;
 })();

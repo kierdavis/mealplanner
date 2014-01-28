@@ -36,8 +36,8 @@ var MPUtil = (function() {
         var row = $("<tr>");
         var nameCell = $("<td>").appendTo(row);
         
-        if (typeof callback !== "undefined" && callback !== null) {
-            $("<a>").text(result.meal.name).appendTo(nameCell).click(function(event) {
+        if (MPUtil.nonnull(callback)) {
+            $("<a href='#'>").text(result.meal.name).appendTo(nameCell).click(function(event) {
                 event.preventDefault();
                 callback(result);
             });
@@ -154,11 +154,19 @@ var MPUtil = (function() {
             tag = tags[i];
             $("<option>").val(tag).text(tag).appendTo(container);
         }
-    }
+    };
     
     MPUtil.formatDateHumanReadable = function(date) {
         return shortWeekdays[date.getDay()] + " " + date.getDate() + " " + shortMonths[date.getMonth()];
-    }
+    };
+    
+    MPUtil.formatDateJSON = function(data) {
+        return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+    };
+    
+    MPUtil.nonnull = function(value) {
+        return typeof value !== "undefined" && value !== null;
+    };
     
     return MPUtil;
 })();

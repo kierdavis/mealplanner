@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+// updateServing implements an API call to update a meal serving for a meal
+// plan with a new meal ID, removing the old serving if it already exists.
 func updateServing(params url.Values) (response JsonResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// MarshalJSON encodes a meal plan into its JSON form.
 func (mp *MealPlan) MarshalJSON() (text []byte, err error) {
 	mpj := mealPlanJson{
 		ID:        mp.ID,
@@ -16,6 +17,8 @@ func (mp *MealPlan) MarshalJSON() (text []byte, err error) {
 	return json.Marshal(mpj)
 }
 
+// UnmarshalJSON populates the fields of the receiver with values parsed from
+// the input JSON.
 func (mp *MealPlan) UnmarshalJSON(text []byte) (err error) {
 	var mpj mealPlanJson
 	err = json.Unmarshal(text, &mpj)
@@ -39,6 +42,7 @@ func (mp *MealPlan) UnmarshalJSON(text []byte) (err error) {
 	return nil
 }
 
+// MarshalJSON encodes a meal serving into its JSON form.
 func (s *Serving) MarshalJSON() (text []byte, err error) {
 	sj := servingJson{
 		MealPlanID: s.MealPlanID,
@@ -49,6 +53,8 @@ func (s *Serving) MarshalJSON() (text []byte, err error) {
 	return json.Marshal(sj)
 }
 
+// UnmarshalJSON populates the fields of the receiver with values parsed from
+// the input JSON.
 func (s *Serving) UnmarshalJSON(text []byte) (err error) {
 	var sj servingJson
 	err = json.Unmarshal(text, &sj)

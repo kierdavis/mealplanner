@@ -2,8 +2,10 @@
 // application.
 package mpdata
 
-// The time format used by the datepicker widget: dd/mm/yyyy.
-// See also: documentation on 'time.Parse'.
+// The time format used by the JQuery datepicker widget and sent in POST
+// requests. See also: documentation on 'time.Parse'.
 const DatepickerDateFormat = "02/01/2006"
 
+// The time format used in JSON encodings. See also: documentation on
+// 'time.Parse'.
 const JsonDateFormat = "2006-01-02"

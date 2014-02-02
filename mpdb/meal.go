@@ -113,7 +113,7 @@ func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags,
 			return nil, err
 		}
 
-		mt.Tags, err = getMealTagsPrepared(q, getTagsStmt, mt.Meal.ID)
+		mt.Tags, err = getMealTagsPrepared(getTagsStmt, mt.Meal.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -160,7 +160,7 @@ func GetMealTags(q Queryable, mealID uint64) (tags []string, err error) {
 // getMealTagsPrepared fetches the list of tags associated with the meal
 // identified by 'mealID'. 'stmt' is assumed to be a prepared statement compiled
 // from GetMealTagsSQL.
-func getMealTagsPrepared(q Queryable, stmt *sql.Stmt, mealID uint64) (tags []string, err error) {
+func getMealTagsPrepared(stmt *sql.Stmt, mealID uint64) (tags []string, err error) {
 	rows, err := stmt.Query(mealID)
 	if err != nil {
 		return nil, err

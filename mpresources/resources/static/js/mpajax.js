@@ -97,6 +97,15 @@ var MPAjax = (function() {
         doAjax(params, callback);
     };
     
+    MPAjax.fetchSuggestions = function(date, callback) {
+        var params = {
+            "command": "fetch-suggestions",
+            "date": MPUtil.formatDateJSON(date),
+        };
+        
+        doAjax(params, callback);
+    }
+    
     MPAjax.updateServing = function(mpID, date, mealID, callback) {
         var params = {
             "command": "update-serving",

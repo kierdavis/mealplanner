@@ -26,7 +26,7 @@
                     .click(function(event) {
                         event.preventDefault();
                         
-                        MPAjax.fetchMealList(function(meals) {
+                        MPAjax.fetchSuggestions(date, function(meals) {
                             MPUtil.renderMealList(meals, $("#meal-list"), function(mt) {
                                 MPAjax.updateServing({{.ID}}, date, mt.meal.id, function() {
                                     a.text(mt.meal.name);

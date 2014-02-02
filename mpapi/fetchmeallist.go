@@ -15,8 +15,10 @@ func fetchMealList(params url.Values) (response JsonResponse) {
 	var mts []mpdata.MealWithTags
 
 	err := mpdb.WithConnection(func(db *sql.DB) (err error) {
-		mts, err = mpdb.ListMealsWithTags(db, true)
-		return err
+		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
+			mts, err = mpdb.ListMealsWithTags(tx, true)
+			return err
+		})
 	})
 
 	if err != nil {

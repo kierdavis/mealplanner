@@ -20,8 +20,10 @@ func toggleFavourite(params url.Values) (response JsonResponse) {
 	var isFavourite bool
 
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
-		isFavourite, err = mpdb.ToggleFavourite(db, mealID)
-		return err
+		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
+			isFavourite, err = mpdb.ToggleFavourite(tx, mealID)
+			return err
+		})
 	})
 
 	if err != nil {

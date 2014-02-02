@@ -18,7 +18,7 @@ func handleEditMealPlan(w http.ResponseWriter, r *http.Request) {
 
 	err := mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
-			mp, err = mpdb.GetMealPlan(db, mpID)
+			mp, err = mpdb.GetMealPlan(tx, mpID)
 			return err
 		})
 	})

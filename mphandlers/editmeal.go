@@ -19,7 +19,7 @@ func handleEditMealForm(w http.ResponseWriter, r *http.Request) {
 
 	err := mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
-			mt, err = mpdb.GetMealWithTags(db, mealID)
+			mt, err = mpdb.GetMealWithTags(tx, mealID)
 			return err
 		})
 	})

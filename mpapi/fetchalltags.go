@@ -14,8 +14,10 @@ func fetchAllTags(params url.Values) (response JsonResponse) {
 	var tags []string
 
 	err := mpdb.WithConnection(func(db *sql.DB) (err error) {
-		tags, err = mpdb.ListAllTags(db, true)
-		return err
+		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
+			tags, err = mpdb.ListAllTags(tx, true)
+			return err
+		})
 	})
 
 	if err != nil {

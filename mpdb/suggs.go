@@ -1,6 +1,7 @@
 package mpdb
 
 import (
+	"database/sql"
 	"github.com/kierdavis/mealplanner/mpdata"
 	"time"
 )
@@ -106,7 +107,7 @@ func scoreMeals(q Queryable, s *mpdata.Scorer, date time.Time) (err error) {
 	}
 	defer insertScoreStmt.Close()
 
-	rows, err := q.Query(ListMealsForSuggsSQL)
+	rows, err := q.Query(ListMealsForSuggsSQL, date)
 	if err != nil {
 		return err
 	}
@@ -114,7 +115,7 @@ func scoreMeals(q Queryable, s *mpdata.Scorer, date time.Time) (err error) {
 	
 	var mealID uint64
 	var favourite bool
-	var csd int
+	var csd sql.NullInt64
 	var tags []string
 	
 	for rows.Next() {
@@ -128,7 +129,7 @@ func scoreMeals(q Queryable, s *mpdata.Scorer, date time.Time) (err error) {
 			return err
 		}
 		
-		score := s.ScoreMeal(favourite, csd, tags)
+		score := s.ScoreMeal(favourite, int(csd.Int64), tags)
 		_, err = insertScoreStmt.Exec(mealID, score)
 		if err != nil {
 			return err

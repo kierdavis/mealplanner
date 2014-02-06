@@ -81,7 +81,7 @@ func ClearTables(q Queryable) (err error) {
 
 // InitDB creates the database tables if they don't exist. If 'clear' is true,
 // the tables are also cleared (in the event that they did exist).
-func InitDB(clear bool) (err error) {
+func InitDB(debug bool) (err error) {
 	return WithConnection(func(db *sql.DB) (err error) {
 		return WithTransaction(db, func(tx *sql.Tx) (err error) {
 			err = CreateTables(tx)
@@ -89,14 +89,19 @@ func InitDB(clear bool) (err error) {
 				return err
 			}
 
-			if clear {
+			if debug {
 				err = ClearTables(tx)
 				if err != nil {
 					return err
 				}
+				
+				err = InsertTestData(tx)
+				if err != nil {
+					return err
+				}
 			}
-
-			return InsertTestData(tx)
+			
+			return nil
 		})
 	})
 }

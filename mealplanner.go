@@ -17,6 +17,7 @@ var (
 	dbSource = flag.String("dbsource", "", "database source, in the form USER:PASS@unix(/PATH/TO/SOCKET)/DB or USER:PASS@tcp(HOST:PORT)/DB")
 	host = flag.String("host", "", "hostname to listen on")
 	port = flag.Int("port", 8080, "port to listen on")
+	debug = flag.Bool("debug", false, "debug mode")
 )
 
 func main() {
@@ -28,7 +29,7 @@ func main() {
 		os.Exit(1)
 	}
 	
-	err := mpdb.InitDB(true)
+	err := mpdb.InitDB(*debug)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database Error: %s\n", err)
 		os.Exit(1)

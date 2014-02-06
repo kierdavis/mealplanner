@@ -12,24 +12,11 @@ const (
 	// The name of the driver to use.
 	DB_DRIVER = "mysql"
 
-	// The username to connect with.
-	DB_USER = "mealplanner"
-
-	// The password to connect with.
-	DB_PASSWORD = "1Ny9IF7WYA6jvSiBXHku"
-
-	// The address of the server to connect to.
-	DB_ADDRESS = "unix(/var/run/mysqld/mysqld.sock)"
-
-	// The database on the server to connect to.
-	DB_DATABASE = "mealplanner"
-
 	// Additional parameters to use.
-	DB_PARAMS = "parseTime=true"
+	DB_PARAMS = "?parseTime=true"
 )
 
-// DB_SOURCE is the constructed datasource string built from the above constants.
-var DB_SOURCE = fmt.Sprintf("%s:%s@%s/%s?%s", DB_USER, DB_PASSWORD, DB_ADDRESS, DB_DATABASE, DB_PARAMS)
+var Source = "mealplanner@unix(/var/run/mysqld/mysqld.sock)/mealplanner"
 
 // Interface Queryable represents a type that can be queried (either a *sql.DB
 // or *sql.Tx). See documentation on 'database/sql#DB' for information on the
@@ -44,7 +31,7 @@ type Queryable interface {
 // Connect creates a new connection to the database using DB_DRIVER and
 // DB_SOURCE.
 func Connect() (db *sql.DB, err error) {
-	return sql.Open(DB_DRIVER, DB_SOURCE)
+	return sql.Open(DB_DRIVER, Source + DB_PARAMS)
 }
 
 // Type FailedCloseError contains information regarding a situation where an

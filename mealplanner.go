@@ -18,6 +18,7 @@ var (
 	host     = flag.String("host", "", "hostname to listen on")
 	port     = flag.Int("port", 8080, "port to listen on")
 	debug    = flag.Bool("debug", false, "debug mode")
+	testdata = flag.Bool("testdata", false, "clear the database and insert test data")
 )
 
 func main() {
@@ -25,22 +26,27 @@ func main() {
 
 	mpdb.Source = *dbSource
 	if mpdb.Source == "" {
-		fmt.Fprintf(os.Stderr, "Please specify a non-empty -dbsource option.\n")
+		fmt.Fprintf(os.Stderr, "Please specify a non-empty -dbsource flag.\n")
 		os.Exit(1)
 	}
 
-	err := mpdb.InitDB(*debug)
+	err := mpdb.InitDB(*testdata)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database Error: %s\n", err)
 		os.Exit(1)
 	}
 
-	m := mphandlers.CreateMux()
 	listenAddr := fmt.Sprintf("%s:%d", *host, *port)
+	m := mphandlers.CreateMux()
 
-	fmt.Printf("Listening on %s\n", listenAddr)
+	app := http.Handler(m)
+	if *debug {
+		app = mphandlers.LoggingHandler{app}
 
-	err = http.ListenAndServe(listenAddr, m)
+		fmt.Printf("Listening on %s\n", listenAddr)
+	}
+
+	err = http.ListenAndServe(listenAddr, app)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Server Error: %s\n", err)
 		os.Exit(1)

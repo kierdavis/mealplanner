@@ -38,32 +38,32 @@ const ListMealsByScoreSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favour
 // a list of pairs of meals and scores.
 func GenerateSuggestions(q Queryable, date time.Time) (suggs []mpdata.MealWithScore, err error) {
 	s := mpdata.NewScorer()
-	
+
 	err = calculateTagScores(q, s, date)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	_, err = q.Exec(CreateScoreTableSQL)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	err = scoreMeals(q, s, date)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	suggs, err = readScoreTable(q)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	_, err = q.Exec(DropScoreTableSQL)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return suggs, nil
 }
 
@@ -73,24 +73,24 @@ func calculateTagScores(q Queryable, s *mpdata.Scorer, date time.Time) (err erro
 		return err
 	}
 	defer rows.Close()
-	
+
 	var tag string
 	var dist int
-	
+
 	for rows.Next() {
 		err = rows.Scan(&tag, &dist)
 		if err != nil {
 			return err
 		}
-		
+
 		s.AddTagScore(tag, dist)
 	}
-	
+
 	err = rows.Err()
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -100,7 +100,7 @@ func scoreMeals(q Queryable, s *mpdata.Scorer, date time.Time) (err error) {
 		return err
 	}
 	defer getTagsStmt.Close()
-	
+
 	insertScoreStmt, err := q.Prepare(InsertScoreSQL)
 	if err != nil {
 		return err
@@ -112,30 +112,30 @@ func scoreMeals(q Queryable, s *mpdata.Scorer, date time.Time) (err error) {
 		return err
 	}
 	defer rows.Close()
-	
+
 	var mealID uint64
 	var favourite bool
 	var csd sql.NullInt64
 	var tags []string
-	
+
 	for rows.Next() {
 		err = rows.Scan(&mealID, &favourite, &csd)
 		if err != nil {
 			return err
 		}
-		
+
 		tags, err = getMealTagsPrepared(getTagsStmt, mealID)
 		if err != nil {
 			return err
 		}
-		
+
 		score := s.ScoreMeal(favourite, int(csd.Int64), tags)
 		_, err = insertScoreStmt.Exec(mealID, score)
 		if err != nil {
 			return err
 		}
 	}
-	
+
 	return nil
 }
 
@@ -169,19 +169,6 @@ func readScoreTable(q Queryable) (results []mpdata.MealWithScore, err error) {
 	return results, nil
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 
 
@@ -197,8 +184,8 @@ const FindCsdSQL = "SELECT ABS(DATEDIFF(serving.dateserved, ?)) " +
 
 // SQL to insert a meal identifier and score into the temporary score table.
 const InsertScoreSQL = "INSERT INTO score VALUES (?, ?)"
-	
-	
+
+
 
 // GenerateSuggestions takes a date to generate suggestions for, and produces
 // a list of pairs of meals and scores.
@@ -238,7 +225,7 @@ func GenerateSuggestions(q Queryable, date time.Time) (suggs []mpdata.MealWithSc
 		if err != nil {
 			return nil, err
 		}
-		
+
 
 		fmt.Println("Suggs tags!!!!!!!")
 

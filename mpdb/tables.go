@@ -94,13 +94,13 @@ func InitDB(debug bool) (err error) {
 				if err != nil {
 					return err
 				}
-				
+
 				err = InsertTestData(tx)
 				if err != nil {
 					return err
 				}
 			}
-			
+
 			return nil
 		})
 	})

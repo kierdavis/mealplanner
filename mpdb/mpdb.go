@@ -31,7 +31,7 @@ type Queryable interface {
 // Connect creates a new connection to the database using DB_DRIVER and
 // DB_SOURCE.
 func Connect() (db *sql.DB, err error) {
-	return sql.Open(DB_DRIVER, Source + DB_PARAMS)
+	return sql.Open(DB_DRIVER, Source+DB_PARAMS)
 }
 
 // Type FailedCloseError contains information regarding a situation where an

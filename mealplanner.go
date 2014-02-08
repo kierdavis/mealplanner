@@ -24,11 +24,16 @@ var (
 func main() {
 	flag.Parse()
 
-	mpdb.Source = *dbSource
-	if mpdb.Source == "" {
-		fmt.Fprintf(os.Stderr, "Please specify a non-empty -dbsource flag.\n")
-		os.Exit(1)
+	source := *dbSource
+	if source == "" {
+		source = os.Getenv("MPDBSOURCE")
+		if source == "" {
+			fmt.Fprintf(os.Stderr, "Please specify a non-empty -dbsource flag or set the MPDBSOURCE environment variable.\n")
+			os.Exit(1)
+		}
 	}
+	
+	mpdb.Source = source
 
 	err := mpdb.InitDB(*testdata)
 	if err != nil {

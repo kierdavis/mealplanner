@@ -54,7 +54,7 @@
                     <div class="col-md-8">
                         <ul class="navigation">
                             <li class="home"><a href="/">Home</a></li>
-                            <li><a href="/mealplans">Meal plans</a></li>
+                            <li><a href="/mealplans?showing={{.StartDate.Format "2006-01-02"}}">Meal plans</a></li>
                             <li>{{.StartDate.Format "02 Jan"}} - {{.EndDate.Format "02 Jan"}}</li>
                         </ul>
                     </div>
@@ -66,10 +66,16 @@
                         <h3>{{.StartDate.Format "02 Jan"}} - {{.EndDate.Format "02 Jan"}}</h3>
                     </div>
                     <div class="col-md-4">
-                        <button class="header-button" id="edit">
-                            <img src="/static/img/edit_24x24.png" height="24" alt=""/>
-                            Edit
-                        </button>
+                        <p>
+                            <a href="/mealplans?showing={{.StartDate.Format "2006-01-02"}}">Return to meal plan browser</a>
+                        </p>
+                        
+                        <p>
+                            <button class="header-button" id="edit">
+                                <img src="/static/img/edit_24x24.png" height="24" alt=""/>
+                                Edit
+                            </button>
+                        </p>
                     </div>
                 </div>
             </div>

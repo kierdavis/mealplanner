@@ -21,9 +21,7 @@
                 var row = $("<tr>").data("tag", tag).appendTo($("#tags"));
                 $("<td>").text(tag).appendTo(row);
                 
-                $("<button>")
-                    .text("Remove")
-                    .addClass("remove-tag")
+                $("<button class='remove-tag'><img src='/static/img/delete_16x16.png' height='16' alt='Remove'/></button>")
                     .appendTo($("<td>").appendTo(row))
                     .click(function(event) {
                         event.preventDefault();
@@ -50,7 +48,29 @@
                 return ok;
             }
             
+            function validateTag(input) {
+                var ok = true, msg = "";
+                
+                if (input.length < 1 || input.length > 64) {
+                    ok = false;
+                    msg = "Tag must be between 1 and 64 characters in length (inclusive)";
+                }
+                
+                if (ok) {
+                    $("#tag-validation").slideUp();
+                }
+                else {
+                    $("#tag-validation td").text(msg);
+                    $("#tag-validation").slideDown();
+                }
+                
+                return ok;
+            }
+            
             $(document).ready(function() {
+                $("#name-validation").hide();
+                $("#tag-validation").hide();
+                
                 // Bind event handlers
                 
                 $("#form").submit(function() {
@@ -163,7 +183,7 @@
                             </td>
                         </tr>
                         <tr id="name-validation">
-                            <td></td>
+                            <td class="error" colspan="2"></td>
                         </tr>
                         <tr>
                             <td>
@@ -224,6 +244,9 @@
                                                 Add
                                             </button>
                                         </td>
+                                    </tr>
+                                    <tr id="tag-validation">
+                                        <td class="error" colspan="3"></td>
                                     </tr>
                                 </table>
                             </div>

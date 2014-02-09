@@ -28,6 +28,34 @@ type Queryable interface {
 	QueryRow(string, ...interface{}) *sql.Row
 }
 
+type LoggingQueryable struct {
+	Q Queryable
+}
+
+func (lq LoggingQueryable) Exec(query string, args ...interface{}) (result sql.Result, err error) {
+	result, err = lq.Q.Exec(query, args...)
+	fmt.Printf("SQL: Exec(%v, %v) -> %v\n", query, args, err)
+	return result, err
+}
+
+func (lq LoggingQueryable) Prepare(query string) (stmt *sql.Stmt, err error) {
+	stmt, err = lq.Q.Prepare(query)
+	fmt.Printf("SQL: Prepare(%v) -> %v\n", query, err)
+	return stmt, err
+}
+
+func (lq LoggingQueryable) Query(query string, args ...interface{}) (rows *sql.Rows, err error) {
+	rows, err = lq.Q.Query(query, args...)
+	fmt.Printf("SQL: Query(%v, %v) -> %v\n", query, args, err)
+	return rows, err
+}
+
+func (lq LoggingQueryable) QueryRow(query string, args ...interface{}) (row *sql.Row) {
+	row = lq.Q.QueryRow(query, args...)
+	fmt.Printf("SQL: QueryRow(%v, %v) -> %v\n", query, args, row)
+	return row
+}
+
 // Connect creates a new connection to the database using DB_DRIVER and
 // DB_SOURCE.
 func Connect() (db *sql.DB, err error) {
@@ -44,7 +72,7 @@ type FailedCloseError struct {
 
 // Error formats the information contained in 'err' into an error message.
 func (err *FailedCloseError) Error() (msg string) {
-	return fmt.Sprintf("%s (when attempting to %s after a previous error: %s)", err.CloseError.Error(), err.What, err.OriginalError.Error())
+	return fmt.Sprintf("%s\nAdditionally, when attempting to %s: %s", err.OriginalError.Error(), err.What, err.CloseError.Error())
 }
 
 // Type WithConnectionFunc represents a function that can be used with
@@ -101,7 +129,7 @@ func WithTransaction(db *sql.DB, f WithTransactionFunc) (err error) {
 	// Commit or rollback the transaction
 	if err != nil {
 		closeErr = tx.Rollback()
-		what = "rollback transaction"
+		what = "roll back transaction"
 	} else {
 		closeErr = tx.Commit()
 		what = "commit transaction"

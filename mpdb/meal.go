@@ -84,11 +84,9 @@ func ListMeals(q Queryable, sortByName bool) (meals []*mpdata.Meal, err error) {
 // with their associated tags. If the parameter 'sortByName' is true, the meals
 // are sorted in alphabetical order by name.
 func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags, err error) {
-	var query string
-	if sortByName {
-		query = ListMealsByNameSQL
-	} else {
-		query = ListMealsSQL
+	meals, err := ListMeals(q, sortByName)
+	if err != nil {
+		return nil, err
 	}
 
 	getTagsStmt, err := q.Prepare(GetMealTagsSQL)
@@ -96,36 +94,20 @@ func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags,
 		return nil, err
 	}
 	defer getTagsStmt.Close()
-
-	rows, err := q.Query(query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
+	
+	for _, meal := range meals {
+		tags, err := getMealTagsPrepared(getTagsStmt, meal.ID)
+		if err != nil {
+			return nil, err
+		}
+		
 		mt := mpdata.MealWithTags{
-			Meal: &mpdata.Meal{},
+			Meal: meal,
+			Tags: tags,
 		}
-
-		err = rows.Scan(&mt.Meal.ID, &mt.Meal.Name, &mt.Meal.RecipeURL, &mt.Meal.Favourite)
-		if err != nil {
-			return nil, err
-		}
-
-		mt.Tags, err = getMealTagsPrepared(getTagsStmt, mt.Meal.ID)
-		if err != nil {
-			return nil, err
-		}
-
 		mts = append(mts, mt)
 	}
-
-	err = rows.Err()
-	if err != nil {
-		return nil, err
-	}
-
+	
 	return mts, nil
 }
 

@@ -32,7 +32,7 @@ func main() {
 			os.Exit(1)
 		}
 	}
-	
+
 	mpdb.Source = source
 
 	err := mpdb.InitDB(*testdata)

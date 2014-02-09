@@ -32,7 +32,7 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 		httpError(w, BadRequestError)
 		return
 	}
-	
+
 	if startDate.After(endDate) {
 		httpError(w, BadRequestError)
 		return

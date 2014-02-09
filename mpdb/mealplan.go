@@ -73,23 +73,23 @@ func ListMealPlansBetween(q Queryable, from time.Time, to time.Time) (mps []*mpd
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	for rows.Next() {
 		mp := &mpdata.MealPlan{}
-		
+
 		err = rows.Scan(&mp.ID, &mp.StartDate, &mp.EndDate)
 		if err != nil {
 			return nil, err
 		}
-		
+
 		mps = append(mps, mp)
 	}
-	
+
 	err = rows.Err()
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return mps, nil
 }
 

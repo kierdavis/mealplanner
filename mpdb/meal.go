@@ -94,20 +94,20 @@ func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags,
 		return nil, err
 	}
 	defer getTagsStmt.Close()
-	
+
 	for _, meal := range meals {
 		tags, err := getMealTagsPrepared(getTagsStmt, meal.ID)
 		if err != nil {
 			return nil, err
 		}
-		
+
 		mt := mpdata.MealWithTags{
 			Meal: meal,
 			Tags: tags,
 		}
 		mts = append(mts, mt)
 	}
-	
+
 	return mts, nil
 }
 

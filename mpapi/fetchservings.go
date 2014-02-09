@@ -35,7 +35,7 @@ func fetchServings(params url.Values) (response JsonResponse) {
 			if err != nil {
 				return err
 			}
-			
+
 			if mps.MealPlan == nil {
 				return nil
 			}

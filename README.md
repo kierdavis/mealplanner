@@ -2,7 +2,7 @@ Meal Planner (A2 Computing Project)
 
 TO-DO: write a description here
 
-# Installation
+# Installation & Usage
 
 Download & install with:
 
@@ -30,7 +30,10 @@ port 3306 (the default MySQL port):
 
 Alternatively to using the `-dbsource` flag, the `MPDBSOURCE` environment
 variable can also be set. The `-dbsource` flag overrides the environment
-variable.
+variable. Example:
+
+    export MPDBSOURCE='web:hello123@tcp(db.example.net:3306)/mealplanner'
+    mealplanner
 
 # Code structure
 

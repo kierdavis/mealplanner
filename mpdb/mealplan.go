@@ -14,6 +14,8 @@ const AddMealPlanSQL = "INSERT INTO mealplan VALUES (NULL, ?, ?, ?)"
 
 const UpdateNotesSQL = "UPDATE mealplan SET mealplan.notes = ? WHERE mealplan.id = ?"
 
+const ListMealPlansBetweenSQL = "SELECT mealplan.id, mealplan.startdate, mealplan.enddate FROM mealplan WHERE (? <= mealplan.startdate AND mealplan.startdate <= ?) OR (? <= mealplan.enddate AND mealplan.enddate <= ?)"
+
 // SQL statement for retrieving information about a meal serving.
 const GetServingSQL = "SELECT serving.mealid FROM serving WHERE serving.mealplanid = ? AND serving.dateserved = ?"
 
@@ -63,6 +65,32 @@ func AddMealPlan(q Queryable, mp *mpdata.MealPlan) (err error) {
 func UpdateNotes(q Queryable, mpID uint64, notes string) (err error) {
 	_, err = q.Exec(UpdateNotesSQL, notes, mpID)
 	return err
+}
+
+func ListMealPlansBetween(q Queryable, from time.Time, to time.Time) (mps []*mpdata.MealPlan, err error) {
+	rows, err := q.Query(ListMealPlansBetweenSQL, from, to, from, to)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	
+	for rows.Next() {
+		mp := &mpdata.MealPlan{}
+		
+		err = rows.Scan(&mp.ID, &mp.StartDate, &mp.EndDate)
+		if err != nil {
+			return nil, err
+		}
+		
+		mps = append(mps, mp)
+	}
+	
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	
+	return mps, nil
 }
 
 // GetServing returns information about the meal serving identified by the

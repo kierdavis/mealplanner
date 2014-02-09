@@ -1,5 +1,8 @@
 {{/*
     browse-meal-plans.html contains the meal plan browser page.
+    
+    Dot is expected to be of type *time.Time (the month of this time is used
+    as the initial month displayed on the calendar).
 */}}
 
 <!DOCTYPE html>
@@ -10,22 +13,75 @@
         {{template "common-head.html"}}
         
         <script type="text/javascript">
+            var cellmap = {};
+            
+            function removeTime(date) {
+                date.setHours(0);
+                date.setMinutes(0);
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+            }
+            
             function renderRows(first, keypoint, last) {
+                cellmap = {};
+                
                 var container = $("#results").empty();
                 var curr = new Date(first.getTime());
                 var i, tr, td;
+                var today = new Date();
+                removeTime(today);
                 
                 while (curr <= last) {
                     tr = $("<tr>").appendTo(container);
                     
                     for (i = 0; i < 7; i++) {
-                        td = $("<td>").text(curr.getDate()).appendTo(tr);
+                        td = $("<td><div>" + curr.getDate() + "</div></td>").addClass("mpnone").appendTo(tr);
                         if (curr.getMonth() != keypoint.getMonth()) {
                             td.addClass("outside-key-month");
                         }
                         
+                        if (curr.getYear() == today.getYear() && curr.getMonth() == today.getMonth() && curr.getDate() == today.getDate()) {
+                            td.addClass("today");
+                        }
+                        
+                        cellmap[curr.getTime()] = td;
                         curr.setDate(curr.getDate() + 1);
                     }
+                }
+            }
+            
+            function setCell(date, cls, id) {
+                var cell = cellmap[date.getTime()];
+                if (MPUtil.nonNull(cell)) {
+                    cell.removeClass("mpnone").addClass(cls).addClass("mp-" + id);
+                    cell.click(function(event) {
+                        event.preventDefault();
+                        location.href = "/mealplans/" + id;
+                    });
+                    cell.mouseover(function() {
+                        $(".mp-" + id).addClass("hover");
+                    });
+                    cell.mouseout(function() {
+                        $(".mp-" + id).removeClass("hover");
+                    })
+                }
+            }
+            
+            function addMealPlan(mp) {
+                var start = new Date(Date.parse(mp.startdate));
+                var end = new Date(Date.parse(mp.enddate));
+                removeTime(start);
+                removeTime(end);
+                
+                var curr = new Date(start.getTime());
+                curr.setDate(curr.getDate() + 1);
+                
+                setCell(start, "mpstart", mp.id);
+                setCell(end, "mpend", mp.id);
+                
+                while (curr < end) {
+                    setCell(curr, "mpmid", mp.id);
+                    curr.setDate(curr.getDate() + 1);
                 }
             }
             
@@ -46,12 +102,15 @@
                 $("#month").text(MPUtil.formatMonthHumanReadable(keypoint));
                 renderRows(first, keypoint, last);
                 
-                /*
                 MPAjax.fetchMealPlans(first, last, function(mps) {
+                    mps = mps || [];
+                    
                     var i;
-                    for 
+                    for (i = 0; i < mps.length; i++) {
+                        console.log(mps[i]);
+                        addMealPlan(mps[i]);
+                    }
                 });
-                */
             }
             
             $(document).ready(function() {
@@ -60,8 +119,7 @@
                     location.href = "/mealplans/new";
                 });
                 
-                var keypoint = new Date();
-                keypoint.setDate(15);
+                var keypoint = new Date({{.Year}}, {{.Month}}, 15, 0, 0, 0, 0);
                 fetchMealPlans(keypoint);
                 
                 $("#next-month").click(function(event) {
@@ -104,35 +162,39 @@
                 </div>
             </div>
             
-            <center>
-                <table class="mplist">
-                    <thead>
-                        <tr>
-                            <th colspan="2" style="text-align: left">
-                                <button id="prev-month">
-                                    <img src="/static/img/prev_24x24.png" height="24" alt="Prev"/>
-                                </button>
-                            </th>
-                            <th colspan="3" style="text-align: center" id="month"></th>
-                            <th colspan="2" style="text-align: right">
-                                <button id="next-month">
-                                    <img src="/static/img/next_24x24.png" height="24" alt="Next"/>
-                                </button>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>M</th>
-                            <th>T</th>
-                            <th>W</th>
-                            <th>T</th>
-                            <th>F</th>
-                            <th>S</th>
-                            <th>S</th>
-                        </tr>
-                    </thead>
-                    <tbody id="results"></tbody>
-                </table>
-            </center>
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <table class="mplist">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="text-align: left">
+                                    <button id="prev-month">
+                                        <img src="/static/img/prev_24x24.png" height="24" alt="Prev"/>
+                                    </button>
+                                </th>
+                                <th colspan="3" style="text-align: center" id="month"></th>
+                                <th colspan="2" style="text-align: right">
+                                    <button id="next-month">
+                                        <img src="/static/img/next_24x24.png" height="24" alt="Next"/>
+                                    </button>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>M</th>
+                                <th>T</th>
+                                <th>W</th>
+                                <th>T</th>
+                                <th>F</th>
+                                <th>S</th>
+                                <th>S</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results"></tbody>
+                    </table>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
             
             <!--
             <div id="results">

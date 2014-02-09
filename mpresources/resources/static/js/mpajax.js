@@ -136,7 +136,17 @@ var MPAjax = (function() {
         };
         
         doAjax(params, callback);
-    }
+    };
+    
+    MPAjax.fetchMealPlans = function(from, to, callback) {
+        var params = {
+            "command": "fetch-meal-plans",
+            "from": MPUtil.formatDateJSON(from),
+            "to": MPUtil.formatDateJSON(to),
+        };
+        
+        doAjax(params, callback);
+    };
     
     return MPAjax;
 })();

@@ -157,18 +157,29 @@ func InsertTestData(q Queryable) (err error) {
 		return err
 	}
 
-	mp := &mpdata.MealPlan{
+	mp1 := &mpdata.MealPlan{
 		Notes:     "some notes",
-		StartDate: time.Date(2014, time.January, 27, 0, 0, 0, 0, time.UTC),
-		EndDate:   time.Date(2014, time.February, 3, 0, 0, 0, 0, time.UTC),
+		StartDate: time.Date(2014, time.January, 25, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2014, time.February, 4, 0, 0, 0, 0, time.UTC),
 	}
 
-	err = AddMealPlan(q, mp)
+	err = AddMealPlan(q, mp1)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Test meal plan is %d\n", mp.ID)
+	mp2 := &mpdata.MealPlan{
+		Notes:     "some other notes",
+		StartDate: time.Date(2014, time.February, 5, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2014, time.February, 8, 0, 0, 0, 0, time.UTC),
+	}
+
+	err = AddMealPlan(q, mp2)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Test meal plans are %d and %d\n", mp1.ID, mp2.ID)
 
 	return nil
 }

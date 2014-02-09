@@ -16,6 +16,11 @@ button.action-button {
 }
 */
 
+.error {
+    font-weight: bold;
+    color: red;
+}
+
 .homepage-cell {
     text-align: center;
 }
@@ -26,10 +31,12 @@ button.action-button {
 
 td, th {
     padding-right: 20px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 table.tags-list {
-    border: 1px solid black;
+    /*border: 1px solid black;*/
 }
 
 button.remove-tag {
@@ -55,38 +62,72 @@ ul.navigation li.home {
     background-image: none;
 }
 
-td, th {
-    padding-top: 2px;
-    padding-bottom: 2px;
-}
-
 table.mplist {
     border-collapse: separate;
     border-spacing: 0px 10px;
 }
 
 table.mplist thead tr th, table.mplist tbody tr td {
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 0px;
     font-size: large;
+    text-align: center;
 }
 
-.mpstart, .mpmid, .mpend {
-    border-top: 2px solid #f00;
-    border-bottom: 2px solid #f00;
+.mpstart div, .mpmid div, .mpend div {
+    border-top: 1px solid #f00;
+    border-bottom: 1px solid #f00;
+    padding-top: 1px;
+    padding-bottom: 1px;
     background: #fee;
 }
 
-.mpstart {
-    border-left: 2px solid #f00;
+.mpstart div {
+    margin-left: 8px;
+    border-left: 1px solid #f00;
+    padding-left: 5px;
+    padding-right: 15px;
 }
 
-.mpend {
+.mpmid div {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.mpnone div {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.mpend div {
+    padding-left: 15px;
+    padding-right: 5px;
+    border-right: 1px solid #f00;
+    margin-right: 8px;
+}
+
+.mpstart.hover div, .mpmid.hover div, .mpend.hover div {
+    border-top: 2px solid #f00;
+    border-bottom: 2px solid #f00;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    background: #fdd;
+}
+
+.mpstart.hover div {
+    border-left: 2px solid #f00;
+    padding-left: 4px;
+}
+
+.mpend.hover div {
     border-right: 2px solid #f00;
+    padding-right: 4px;
 }
 
 .outside-key-month {
     color: #999;
+}
+
+.today {
+    font-weight: bold;
+    color: #009;
 }

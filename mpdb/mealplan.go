@@ -14,7 +14,12 @@ const AddMealPlanSQL = "INSERT INTO mealplan VALUES (NULL, ?, ?, ?)"
 
 const UpdateNotesSQL = "UPDATE mealplan SET mealplan.notes = ? WHERE mealplan.id = ?"
 
-const ListMealPlansBetweenSQL = "SELECT mealplan.id, mealplan.startdate, mealplan.enddate FROM mealplan WHERE (? <= mealplan.startdate AND mealplan.startdate <= ?) OR (? <= mealplan.enddate AND mealplan.enddate <= ?)"
+const ListMealPlansBetweenSQL = "SELECT mealplan.id, mealplan.startdate, mealplan.enddate " +
+	"FROM mealplan " +
+	"WHERE ? <= mealplan.enddate && mealplan.startdate <= ?"
+//	"WHERE (? <= mealplan.startdate AND mealplan.startdate <= ?) " +	// Start date lies within 'from' and 'to',
+//	"OR (? <= mealplan.enddate AND mealplan.enddate <= ?) " +			// or end date lies within 'from' and 'to',
+//	"OR (mealplan.startdate <= ? AND mealplan.enddate >= ?)"			// or meal plan starts before 'from' and ends after 'to'."
 
 // SQL statement for retrieving information about a meal serving.
 const GetServingSQL = "SELECT serving.mealid FROM serving WHERE serving.mealplanid = ? AND serving.dateserved = ?"
@@ -68,7 +73,7 @@ func UpdateNotes(q Queryable, mpID uint64, notes string) (err error) {
 }
 
 func ListMealPlansBetween(q Queryable, from time.Time, to time.Time) (mps []*mpdata.MealPlan, err error) {
-	rows, err := q.Query(ListMealPlansBetweenSQL, from, to, from, to)
+	rows, err := q.Query(ListMealPlansBetweenSQL, from, to)
 	if err != nil {
 		return nil, err
 	}

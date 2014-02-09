@@ -59,3 +59,34 @@ td, th {
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
+table.mplist {
+    border-collapse: separate;
+    border-spacing: 0px 10px;
+}
+
+table.mplist thead tr th, table.mplist tbody tr td {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: large;
+}
+
+.mpstart, .mpmid, .mpend {
+    border-top: 2px solid #f00;
+    border-bottom: 2px solid #f00;
+    background: #fee;
+}
+
+.mpstart {
+    border-left: 2px solid #f00;
+}
+
+.mpend {
+    border-right: 2px solid #f00;
+}
+
+.outside-key-month {
+    color: #999;
+}

@@ -164,6 +164,10 @@ var MPUtil = (function() {
         }
     };
     
+    MPUtil.formatMonthHumanReadable = function(date) {
+        return shortMonths[date.getMonth()] + " " + date.getFullYear();
+    };
+    
     MPUtil.formatDateHumanReadable = function(date) {
         return shortWeekdays[date.getDay()] + " " + date.getDate() + " " + shortMonths[date.getMonth()];
     };

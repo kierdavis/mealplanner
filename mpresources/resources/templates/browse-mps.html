@@ -10,17 +10,72 @@
         {{template "common-head.html"}}
         
         <script type="text/javascript">
-            /*
+            function renderRows(first, keypoint, last) {
+                var container = $("#results").empty();
+                var curr = new Date(first.getTime());
+                var i, tr, td;
+                
+                while (curr <= last) {
+                    tr = $("<tr>").appendTo(container);
+                    
+                    for (i = 0; i < 7; i++) {
+                        td = $("<td>").text(curr.getDate()).appendTo(tr);
+                        if (curr.getMonth() != keypoint.getMonth()) {
+                            td.addClass("outside-key-month");
+                        }
+                        
+                        curr.setDate(curr.getDate() + 1);
+                    }
+                }
+            }
+            
+            function fetchMealPlans(keypoint) {
+                var first = new Date(keypoint.getTime());
+                first.setDate(1);
+                while (first.getDay() != 1) {
+                    first.setDate(first.getDate() - 1);
+                }
+                
+                var last = new Date(keypoint.getTime());
+                last.setMonth(last.getMonth() + 1);
+                last.setDate(0);
+                while (last.getDay() != 0) {
+                    last.setDate(last.getDate() + 1);
+                }
+                
+                $("#month").text(MPUtil.formatMonthHumanReadable(keypoint));
+                renderRows(first, keypoint, last);
+                
+                /*
+                MPAjax.fetchMealPlans(first, last, function(mps) {
+                    var i;
+                    for 
+                });
+                */
+            }
+            
             $(document).ready(function() {
-                $("#add-meal").click(function() {
-                    location.href = "/meals/new";
+                $("#add-mp").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/mealplans/new";
                 });
                 
-                MPAjax.fetchMealList(function(meals) {
-                    MPUtil.renderMealList(meals, $("#results"));
+                var keypoint = new Date();
+                keypoint.setDate(15);
+                fetchMealPlans(keypoint);
+                
+                $("#next-month").click(function(event) {
+                    event.preventDefault();
+                    keypoint.setMonth(keypoint.getMonth() + 1);
+                    fetchMealPlans(keypoint);
+                });
+                
+                $("#prev-month").click(function(event) {
+                    event.preventDefault();
+                    keypoint.setMonth(keypoint.getMonth() - 1);
+                    fetchMealPlans(keypoint);
                 });
             });
-            */
         </script>
     </head>
     
@@ -41,7 +96,7 @@
                         <h1>Browse Meal Plans</h1>
                     </div>
                     <div class="col-md-4">
-                        <button class="header-button" id="add-meal">
+                        <button class="header-button" id="add-mp">
                             <img src="/static/icons/add-meal-plan_32x32.png" height="24" alt=""/>
                             Create meal plan
                         </button>
@@ -49,10 +104,42 @@
                 </div>
             </div>
             
+            <center>
+                <table class="mplist">
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: left">
+                                <button id="prev-month">
+                                    <img src="/static/icons/prev_24x24.png" height="24" alt="Prev"/>
+                                </button>
+                            </th>
+                            <th colspan="3" style="text-align: center" id="month"></th>
+                            <th colspan="2" style="text-align: right">
+                                <button id="next-month">
+                                    <img src="/static/icons/next_24x24.png" height="24" alt="Next"/>
+                                </button>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>M</th>
+                            <th>T</th>
+                            <th>W</th>
+                            <th>T</th>
+                            <th>F</th>
+                            <th>S</th>
+                            <th>S</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results"></tbody>
+                </table>
+            </center>
+            
+            <!--
             <div id="results">
                 <img src="/static/icons/loading.gif" alt=""/>
                 Loading results...
             </div>
+            -->
         </div>
     </body>
 </html>

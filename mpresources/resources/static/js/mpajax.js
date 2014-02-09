@@ -24,6 +24,7 @@ var MPAjax = (function() {
                 if (resp.error) {
                     console.log("MPAjax server error:");
                     console.log("  Message: " + resp.error);
+                    alert("MPAjax error! Check console for more details.");
                 }
                 
                 else {
@@ -126,6 +127,16 @@ var MPAjax = (function() {
         
         doAjax(params, callback);
     };
+    
+    MPAjax.updateNotes = function(mpID, notes, callback) {
+        var params = {
+            "command": "update-notes",
+            "mealplanid": mpID,
+            "notes": notes,
+        };
+        
+        doAjax(params, callback);
+    }
     
     return MPAjax;
 })();

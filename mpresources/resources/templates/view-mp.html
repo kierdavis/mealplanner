@@ -1,0 +1,92 @@
+{{/*
+    edit-mp-form.html contains the form used for editing meal plans.
+    
+    Dot is expected to be of type *mpdata.MealPlan.
+*/}}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit Meal Plan :: Meal Planner</title>
+        
+        {{template "common-head.html"}}
+        
+        <script type="text/javascript">
+            function addServingRow(result) {
+                var date = new Date(Date.parse(result.date));
+                var row = $("<tr>");
+                
+                $("<td>")
+                    .text(MPUtil.formatDateHumanReadable(date))
+                    .appendTo(row);
+                
+                $("<td>")
+                    .text(result.hasmeal ? result.mealname : "-")
+                    .appendTo(row);
+                
+                return row;
+            }
+            
+            $(document).ready(function() {
+                $("#edit").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/mealplans/{{.ID}}/edit";
+                });
+                
+                MPAjax.fetchServings({{.ID}}, function(results) {
+                    results = results || [];
+                    
+                    var container = $("#servings");
+                    
+                    var i;
+                    for (i = 0; i < results.length; i++) {
+                        container.append(addServingRow(results[i]));
+                    }
+                });
+            });
+        </script>
+    </head>
+    
+    <body>
+        <div class="container">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <ul class="navigation">
+                            <li class="home"><a href="/">Home</a></li>
+                            <li><a href="/mealplans">Meal plans</a></li>
+                            <li>{{.StartDate.Format "02 Jan"}} - {{.EndDate.Format "02 Jan"}}</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>Meal Plan</h1>
+                        <h3>{{.StartDate.Format "02 Jan"}} - {{.EndDate.Format "02 Jan"}}</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="header-button" id="edit">
+                            <img src="/static/icons/edit_24x24.png" height="24" alt=""/>
+                            Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Serving</th>
+                    </tr>
+                </thead>
+                <tbody id="servings"></tbody>
+            </table>
+            
+            <hr/>
+            
+            <p id="notes">{{.Notes}}</p>
+        </div>
+    </body>
+</html>

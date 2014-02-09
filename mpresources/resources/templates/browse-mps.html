@@ -1,15 +1,16 @@
 {{/*
-    browse-meals.html contains the list of meals page.
+    browse-meal-plans.html contains the meal plan browser page.
 */}}
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Browse Meals :: Meal Planner</title>
+        <title>Browse Meal Plans :: Meal Planner</title>
         
         {{template "common-head.html"}}
         
         <script type="text/javascript">
+            /*
             $(document).ready(function() {
                 $("#add-meal").click(function() {
                     location.href = "/meals/new";
@@ -19,6 +20,7 @@
                     MPUtil.renderMealList(meals, $("#results"));
                 });
             });
+            */
         </script>
     </head>
     
@@ -29,26 +31,26 @@
                     <div class="col-md-8">
                         <ul class="navigation">
                             <li class="home"><a href="/">Home</a></li>
-                            <li>Meals</li>
+                            <li>Meal plans</li>
                         </ul>
                     </div>
                 </div>
                 
                 <div class="row">
                     <div class="col-md-8">
-                        <h1>Browse Meals</h1>
+                        <h1>Browse Meal Plans</h1>
                     </div>
                     <div class="col-md-4">
                         <button class="header-button" id="add-meal">
-                            <img src="/static/icons/add-meal_32x32.png" height="24" alt=""/>
-                            Add new meal
+                            <img src="/static/icons/add-meal-plan_32x32.png" height="24" alt=""/>
+                            Create meal plan
                         </button>
                     </div>
                 </div>
             </div>
             
             <div id="results">
-                <img src="/static/icons/loading.gif" height='32' alt=""/>
+                <img src="/static/icons/loading.gif" alt=""/>
                 Loading results...
             </div>
         </div>

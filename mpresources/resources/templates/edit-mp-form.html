@@ -58,9 +58,23 @@
                     draggable: true,
                     height: 600,
                     modal: true,
-                    resizable: true,
                     title: "Edit serving",
                     width: 800,
+                });
+                
+                $("#save-notes").click(function(event) {
+                    event.preventDefault();
+                    
+                    $("#save-text").html("<img src='/static/icons/loading.gif' height='16' alt=''/> Saving...");
+                    $("#save-text").show();
+                    
+                    MPAjax.updateNotes({{.ID}}, $("#notes").val(), function() {
+                        $("#save-text").text("Saved!");
+                        
+                        window.setTimeout(function() {
+                            $("#save-text").toggle("fade");
+                        }, 3000);
+                    });
                 });
                 
                 MPAjax.fetchServings({{.ID}}, function(results) {
@@ -91,19 +105,44 @@
                     </div>
                 </div>
                 
-                <h1>Edit Meal Plan</h1>
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>Edit Meal Plan</h1>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/mealplans/{{.ID}}">Return to meal plan</a>
+                    </div>
+                </div>
             </div>
             
             <table>
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Serving</th>
-                        <th>
+                        <th colspan="2">Serving</th>
                     </tr>
                 </thead>
                 <tbody id="servings"></tbody>
             </table>
+        
+            <hr/>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <textarea id="notes" style="width: 100%">{{.Notes}}</textarea>
+                </div>
+                
+                <div class="col-md-4">
+                    <p>
+                        <button id="save-notes">
+                            <img src="/static/icons/save_16x16.png" height="16" alt=""/>
+                            Save notes
+                        </button>
+                    </p>
+                    
+                    <p id="save-text"></p>
+                </div>
+            </div>
         </div>
         
         <div id="dialog">

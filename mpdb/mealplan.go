@@ -12,6 +12,8 @@ const GetMealPlanSQL = "SELECT mealplan.notes, mealplan.startdate, mealplan.endd
 // SQL statement for adding a meal plan to the database.
 const AddMealPlanSQL = "INSERT INTO mealplan VALUES (NULL, ?, ?, ?)"
 
+const UpdateNotesSQL = "UPDATE mealplan SET mealplan.notes = ? WHERE mealplan.id = ?"
+
 // SQL statement for retrieving information about a meal serving.
 const GetServingSQL = "SELECT serving.mealid FROM serving WHERE serving.mealplanid = ? AND serving.dateserved = ?"
 
@@ -56,6 +58,11 @@ func AddMealPlan(q Queryable, mp *mpdata.MealPlan) (err error) {
 	mp.ID = uint64(mpID)
 
 	return nil
+}
+
+func UpdateNotes(q Queryable, mpID uint64, notes string) (err error) {
+	_, err = q.Exec(UpdateNotesSQL, notes, mpID)
+	return err
 }
 
 // GetServing returns information about the meal serving identified by the

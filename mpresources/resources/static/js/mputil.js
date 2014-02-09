@@ -103,7 +103,7 @@ var MPUtil = (function() {
         
         $("<td>").appendTo(row).append(favButton).append(unfavButton);
         
-        $("<td><button class='action-button'><img src='/static/icons/edit-meal_16x16.png' height='16' alt=''/> Edit</button></td>")
+        $("<td><button class='action-button'><img src='/static/icons/edit_24x24.png' height='16' alt=''/> Edit</button></td>")
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();

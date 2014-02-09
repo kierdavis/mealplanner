@@ -57,6 +57,8 @@ func Dispatch(params url.Values) (response JsonResponse) {
 		return updateServing(params)
 	case "delete-serving":
 		return deleteServing(params)
+	case "update-notes":
+		return updateNotes(params)
 	}
 
 	return JsonResponse{Error: "Invalid or missing command"}

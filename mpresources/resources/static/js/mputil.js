@@ -56,15 +56,15 @@ var MPUtil = (function() {
         
         $("<td>").appendTo(row).text((result.tags || []).join(", "));
         
-        $("<td><button class='action-button'><img src='/static/icons/open-recipe_16x16.png' height='16' alt=''/> Open recipe</button></td>")
+        $("<td><button class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/> Open recipe</button></td>")
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
                 location.href = result.meal.recipe;
             });
         
-        var favButton   = $("<button class='action-button'><img src='/static/icons/favourite_16x16.png' height='16' alt=''/> Favourite</button>");
-        var unfavButton = $("<button class='action-button'><img src='/static/icons/unfavourite_16x16.png' height='16' alt=''/> Unfavourite</button>");
+        var favButton   = $("<button class='action-button'><img src='/static/img/favourite_16x16.png' height='16' alt=''/> Favourite</button>");
+        var unfavButton = $("<button class='action-button'><img src='/static/img/unfavourite_16x16.png' height='16' alt=''/> Unfavourite</button>");
         
         favButton.click(function(event) {
             event.preventDefault();
@@ -103,14 +103,14 @@ var MPUtil = (function() {
         
         $("<td>").appendTo(row).append(favButton).append(unfavButton);
         
-        $("<td><button class='action-button'><img src='/static/icons/edit_24x24.png' height='16' alt=''/> Edit</button></td>")
+        $("<td><button class='action-button'><img src='/static/img/edit_24x24.png' height='16' alt=''/> Edit</button></td>")
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
                 location.href = "/meals/" + result.meal.id + "/edit";
             });
         
-        $("<td><button class='action-button'><img src='/static/icons/delete_16x16.png' height='16' alt=''/> Delete</button></td>")
+        $("<td><button class='action-button'><img src='/static/img/delete_16x16.png' height='16' alt=''/> Delete</button></td>")
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();

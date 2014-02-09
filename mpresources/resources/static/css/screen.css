@@ -42,7 +42,7 @@ ul.navigation {
 
 ul.navigation li {
     display: inline;
-    background-image: url("/static/icons/nav-sep.png");
+    background-image: url("/static/img/nav-sep.png");
     background-color: #ffffff;
     background-repeat: no-repeat;
     background-position: 3px 2px;

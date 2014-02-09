@@ -39,7 +39,7 @@
                         });
                     });
                 
-                $("<button><img src='/static/icons/delete_16x16.png' height='16' alt='Delete'/></button>")
+                $("<button><img src='/static/img/delete_16x16.png' height='16' alt='Delete'/></button>")
                     .appendTo($("<td>").appendTo(row))
                     .click(function(event) {
                         event.preventDefault();
@@ -65,7 +65,7 @@
                 $("#save-notes").click(function(event) {
                     event.preventDefault();
                     
-                    $("#save-text").html("<img src='/static/icons/loading.gif' height='16' alt=''/> Saving...");
+                    $("#save-text").html("<img src='/static/img/loading.gif' height='16' alt=''/> Saving...");
                     $("#save-text").show();
                     
                     MPAjax.updateNotes({{.ID}}, $("#notes").val(), function() {
@@ -135,7 +135,7 @@
                 <div class="col-md-4">
                     <p>
                         <button id="save-notes">
-                            <img src="/static/icons/save_16x16.png" height="16" alt=""/>
+                            <img src="/static/img/save_16x16.png" height="16" alt=""/>
                             Save notes
                         </button>
                     </p>

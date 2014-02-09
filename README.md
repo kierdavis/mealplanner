@@ -10,32 +10,37 @@ Download & install with:
 
 Run server with:
 
-    mealplanner
+    mealplanner -dbsource 'DBSOURCE'
+
+where `DBSOURCE` is a data source identifier of the form:
+
+    USER:PASS@tcp(HOST:PORT)/DATABASE
+    or
+    USER:PASS@unix(/PATH/TO/SOCKET)/DATABASE
+
+For example, to connect the local 'mealplanner' database with username
+'web' and password 'hello123', the data source would be:
+
+    web:hello123@unix(/var/run/mysqld/mysqld.sock)/mealplanner
+
+and to connect with the same credentials to a remote database at db.example.net,
+port 3306 (the default MySQL port):
+
+    web:hello123@tcp(db.example.net:3306)/mealplanner
+
+Alternatively to using the `-dbsource` flag, the `MPDBSOURCE` environment
+variable can also be set. The `-dbsource` flag overrides the environment
+variable.
 
 # Code structure
 
 * `github.com/kierdavis/mealplanner` - Main application command
 * `github.com/kierdavis/mealplanner/mpapi` - Implementations of Ajax API calls
-    * `mpapi.go` - Dispatching code
-    * other files - Implementations of individial API calls
-* `github.com/kierdavis/mealplanner/mpdata` - Data structures and data-processing algorithms
-    * `mpdata.go` - Miscellaneous: global constants
-    * `types.go` - Data structure definitions
-    * `score.go` - Scoring algorithm
-* `github.com/kierdavis/mealplanner/mpdb` - Database interface (abstraction of SQL commands into functions 
-involving the application's data structures)
-    * `mpdb.go` - Connection details, definition of `Queryable` interface and closure functions (`With*`)
-    * `tables.go` - Database routines to create empty database & tables
-    * other files - Database routines for manipulating different areas of the database
-* `github.com/kierdavis/mealplanner/mphandlers` - Implementations of HTTP request handlers
-    * `mphandlers.go` - Dispatching code
-    * `httperror.go` - Definition of HTTP error codes & associated user messages (this might be temporary)
-    * `util.go` - Utility functions
-    * other files - Implementations of individual web page handlers
-* `github.com/kierdavis/mealplanner/mpresources` - Data files (HTML templates, static web files), and code to 
-locate these at runtime
-    * `mpresources.go` - Resource loader
-    * `resources/templates/` - HTML templates
-    * `resources/static/` - Static files
-        * `resources/static/css/screen.css` - Application-specific CSS
-        * `resources/static/js/mpajax.js` - Client-side interface to Ajax API
+* `github.com/kierdavis/mealplanner/mpdata` - Data structures and data-
+  processing algorithms
+* `github.com/kierdavis/mealplanner/mpdb` - Database interface (abstraction of
+  SQL commands into functions involving the application's data structures)
+* `github.com/kierdavis/mealplanner/mphandlers` - Implementations of HTTP
+  request handlers
+* `github.com/kierdavis/mealplanner/mpresources` - Data files (HTML templates,
+  static web files), and code to locate these at runtime

@@ -18,9 +18,10 @@ type MealWithTags struct {
 	Tags []string `json:"tags"` // The meal's tags.
 }
 
-// Type MealWithScore pairs a Meal with its associated score.
-type MealWithScore struct {
-	Meal  *Meal   `json:"meal"`  // The meal.
+// Type Suggestion pairs a Meal with its associated tags, closest serving distance and score.
+type Suggestion struct {
+	MT MealWithTags `json:"mt"` // The meal and tags.
+	CSD int `json:"-"` // The closest serving distance (used in computing the score).
 	Score float32 `json:"score"` // The meal's score.
 }
 

@@ -20,5 +20,12 @@
         $(".datepicker").datepicker({
             dateFormat: "dd/mm/yy",
         });
+        
+        $("input").keypress(function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                $(this).trigger("enterKey");
+            }
+        });
     });
 </script>

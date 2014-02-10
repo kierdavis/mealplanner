@@ -17,7 +17,7 @@ func fetchSuggestions(params url.Values) (response JsonResponse) {
 		return JsonResponse{Error: "Invalid or missing 'date' parameter"}
 	}
 
-	var suggs []mpdata.MealWithScore
+	var suggs []*mpdata.Suggestion
 
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {

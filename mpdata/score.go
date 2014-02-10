@@ -24,19 +24,25 @@ func (s *Scorer) AddTagScore(tag string, dist int) {
 	s.tagScores[tag] = score
 }
 
-func (s *Scorer) ScoreMeal(favourite bool, csd int, tags []string) (score float32) {
-	score = 1.35 - (2.8 / float32(csd+1))
+func (s *Scorer) ScoreSuggestion(sugg *Suggestion) {
+	score := float32(1)
+	
+	if sugg.CSD < 0 {
+		score *= 1.6
+	} else {
+		score *= 1.45 - (2.8 / float32(sugg.CSD + 1))
+	}
 
-	for _, tag := range tags {
+	for _, tag := range sugg.MT.Tags {
 		tagScore, ok := s.tagScores[tag]
 		if ok {
 			score *= tagScore
 		}
 	}
 
-	if favourite {
+	if sugg.MT.Meal.Favourite {
 		score *= 2.0
 	}
-
-	return score
+	
+	sugg.Score = score
 }

@@ -40,36 +40,40 @@ var MPUtil = (function() {
     
     // Renders a single meal/tag result and returns the created <tr> element.
     // Used by MPUtil.renderMealList.
-    function renderMealResult(result, callback) {
+    function renderMealResult(mt, score, callback) {
         var row = $("<tr>");
         var nameCell = $("<td>").appendTo(row);
         
         if (MPUtil.nonNull(callback)) {
-            $("<a href='#'>").text(result.meal.name).appendTo(nameCell).click(function(event) {
+            $("<a href='#'>").text(mt.meal.name).appendTo(nameCell).click(function(event) {
                 event.preventDefault();
-                callback(result);
+                callback(mt);
             });
         }
         else {
-            nameCell.text(result.meal.name);
+            nameCell.text(mt.meal.name);
         }
         
-        $("<td>").appendTo(row).text((result.tags || []).join(", "));
+        $("<td>").appendTo(row).text((mt.tags || []).join(", "));
         
-        $("<td><button class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/> Open recipe</button></td>")
+        if (MPUtil.nonNull(score)) {
+            $("<td>").text(score).appendTo(row);
+        }
+        
+        $("<td><button class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/></button></td>")
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
-                location.href = result.meal.recipe;
+                location.href = mt.meal.recipe;
             });
         
-        var favButton   = $("<button class='action-button'><img src='/static/img/favourite_16x16.png' height='16' alt=''/> Favourite</button>");
-        var unfavButton = $("<button class='action-button'><img src='/static/img/unfavourite_16x16.png' height='16' alt=''/> Unfavourite</button>");
+        var favButton   = $("<button class='action-button'><img src='/static/img/favourite_16x16.png' height='16' alt=''/></button>");
+        var unfavButton = $("<button class='action-button'><img src='/static/img/unfavourite_16x16.png' height='16' alt=''/></button>");
         
         favButton.click(function(event) {
             event.preventDefault();
             
-            MPAjax.toggleFavourite(result.meal.id, function(isFavourite) {
+            MPAjax.toggleFavourite(mt.meal.id, function(isFavourite) {
                 if (isFavourite) {
                     favButton.hide();
                     unfavButton.show();
@@ -83,7 +87,7 @@ var MPUtil = (function() {
         unfavButton.click(function(event) {
             event.preventDefault();
             
-            MPAjax.toggleFavourite(result.meal.id, function(isFavourite) {
+            MPAjax.toggleFavourite(mt.meal.id, function(isFavourite) {
                 if (!isFavourite) {
                     unfavButton.hide();
                     favButton.show();
@@ -94,7 +98,7 @@ var MPUtil = (function() {
             })
         });
         
-        if (result.meal.favourite) {
+        if (mt.meal.favourite) {
             favButton.hide();
         }
         else {
@@ -103,20 +107,20 @@ var MPUtil = (function() {
         
         $("<td>").appendTo(row).append(favButton).append(unfavButton);
         
-        $("<td><button class='action-button'><img src='/static/img/edit_24x24.png' height='16' alt=''/> Edit</button></td>")
+        $("<td><button class='action-button'><img src='/static/img/edit_24x24.png' height='16' alt=''/></button></td>")
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
-                location.href = "/meals/" + result.meal.id + "/edit";
+                location.href = "/meals/" + mt.meal.id + "/edit";
             });
         
-        $("<td><button class='action-button'><img src='/static/img/delete_16x16.png' height='16' alt=''/> Delete</button></td>")
+        $("<td><button class='action-button'><img src='/static/img/delete_16x16.png' height='16' alt=''/></button></td>")
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
                 var row = $(this);
                 
-                MPAjax.deleteMeal(result.meal.id, function(response) {
+                MPAjax.deleteMeal(mt.meal.id, function(response) {
                     row.remove();
                 });
             });
@@ -128,15 +132,16 @@ var MPUtil = (function() {
     // and renders them to a table created inside 'container'. 'callback', if
     // not null, is a function that will be called when the meal name is clicked.
     // It is passed the meal-with-tags object.
-    MPUtil.renderMealList = function(results, container, callback) {
-        results = results || [];
+    MPUtil.renderMealList = function(mts, container, callback) {
+        mts = mts || [];
+        container.empty();
         
-        if (results.length == 0) {
-            container.text("No meals to display.");
+        if (mts.length == 0) {
+            container.text("No results to display.");
             return;
         }
         
-        var table = $("<table>").appendTo(container.empty());
+        var table = $("<table>").appendTo(container);
         var thead = $("<thead>").appendTo(table);
         var headerRow = $("<tr>").appendTo(thead);
         $("<th>Name</th>").appendTo(headerRow);
@@ -146,8 +151,34 @@ var MPUtil = (function() {
         
         var i, result, row;
         
-        for (i = 0; i < results.length; i++) {
-            row = renderMealResult(results[i], callback);
+        for (i = 0; i < mts.length; i++) {
+            row = renderMealResult(mts[i], null, callback);
+            row.appendTo(tbody);
+        }
+    };
+    
+    MPUtil.renderSuggestions = function(suggs, container, callback) {
+        suggs = suggs || [];
+        container.empty();
+        
+        if (suggs.length == 0) {
+            container.text("No results to display.");
+            return;
+        }
+        
+        var table = $("<table>").appendTo(container);
+        var thead = $("<thead>").appendTo(table);
+        var headerRow = $("<tr>").appendTo(thead);
+        $("<th>Name</th>").appendTo(headerRow);
+        $("<th>Tags</th>").appendTo(headerRow);
+        $("<th>Score</th>").appendTo(headerRow);
+        $("<th colspan='4'>Actions</th>").appendTo(headerRow);
+        var tbody = $("<tbody>").appendTo(table);
+        
+        var i, result, row;
+        
+        for (i = 0; i < suggs.length; i++) {
+            row = renderMealResult(suggs[i].mt, 1.0 * suggs[i].score, callback);
             row.appendTo(tbody);
         }
     };

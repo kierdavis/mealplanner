@@ -26,14 +26,16 @@
                     .click(function(event) {
                         event.preventDefault();
                         
-                        MPAjax.fetchSuggestions(date, function(meals) {
-                            MPUtil.renderMealList(meals, $("#meal-list"), function(mt) {
+                        MPAjax.fetchSuggestions(date, function(suggs) {
+                            MPUtil.renderSuggestions(suggs, $("#meal-list"), function(mt) {
                                 MPAjax.updateServing({{.ID}}, date, mt.meal.id, function() {
                                     a.text(mt.meal.name);
                                 });
                                 
                                 $("#dialog").dialog("close");
                             });
+                            
+                            console.log(suggs);
                             
                             $("#dialog").dialog("open");
                         });

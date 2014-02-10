@@ -73,6 +73,7 @@
                 
                 // Bind event handlers
                 
+                // Validate upon submitting form.
                 $("#form").submit(function() {
                     // Validate inputs
                     if (!validateMealName($("#name").val())) return false;
@@ -99,14 +100,14 @@
                     }
                 });
                 
-                // Implement adding existing tags
+                // Implement adding existing tags.
                 $("#add-existing-tag").click(function(event) {
                     event.preventDefault();
                     
                     addTag($("#existing-tag").val());
                 });
                 
-                // Implement adding new tags
+                // Implement adding new tags.
                 $("#add-new-tag").click(function(event) {
                     event.preventDefault();
                     
@@ -118,16 +119,7 @@
                     $("#new-tag").val("");
                 });
                 
-                /*
-                // Implement tag removal
-                $("#remove-tag").click(function(event) {
-                    event.preventDefault();
-                    
-                    $("#tags option:selected").remove();
-                });
-                */
-                
-                // Implement resetting the tags list on reset
+                // Implement resetting the tags list on reset.
                 $("#reset").click(function() {
                     $("#tags").empty();
                     
@@ -135,6 +127,20 @@
                         addTag("{{. | js}}");
                     {{end}}
                 });
+                
+                // Implement pressing enter in various text boxes;
+                $("#name").bind("enterKey", function() {
+                    $("#form").submit();
+                });
+                $("#recipe").bind("enterKey", function() {
+                    $("#form").submit();
+                });
+                $("#new-tag").bind("enterKey", function() {
+                    $("#add-new-tag").click();
+                });
+                
+                // Initialise the tags list.
+                $("#reset").click();
             });
         </script>
     </head>

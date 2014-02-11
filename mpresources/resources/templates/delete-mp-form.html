@@ -1,0 +1,78 @@
+{{/*
+    delete-mp-form.html contains the form used for confirmation of deletion of
+    a meal plan.
+    
+    Dot is expected to be a struct/map containing a field 'MP' of type
+    *mpdata.MealPlan and a field 'NumServings' of integral type.
+*/}}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Delete Meal Plan :: Meal Planner</title>
+        
+        {{template "common-head.html"}}
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#no").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/mealplans/{{.MP.ID}}";
+                });
+            });
+        </script>
+    </head>
+    
+    <body>
+        <div class="container">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <ul class="navigation">
+                            <li class="home"><a href="/">Home</a></li>
+                            <li><a href="/mealplans">Meal plans</a></li>
+                            <li><a href="/mealplans/{{.MP.ID}}">{{.MP.StartDate.Format "02 Jan"}} - {{.MP.EndDate.Format "02 Jan"}}</a></li>
+                            <li>Delete</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>Delete Meal Plan</h1>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/mealplans/{{.MP.ID}}">Return to meal plan</a>
+                    </div>
+                </div>
+            </div>
+            
+            <p>
+                Are you sure you want to delete the meal plan spanning
+                {{.MP.StartDate.Format "Mon 02 Jan 2006"}} to
+                {{.MP.EndDate.Format "Mon 02 Jan 2006"}}?
+            </p>
+            
+            {{if .NumServings}}
+                <p>
+                    The {{.NumServings}} servings associated with the meal plan
+                    will also be deleted.
+                </p>
+            {{end}}
+            
+            <p>
+                <button id="no">
+                    <img src="/static/img/back_16x16.png" height="16" alt=""/>
+                    No, take me back.
+                </button>
+                
+                <form action="" method="post">
+                    <button id="yes" type="submit">
+                        <img src="/static/img/delete_24x24.png" height="16" alt=""/>
+                        Yes, delete the meal plan.
+                    </button>
+                </form>
+            </p>
+        </div>
+    </body>
+</html>

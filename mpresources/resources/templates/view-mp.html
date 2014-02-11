@@ -33,6 +33,11 @@
                     location.href = "/mealplans/{{.ID}}/edit";
                 });
                 
+                $("#delete").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/mealplans/{{.ID}}/delete";
+                });
+                
                 MPAjax.fetchServings({{.ID}}, function(results) {
                     results = results || [];
                     
@@ -74,6 +79,11 @@
                             <button title="Edit the meal plan" class="header-button" id="edit">
                                 <img src="/static/img/edit_24x24.png" height="24" alt=""/>
                                 Edit
+                            </button>
+                            
+                            <button title="Edit the meal plan" class="header-button" id="delete">
+                                <img src="/static/img/delete_24x24.png" height="24" alt=""/>
+                                Delete
                             </button>
                         </p>
                     </div>

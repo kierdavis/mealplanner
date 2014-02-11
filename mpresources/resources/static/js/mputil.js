@@ -114,7 +114,7 @@ var MPUtil = (function() {
                 location.href = "/meals/" + mt.meal.id + "/edit";
             });
         
-        $("<td><button title='Delete this meal from the list' class='action-button'><img src='/static/img/delete_16x16.png' height='16' alt=''/></button></td>")
+        $("<td><button title='Delete this meal from the list' class='action-button'><img src='/static/img/delete_24x24.png' height='16' alt=''/></button></td>")
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();

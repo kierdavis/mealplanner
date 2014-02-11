@@ -14,6 +14,8 @@ const AddMealPlanSQL = "INSERT INTO mealplan VALUES (NULL, ?, ?, ?)"
 
 const UpdateNotesSQL = "UPDATE mealplan SET mealplan.notes = ? WHERE mealplan.id = ?"
 
+const DeleteMealPlanSQL = "DELETE FROM mealplan WHERE mealplan.id = ?"
+
 const ListMealPlansBetweenSQL = "SELECT mealplan.id, mealplan.startdate, mealplan.enddate " +
 	"FROM mealplan " +
 	"WHERE ? <= mealplan.enddate && mealplan.startdate <= ?"
@@ -27,8 +29,12 @@ const GetServingSQL = "SELECT serving.mealid FROM serving WHERE serving.mealplan
 // SQL statement for retrieving the servings associated with a meal plan.
 const GetServingsSQL = "SELECT serving.dateserved, serving.mealid FROM serving WHERE serving.mealplanid = ?"
 
+const CountServingsSQL = "SELECT COUNT(serving.dateserved) FROM serving WHERE serving.mealplanid = ?"
+
 // SQL statement for deleting a serving.
 const DeleteServingSQL = "DELETE FROM serving WHERE serving.mealplanid = ? AND serving.dateserved = ?"
+
+const DeleteServingsSQL = "DELETE FROM serving WHERE serving.mealplanid = ?"
 
 // SQL statement for adding a meal serving.
 const InsertServingSQL = "INSERT INTO serving VALUES (?, ?, ?)"
@@ -69,6 +75,11 @@ func AddMealPlan(q Queryable, mp *mpdata.MealPlan) (err error) {
 
 func UpdateNotes(q Queryable, mpID uint64, notes string) (err error) {
 	_, err = q.Exec(UpdateNotesSQL, notes, mpID)
+	return err
+}
+
+func DeleteMealPlan(q Queryable, mpID uint64) (err error) {
+	_, err = q.Exec(DeleteMealPlanSQL, mpID)
 	return err
 }
 
@@ -142,6 +153,15 @@ func GetServings(q Queryable, mpID uint64) (servings []*mpdata.Serving, err erro
 	return servings, nil
 }
 
+func CountServings(q Queryable, mpID uint64) (numServings int, err error) {
+	err = q.QueryRow(CountServingsSQL, mpID).Scan(&numServings)
+	if err != nil {
+		return 0, err
+	}
+	
+	return numServings, nil
+}
+
 // GetMealPlanWithServings returns the information about the meal plan
 // identified by 'mpID' including its servings.
 func GetMealPlanWithServings(q Queryable, mpID uint64) (mps *mpdata.MealPlanWithServings, err error) {
@@ -164,6 +184,11 @@ func GetMealPlanWithServings(q Queryable, mpID uint64) (mps *mpdata.MealPlanWith
 
 func DeleteServing(q Queryable, mpID uint64, date time.Time) (err error) {
 	_, err = q.Exec(DeleteServingSQL, mpID, date)
+	return err
+}
+
+func DeleteServings(q Queryable, mpID uint64) (err error) {
+	_, err = q.Exec(DeleteServingsSQL, mpID)
 	return err
 }
 

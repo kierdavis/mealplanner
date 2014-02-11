@@ -21,7 +21,7 @@
                 var row = $("<tr>").data("tag", tag).appendTo($("#tags"));
                 $("<td>").text(tag).appendTo(row);
                 
-                $("<button title='Remove this tag from the list' class='remove-tag'><img src='/static/img/delete_16x16.png' height='16' alt='Remove'/></button>")
+                $("<button title='Remove this tag from the list' class='remove-tag'><img src='/static/img/delete_24x24.png' height='16' alt='Remove'/></button>")
                     .appendTo($("<td>").appendTo(row))
                     .click(function(event) {
                         event.preventDefault();

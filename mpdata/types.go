@@ -20,9 +20,9 @@ type MealWithTags struct {
 
 // Type Suggestion pairs a Meal with its associated tags, closest serving distance and score.
 type Suggestion struct {
-	MT MealWithTags `json:"mt"` // The meal and tags.
-	CSD int `json:"-"` // The closest serving distance (used in computing the score).
-	Score float32 `json:"score"` // The meal's score.
+	MT    MealWithTags `json:"mt"`    // The meal and tags.
+	CSD   int          `json:"-"`     // The closest serving distance (used in computing the score).
+	Score float32      `json:"score"` // The meal's score.
 }
 
 // Type MealPlan holds information about a meal plan in the database. It

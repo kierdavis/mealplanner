@@ -23,23 +23,23 @@ func GenerateSuggestions(q Queryable, date time.Time) (suggs []*mpdata.Suggestio
 	if err != nil {
 		return nil, err
 	}
-	
+
 	suggs, err = listSuggestions(q, date)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	err = getTagsForSuggestions(q, suggs)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	for _, sugg := range suggs {
 		s.ScoreSuggestion(sugg)
 	}
-	
+
 	sort.Sort(mpdata.SuggestionSlice(suggs))
-	
+
 	return suggs, nil
 }
 
@@ -76,33 +76,33 @@ func listSuggestions(q Queryable, date time.Time) (suggs []*mpdata.Suggestion, e
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	for rows.Next() {
 		meal := new(mpdata.Meal)
 		sugg := new(mpdata.Suggestion)
 		sugg.MT.Meal = meal
-		
+
 		var csd sql.NullInt64
-		
+
 		err = rows.Scan(&meal.ID, &meal.Name, &meal.RecipeURL, &meal.Favourite, &csd)
 		if err != nil {
 			return nil, err
 		}
-		
+
 		if csd.Valid {
 			sugg.CSD = int(csd.Int64)
 		} else {
 			sugg.CSD = -1
 		}
-		
+
 		suggs = append(suggs, sugg)
 	}
-	
+
 	err = rows.Err()
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return suggs, nil
 }
 
@@ -112,13 +112,13 @@ func getTagsForSuggestions(q Queryable, suggs []*mpdata.Suggestion) (err error) 
 		return err
 	}
 	defer getTagsStmt.Close()
-	
+
 	for _, sugg := range suggs {
 		sugg.MT.Tags, err = getMealTagsPrepared(getTagsStmt, sugg.MT.Meal.ID)
 		if err != nil {
 			return err
 		}
 	}
-	
+
 	return nil
 }

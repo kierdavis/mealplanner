@@ -36,7 +36,7 @@ func CreateMux() (m *mux.Router) {
 	createMP := m.Path("/mealplans/new").Subrouter()
 	createMP.Methods("GET", "HEAD").HandlerFunc(handleCreateMealPlanForm)
 	createMP.Methods("POST").HandlerFunc(handleCreateMealPlanAction)
-	
+
 	deleteMP := m.Path("/mealplans/{mealplanid:[0-9]+}/delete").Subrouter()
 	deleteMP.Methods("GET", "HEAD").HandlerFunc(handleDeleteMealPlanForm)
 	deleteMP.Methods("POST").HandlerFunc(handleDeleteMealPlanAction)

@@ -13,4 +13,3 @@ func (ss SuggestionSlice) Less(i int, j int) (less bool) {
 func (ss SuggestionSlice) Swap(i int, j int) {
 	ss[i], ss[j] = ss[j], ss[i]
 }
-

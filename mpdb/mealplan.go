@@ -19,6 +19,7 @@ const DeleteMealPlanSQL = "DELETE FROM mealplan WHERE mealplan.id = ?"
 const ListMealPlansBetweenSQL = "SELECT mealplan.id, mealplan.startdate, mealplan.enddate " +
 	"FROM mealplan " +
 	"WHERE ? <= mealplan.enddate && mealplan.startdate <= ?"
+
 //	"WHERE (? <= mealplan.startdate AND mealplan.startdate <= ?) " +	// Start date lies within 'from' and 'to',
 //	"OR (? <= mealplan.enddate AND mealplan.enddate <= ?) " +			// or end date lies within 'from' and 'to',
 //	"OR (mealplan.startdate <= ? AND mealplan.enddate >= ?)"			// or meal plan starts before 'from' and ends after 'to'."
@@ -160,7 +161,7 @@ func CountServings(q Queryable, mpID uint64) (numServings int, err error) {
 	if err != nil {
 		return 0, err
 	}
-	
+
 	return numServings, nil
 }
 

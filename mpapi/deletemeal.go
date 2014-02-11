@@ -22,7 +22,7 @@ func deleteMeal(params url.Values) (response JsonResponse) {
 			if err != nil {
 				return err
 			}
-			
+
 			return mpdb.DeleteMealWithTags(tx, mealID)
 		})
 	})

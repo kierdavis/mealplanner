@@ -118,7 +118,6 @@ var MPUtil = (function() {
             .appendTo(row)
             .click(function(event) {
                 event.preventDefault();
-                var row = $(this);
                 
                 if (confirm("Are you sure you want to delete the meal '" + mt.meal.name + "'?")) {
                     MPAjax.deleteMeal(mt.meal.id, function(response) {

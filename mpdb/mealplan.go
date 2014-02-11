@@ -28,7 +28,7 @@ const GetServingSQL = "SELECT serving.mealid FROM serving WHERE serving.mealplan
 const GetServingsSQL = "SELECT serving.dateserved, serving.mealid FROM serving WHERE serving.mealplanid = ?"
 
 // SQL statement for deleting a serving.
-const DeleteServingSQL = "DELETE FROM serving WHERE serving.mealid = ? AND serving.dateserved = ?"
+const DeleteServingSQL = "DELETE FROM serving WHERE serving.mealplanid = ? AND serving.dateserved = ?"
 
 // SQL statement for adding a meal serving.
 const InsertServingSQL = "INSERT INTO serving VALUES (?, ?, ?)"

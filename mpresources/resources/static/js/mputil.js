@@ -60,12 +60,17 @@ var MPUtil = (function() {
             $("<td>").text(score).appendTo(row);
         }
         
-        $("<td><button title='Open the recipe page listed for this meal' class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/></button></td>")
-            .appendTo(row)
-            .click(function(event) {
-                event.preventDefault();
-                location.href = mt.meal.recipe;
-            });
+        if (mt.meal.recipe) {
+            $("<td><button title='Open the recipe page listed for this meal' class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/></button></td>")
+                .appendTo(row)
+                .click(function(event) {
+                    event.preventDefault();
+                    location.href = mt.meal.recipe;
+                });
+        }
+        else {
+            $("<td>").appendTo(row);
+        }
         
         var favButton   = $("<button title='Mark this meal as a favourite' class='action-button'><img src='/static/img/favourite_16x16.png' height='16' alt=''/></button>");
         var unfavButton = $("<button title='Remove the favourite mark from this meal' class='action-button'><img src='/static/img/unfavourite_16x16.png' height='16' alt=''/></button>");

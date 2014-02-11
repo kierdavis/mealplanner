@@ -18,6 +18,11 @@ func deleteMeal(params url.Values) (response JsonResponse) {
 
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
+			err = mpdb.DeleteServingsOf(tx, mealID)
+			if err != nil {
+				return err
+			}
+			
 			return mpdb.DeleteMealWithTags(tx, mealID)
 		})
 	})

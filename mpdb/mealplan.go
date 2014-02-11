@@ -36,6 +36,8 @@ const DeleteServingSQL = "DELETE FROM serving WHERE serving.mealplanid = ? AND s
 
 const DeleteServingsSQL = "DELETE FROM serving WHERE serving.mealplanid = ?"
 
+const DeleteServingsOfSQL = "DELETE FROM serving WHERE serving.mealid = ?"
+
 // SQL statement for adding a meal serving.
 const InsertServingSQL = "INSERT INTO serving VALUES (?, ?, ?)"
 
@@ -189,6 +191,11 @@ func DeleteServing(q Queryable, mpID uint64, date time.Time) (err error) {
 
 func DeleteServings(q Queryable, mpID uint64) (err error) {
 	_, err = q.Exec(DeleteServingsSQL, mpID)
+	return err
+}
+
+func DeleteServingsOf(q Queryable, mealID uint64) (err error) {
+	_, err = q.Exec(DeleteServingsOfSQL, mealID)
 	return err
 }
 

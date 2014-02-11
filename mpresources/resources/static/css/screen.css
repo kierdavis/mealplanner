@@ -131,3 +131,8 @@ table.mplist thead tr th, table.mplist tbody tr td {
     font-weight: bold;
     color: #009;
 }
+
+.footer {
+    font-size: x-small;
+    color: #666;
+}

@@ -9,7 +9,7 @@
     <head>
         <title>Edit Meal Plan :: Meal Planner</title>
         
-        {{template "common-head.html"}}
+        {{template "common-head.inc.html"}}
         
         <script type="text/javascript">
             function addServingRow(result) {
@@ -103,6 +103,8 @@
             <hr/>
             
             <p id="notes">{{.Notes}}</p>
+            
+            {{template "footer.inc.html"}}
         </div>
     </body>
 </html>

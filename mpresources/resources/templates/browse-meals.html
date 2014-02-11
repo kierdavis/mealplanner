@@ -7,7 +7,7 @@
     <head>
         <title>Browse Meals :: Meal Planner</title>
         
-        {{template "common-head.html"}}
+        {{template "common-head.inc.html"}}
         
         <script type="text/javascript">
             $(document).ready(function() {
@@ -51,6 +51,8 @@
                 <img src="/static/img/loading.gif" alt=""/>
                 Loading results...
             </div>
+            
+            {{template "footer.inc.html"}}
         </div>
     </body>
 </html>

@@ -14,7 +14,7 @@
             <title>Create Meal :: Meal Planner</title>
         {{end}}
         
-        {{template "common-head.html"}}
+        {{template "common-head.inc.html"}}
         
         <script type="text/javascript">
             function addTag(tag) {
@@ -267,6 +267,8 @@
                     </button>
                 </p>
             </form>
+            
+            {{template "footer.inc.html"}}
         </div>
     </body>
 </html>

@@ -9,7 +9,7 @@
     <head>
         <title>{{.ShortDesc}} :: Meal Planner</title>
         
-        {{template "common-head.html"}}
+        {{template "common-head.inc.html"}}
     </head>
     <body>
         <div class="container">
@@ -33,6 +33,8 @@
             <p>
                 Please use your browser's Back button to go back and try again.
             </p>
+            
+            {{template "footer.inc.html"}}
         </div>
     </body>
 </html>

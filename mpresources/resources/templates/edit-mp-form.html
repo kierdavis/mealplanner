@@ -9,7 +9,7 @@
     <head>
         <title>Edit Meal Plan :: Meal Planner</title>
         
-        {{template "common-head.html"}}
+        {{template "common-head.inc.html"}}
         
         <script type="text/javascript">
             function addServingRow(result) {
@@ -145,6 +145,8 @@
                     <p id="save-text"></p>
                 </div>
             </div>
+            
+            {{template "footer.inc.html"}}
         </div>
         
         <div id="dialog">

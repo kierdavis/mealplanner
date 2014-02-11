@@ -90,16 +90,6 @@
                     });
                 });
                 
-                // Implement fetching all tags in database when drop-down is
-                // opened.
-                $("#existing-tag").click(function(event) {
-                    if (!MPAjax.tagsFetched) {
-                        MPAjax.fetchAllTagsOnce(function(tags) {
-                            MPUtil.renderExistingTagsList(tags, $(this));
-                        });
-                    }
-                });
-                
                 // Implement adding existing tags.
                 $("#add-existing-tag").click(function(event) {
                     event.preventDefault();
@@ -141,6 +131,11 @@
                 
                 // Initialise the tags list.
                 $("#reset").click();
+                
+                // Initialise existing tags list.
+                MPAjax.fetchAllTags(function(tags) {
+                    MPUtil.renderExistingTagsList(tags, $("#existing-tag"));
+                });
             });
         </script>
     </head>

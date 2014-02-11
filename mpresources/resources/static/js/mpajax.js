@@ -77,15 +77,18 @@ var MPAjax = (function() {
         doAjax(params, callback);
     };
     
+    /*
     // The first time this function is called, it is identical to 'fetchAllTags'.
     // After that, it does nothing.
-    MPAjax.tagsFetched = false;
+    var tagsFetched = false;
     MPAjax.fetchAllTagsOnce = function(callback) {
-        if (!MPAjax.tagsFetched) {
+        console.log(tagsFetched);
+        if (!tagsFetched) {
             MPAjax.fetchAllTags(callback);
-            MPAjax.tagsFetched = true;
+            tagsFetched = true;
         }
     };
+    */
     
     // Fetch a list of servings for the meal plan identified by 'mpID' and pass
     // them to a callback function.

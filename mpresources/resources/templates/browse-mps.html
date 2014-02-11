@@ -88,14 +88,14 @@
             function fetchMealPlans(keypoint) {
                 var first = new Date(keypoint.getTime());
                 first.setDate(1);
-                while (first.getDay() != 1) {
+                while (first.getDay() != 0) {
                     first.setDate(first.getDate() - 1);
                 }
                 
                 var last = new Date(keypoint.getTime());
                 last.setMonth(last.getMonth() + 1);
                 last.setDate(0);
-                while (last.getDay() != 0) {
+                while (last.getDay() != 6) {
                     last.setDate(last.getDate() + 1);
                 }
                 
@@ -181,12 +181,12 @@
                                 </th>
                             </tr>
                             <tr>
+                                <th>S</th>
                                 <th>M</th>
                                 <th>T</th>
                                 <th>W</th>
                                 <th>T</th>
                                 <th>F</th>
-                                <th>S</th>
                                 <th>S</th>
                             </tr>
                         </thead>

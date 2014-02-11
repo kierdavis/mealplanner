@@ -120,9 +120,11 @@ var MPUtil = (function() {
                 event.preventDefault();
                 var row = $(this);
                 
-                MPAjax.deleteMeal(mt.meal.id, function(response) {
-                    row.remove();
-                });
+                if (confirm("Are you sure you want to delete the meal '" + mt.meal.name + "'?")) {
+                    MPAjax.deleteMeal(mt.meal.id, function(response) {
+                        row.remove();
+                    });
+                }
             });
         
         return row;

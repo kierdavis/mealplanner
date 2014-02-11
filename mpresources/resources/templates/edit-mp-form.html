@@ -41,7 +41,7 @@
                         });
                     });
                 
-                $("<button><img src='/static/img/delete_16x16.png' height='16' alt='Delete'/></button>")
+                $("<button title='Delete this serving'><img src='/static/img/delete_16x16.png' height='16' alt='Delete'/></button>")
                     .appendTo($("<td>").appendTo(row))
                     .click(function(event) {
                         event.preventDefault();
@@ -136,7 +136,7 @@
                 
                 <div class="col-md-4">
                     <p>
-                        <button id="save-notes">
+                        <button title="Save these contents of the text box as the meal plan's notes" id="save-notes">
                             <img src="/static/img/save_16x16.png" height="16" alt=""/>
                             Save notes
                         </button>

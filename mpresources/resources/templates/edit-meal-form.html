@@ -21,7 +21,7 @@
                 var row = $("<tr>").data("tag", tag).appendTo($("#tags"));
                 $("<td>").text(tag).appendTo(row);
                 
-                $("<button class='remove-tag'><img src='/static/img/delete_16x16.png' height='16' alt='Remove'/></button>")
+                $("<button title='Remove this tag from the list' class='remove-tag'><img src='/static/img/delete_16x16.png' height='16' alt='Remove'/></button>")
                     .appendTo($("<td>").appendTo(row))
                     .click(function(event) {
                         event.preventDefault();
@@ -226,7 +226,7 @@
                                             <select id="existing-tag" style="min-width: 100px"></select>
                                         </td>
                                         <td>
-                                            <button id="add-existing-tag">
+                                            <button title="Add the tag in the drop-down to the list" id="add-existing-tag">
                                                 <img src="/static/img/add_16x16.png" height="16" alt=""/>
                                                 Add
                                             </button>
@@ -240,7 +240,7 @@
                                             <input type="text" id="new-tag" size="15"/>
                                         </td>
                                         <td>
-                                            <button id="add-new-tag">
+                                            <button title="Add the tag in the text box to the list" id="add-new-tag">
                                                 <img src="/static/img/add_16x16.png" height="16" alt=""/>
                                                 Add
                                             </button>
@@ -256,12 +256,12 @@
                 </div>
                 
                 <p>
-                    <button id="reset" type="reset">
+                    <button title="Reset the form" id="reset" type="reset">
                         <img src="/static/img/reset_16x16.png" height="16" alt=""/>
                         Reset
                     </button>
                     
-                    <button type="submit">
+                    <button title="Save the meal to the database" type="submit">
                         <img src="/static/img/save_16x16.png" height="16" alt=""/>
                         Save
                     </button>

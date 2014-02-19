@@ -116,7 +116,7 @@ var MPUtil = (function() {
     }
     
     function renderDeleteCell(mt) {
-        return $("<td><button title='Delete this meal from the list' class='action-button'><img src='/static/img/delete_24x24.png' height='16' alt=''/></button></td>")
+        return $("<td><button title='Delete this meal from the database' class='action-button'><img src='/static/img/delete_24x24.png' height='16' alt=''/></button></td>")
             .click(function(event) {
                 event.preventDefault();
                 

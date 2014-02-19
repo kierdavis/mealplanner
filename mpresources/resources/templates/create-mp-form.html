@@ -8,6 +8,65 @@
         <title>Create Meal Plan :: Meal Planner</title>
         
         {{template "common-head.inc.html"}}
+        
+        <script type="text/javascript">
+            function validateStartDate(start) {
+                var ok = true, msg = "";
+                
+                if (start == null) {
+                    ok = false;
+                    msg = "Please use the format 'dd/mm/yyyy'.";
+                }
+                
+                if (ok) {
+                    $("#start-validation").slideUp();
+                }
+                else {
+                    $("#start-validation td").text(msg);
+                    $("#start-validation").slideDown();
+                }
+                
+                return ok;
+            }
+            
+            function validateEndDate(start, end) {
+                var ok = true, msg = "";
+                
+                if (end == null) {
+                    ok = false;
+                    msg = "Please use the format 'dd/mm/yyyy'.";
+                }
+                
+                if (ok && start > end) {
+                    ok = false;
+                    msg = "The start date cannot be after the end date.";
+                }
+                
+                if (ok) {
+                    $("#end-validation").slideUp();
+                }
+                else {
+                    $("#end-validation td").text(msg);
+                    $("#end-validation").slideDown();
+                }
+                
+                return ok;
+            }
+            
+            function validateDates() {
+                var startStr = $("#start").val();
+                var endStr = $("#end").val();
+                
+                var start = MPUtil.parseDatepickerDate(startStr);
+                var end = MPUtil.parseDatepickerDate(endStr);
+                
+                return validateStartDate(start) && validateEndDate(start, end);
+            }
+            
+            $("#form").submit(function() {
+                if (!validateDates()) return false;
+            });
+        </script>
     </head>
     
     <body>
@@ -26,7 +85,7 @@
                 <h1>Create Meal Plan</h1>
             </div>
             
-            <form action="" method="post">
+            <form action="" method="post" id="form">
                 <table>
                     <tbody>
                         <tr>
@@ -34,8 +93,12 @@
                                 <label for="start">From:</label>
                             </td>
                             <td>
-                                <input type="text" name="start" id="start" size="15" class="datepicker"/>
+                                <input type="text" name="start" id="start" size="15" class="datepicker" placeholder="dd/mm/yyyy"/>
                             </td>
+                        </tr>
+                        
+                        <tr id="start-validation">
+                            <td class="error" colspan="2"></td>
                         </tr>
                         
                         <tr>
@@ -43,8 +106,12 @@
                                 <label for="end">To:</label>
                             </td>
                             <td>
-                                <input type="text" name="end" id="end" size="15" class="datepicker"/>
+                                <input type="text" name="end" id="end" size="15" class="datepicker" placeholder="dd/mm/yyyy"/>
                             </td>
+                        </tr>
+                        
+                        <tr id="end-validation">
+                            <td class="error" colspan="2"></td>
                         </tr>
                     </tbody>
                 </table>

@@ -38,11 +38,8 @@ var MPUtil = (function() {
         return str;
     }
     
-    // Renders a single meal/tag result and returns the created <tr> element.
-    // Used by MPUtil.renderMealList.
-    function renderMealResult(mt, score, callback) {
-        var row = $("<tr>");
-        var nameCell = $("<td>").appendTo(row);
+    function renderNameCell(mt, callback) {
+        var nameCell = $("<td>");
         
         if (MPUtil.nonNull(callback)) {
             $("<a href='#'>").text(mt.meal.name).appendTo(nameCell).click(function(event) {
@@ -54,28 +51,32 @@ var MPUtil = (function() {
             nameCell.text(mt.meal.name);
         }
         
-        $("<td>").appendTo(row).text((mt.tags || []).join(", "));
-        
-        if (MPUtil.nonNull(score)) {
-            $("<td>").text(score).appendTo(row);
-        }
-        
+        return nameCell;
+    }
+    
+    function renderTagsCell(mt) {
+        return $("<td>").text((mt.tags || []).join(", "));
+    }
+    
+    function renderScoreCell(score) {
+        return $("<td>").text(score);
+    }
+    
+    function renderRecipeCell(mt) {
         if (mt.meal.recipe) {
-            $("<td><button title='Open the recipe page listed for this meal' class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/></button></td>")
-                .appendTo(row)
+            return $("<td><button title='Open the recipe page listed for this meal' class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/></button></td>")
                 .click(function(event) {
                     event.preventDefault();
                     location.href = mt.meal.recipe;
                 });
         }
         else {
-            $("<td>").appendTo(row);
+            return $("<td>");
         }
-        
-        var favButton   = $("<button title='Mark this meal as a favourite' class='action-button'><img src='/static/img/favourite_16x16.png' height='16' alt=''/></button>");
-        var unfavButton = $("<button title='Remove the favourite mark from this meal' class='action-button'><img src='/static/img/unfavourite_16x16.png' height='16' alt=''/></button>");
-        
-        favButton.click(function(event) {
+    }
+    
+    function renderFavCell(mt) {
+        var toggleFavCallback = function(event) {
             event.preventDefault();
             
             MPAjax.toggleFavourite(mt.meal.id, function(isFavourite) {
@@ -84,24 +85,17 @@ var MPUtil = (function() {
                     unfavButton.show();
                 }
                 else {
-                    alert("Unexpected: 'favourite' button did not favourite the meal!");
-                }
-            });
-        });
-        
-        unfavButton.click(function(event) {
-            event.preventDefault();
-            
-            MPAjax.toggleFavourite(mt.meal.id, function(isFavourite) {
-                if (!isFavourite) {
                     unfavButton.hide();
                     favButton.show();
                 }
-                else {
-                    alert("Unexpected: 'unfavourite' button did not unfavourite the meal!");
-                }
-            })
-        });
+            });
+        };
+        
+        var favButton   = $("<button title='Mark this meal as a favourite' class='action-button'><img src='/static/img/favourite_16x16.png' height='16' alt=''/></button>");
+        var unfavButton = $("<button title='Remove the favourite mark from this meal' class='action-button'><img src='/static/img/unfavourite_16x16.png' height='16' alt=''/></button>");
+        
+        favButton.click(toggleFavCallback);
+        unfavButton.click(toggleFavCallback);
         
         if (mt.meal.favourite) {
             favButton.hide();
@@ -110,17 +104,19 @@ var MPUtil = (function() {
             unfavButton.hide();
         }
         
-        $("<td>").appendTo(row).append(favButton).append(unfavButton);
-        
-        $("<td><button title='Edit this meal' class='action-button'><img src='/static/img/edit_24x24.png' height='16' alt=''/></button></td>")
-            .appendTo(row)
+        return $("<td>").append(favButton).append(unfavButton);
+    }
+    
+    function renderEditCell(mt) {
+        return $("<td><button title='Edit this meal' class='action-button'><img src='/static/img/edit_24x24.png' height='16' alt=''/></button></td>")
             .click(function(event) {
                 event.preventDefault();
                 location.href = "/meals/" + mt.meal.id + "/edit";
             });
-        
-        $("<td><button title='Delete this meal from the list' class='action-button'><img src='/static/img/delete_24x24.png' height='16' alt=''/></button></td>")
-            .appendTo(row)
+    }
+    
+    function renderDeleteCell(mt) {
+        return $("<td><button title='Delete this meal from the list' class='action-button'><img src='/static/img/delete_24x24.png' height='16' alt=''/></button></td>")
             .click(function(event) {
                 event.preventDefault();
                 
@@ -130,6 +126,24 @@ var MPUtil = (function() {
                     });
                 }
             });
+    }
+    
+    // Renders a single meal/tag result and returns the created <tr> element.
+    // Used by MPUtil.renderMealList.
+    function renderMealResult(mt, score, callback) {
+        var row = $("<tr>");
+        
+        row.append(renderNameCell(mt, callback));
+        row.append(renderTagsCell(mt));
+        
+        if (MPUtil.nonNull(score)) {
+            row.append(renderScoreCell(score));
+        }
+        
+        row.append(renderRecipeCell(mt));
+        row.append(renderFavCell(mt));
+        row.append(renderEditCell(mt));
+        row.append(renderDeleteCell(mt));
         
         return row;
     }
@@ -211,6 +225,15 @@ var MPUtil = (function() {
     
     MPUtil.formatDateJSON = function(date) {
         return zeroPad(date.getFullYear(), 4) + "-" + zeroPad(date.getMonth() + 1, 2) + "-" + zeroPad(date.getDate(), 2);
+    };
+    
+    MPUtil.parseDatepickerDate = function(str) {
+        parts = str.split("/");
+        if (parts.length < 3 || 1*parts[2] == NaN || 1*parts[1] == NaN || 1*parts[0] == NaN) {
+            return null;
+        }
+        
+        return new Date(parts[2], parts[1]-1, parts[0]);
     };
     
     MPUtil.nonNull = function(value) {

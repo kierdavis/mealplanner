@@ -10,7 +10,7 @@ import (
 )
 
 // updateNotes implements an API call to update the notes associated with a
-// meal plan.
+// meal plan. Expected parameters: mealplanid, notes. Returns: nothing.
 func updateNotes(params url.Values) (response JsonResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {

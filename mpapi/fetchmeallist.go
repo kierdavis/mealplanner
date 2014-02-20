@@ -10,7 +10,7 @@ import (
 )
 
 // fetchMealList handles an API call to fetch a list of all meals in the
-// database.
+// database. Expected parameters: none. Returns: an array of meal/tags objects.
 func fetchMealList(params url.Values) (response JsonResponse) {
 	var mts []mpdata.MealWithTags
 

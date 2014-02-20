@@ -9,7 +9,8 @@ import (
 )
 
 // fetchAllTags handles an API call to obtain a list of all tags present in the
-// database, without duplicates and in alphabetical order.
+// database, without duplicates and in alphabetical order. Expected parameters:
+// none. Returns: an array of tags.
 func fetchAllTags(params url.Values) (response JsonResponse) {
 	var tags []string
 

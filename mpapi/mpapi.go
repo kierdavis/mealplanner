@@ -37,7 +37,7 @@ func HandleApiCall(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Dispatch looks at the "command" parameter and dispatches the request to the
+// Dispatch inspects the "command" parameter and dispatches the request to the
 // appropriate handler function.
 func Dispatch(params url.Values) (response JsonResponse) {
 	switch params.Get("command") {

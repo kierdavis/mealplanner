@@ -4,16 +4,23 @@ import (
 	"math"
 )
 
+// Type Scorer encapsulates the scoring algorithm used for suggestion
+// generation.
 type Scorer struct {
 	tagScores map[string]float32
 }
 
+// NewScorer allocates and returns a new Scorer.
 func NewScorer() (s *Scorer) {
 	return &Scorer{
 		tagScores: make(map[string]float32),
 	}
 }
 
+// AddTagScore should be called for every tag occurrence in the database. The
+// 'dist' argument refers to the number of days between the date that
+// suggestions are being generated for and the date of the closest serving of
+// the meal the tag is associated with.
 func (s *Scorer) AddTagScore(tag string, dist int) {
 	score, ok := s.tagScores[tag]
 	if !ok {
@@ -24,6 +31,8 @@ func (s *Scorer) AddTagScore(tag string, dist int) {
 	s.tagScores[tag] = score
 }
 
+// ScoreSuggestion calculates a score for the given suggestion and assigns it
+// to the 'Score' field of the argument.
 func (s *Scorer) ScoreSuggestion(sugg *Suggestion) {
 	score := float32(1)
 

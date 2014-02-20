@@ -20,7 +20,8 @@ type fetchServingsRecord struct {
 }
 
 // fetchServings handles an API call to list all the servings for a given meal
-// plan.
+// plan. Expected parameters: mealplanid. Returns: an array of
+// fetchServingsRecord objects.
 func fetchServings(params url.Values) (response JsonResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {

@@ -7,15 +7,22 @@ import (
 	"time"
 )
 
+// SQL statement to obtain a list of all tags and their distances to every
+// serving of the meals they are attached to.
 const CalculateTagScoresSQL = "SELECT tag.tag, ABS(DATEDIFF(serving.dateserved, ?)) " +
 	"FROM tag " +
 	"INNER JOIN serving ON serving.mealid = tag.mealid"
 
+// SQL statement to obtain a list of meals along with the distances to their
+// closest servings.
 const ListSuggestionsSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite, MIN(ABS(DATEDIFF(serving.dateserved, ?))) " +
 	"FROM meal " +
 	"LEFT JOIN serving ON meal.id = serving.mealid " +
 	"GROUP BY meal.id"
 
+// GenerateSuggestions calculates a score for each meal in the database based on
+// their suitability for serving on 'date'. These are returned as a list of
+// Suggestions.
 func GenerateSuggestions(q Queryable, date time.Time) (suggs []*mpdata.Suggestion, err error) {
 	s := mpdata.NewScorer()
 
@@ -43,6 +50,8 @@ func GenerateSuggestions(q Queryable, date time.Time) (suggs []*mpdata.Suggestio
 	return suggs, nil
 }
 
+// calculateTagScores prepares the scorer 's' by adding a score for each usage
+// of a tag.
 func calculateTagScores(q Queryable, s *mpdata.Scorer, date time.Time) (err error) {
 	rows, err := q.Query(CalculateTagScoresSQL, date)
 	if err != nil {
@@ -70,6 +79,8 @@ func calculateTagScores(q Queryable, s *mpdata.Scorer, date time.Time) (err erro
 	return nil
 }
 
+// listSuggestions returns a list of meals (without tags) and the distance
+// between 'date' and their closest serving to 'date'.
 func listSuggestions(q Queryable, date time.Time) (suggs []*mpdata.Suggestion, err error) {
 	rows, err := q.Query(ListSuggestionsSQL, date)
 	if err != nil {
@@ -106,6 +117,7 @@ func listSuggestions(q Queryable, date time.Time) (suggs []*mpdata.Suggestion, e
 	return suggs, nil
 }
 
+// getTagsForSuggestions fills the tags field of each suggestion in 'suggs'.
 func getTagsForSuggestions(q Queryable, suggs []*mpdata.Suggestion) (err error) {
 	getTagsStmt, err := q.Prepare(GetMealTagsSQL)
 	if err != nil {

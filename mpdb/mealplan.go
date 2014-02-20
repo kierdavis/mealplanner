@@ -12,17 +12,16 @@ const GetMealPlanSQL = "SELECT mealplan.notes, mealplan.startdate, mealplan.endd
 // SQL statement for adding a meal plan to the database.
 const AddMealPlanSQL = "INSERT INTO mealplan VALUES (NULL, ?, ?, ?)"
 
+// SQL statement for setting the notes associated with a meal plan.
 const UpdateNotesSQL = "UPDATE mealplan SET mealplan.notes = ? WHERE mealplan.id = ?"
 
+// SQL statement for deleting a meal plan identified by its ID.
 const DeleteMealPlanSQL = "DELETE FROM mealplan WHERE mealplan.id = ?"
 
+// SQL statement for listing meal plans that overlap a given date range.
 const ListMealPlansBetweenSQL = "SELECT mealplan.id, mealplan.startdate, mealplan.enddate " +
 	"FROM mealplan " +
 	"WHERE ? <= mealplan.enddate && mealplan.startdate <= ?"
-
-//	"WHERE (? <= mealplan.startdate AND mealplan.startdate <= ?) " +	// Start date lies within 'from' and 'to',
-//	"OR (? <= mealplan.enddate AND mealplan.enddate <= ?) " +			// or end date lies within 'from' and 'to',
-//	"OR (mealplan.startdate <= ? AND mealplan.enddate >= ?)"			// or meal plan starts before 'from' and ends after 'to'."
 
 // SQL statement for retrieving information about a meal serving.
 const GetServingSQL = "SELECT serving.mealid FROM serving WHERE serving.mealplanid = ? AND serving.dateserved = ?"
@@ -30,13 +29,16 @@ const GetServingSQL = "SELECT serving.mealid FROM serving WHERE serving.mealplan
 // SQL statement for retrieving the servings associated with a meal plan.
 const GetServingsSQL = "SELECT serving.dateserved, serving.mealid FROM serving WHERE serving.mealplanid = ?"
 
+// SQL statement for returning the number of servings on a meal plan.
 const CountServingsSQL = "SELECT COUNT(serving.dateserved) FROM serving WHERE serving.mealplanid = ?"
 
 // SQL statement for deleting a serving.
 const DeleteServingSQL = "DELETE FROM serving WHERE serving.mealplanid = ? AND serving.dateserved = ?"
 
+// SQL statement for deleting all servings in a meal plan.
 const DeleteServingsSQL = "DELETE FROM serving WHERE serving.mealplanid = ?"
 
+// SQL statement for deleting all servings of a given meal.
 const DeleteServingsOfSQL = "DELETE FROM serving WHERE serving.mealid = ?"
 
 // SQL statement for adding a meal serving.
@@ -76,16 +78,23 @@ func AddMealPlan(q Queryable, mp *mpdata.MealPlan) (err error) {
 	return nil
 }
 
+// UpdateNotes sets the notes associated with the meal plan identified by 'mpID'
+// to 'notes'.
 func UpdateNotes(q Queryable, mpID uint64, notes string) (err error) {
 	_, err = q.Exec(UpdateNotesSQL, notes, mpID)
 	return err
 }
 
+// DeleteMealPlan deletes the meal plan record identified by 'mpID'. If no such
+// meal plan exists, no error is raised.
 func DeleteMealPlan(q Queryable, mpID uint64) (err error) {
 	_, err = q.Exec(DeleteMealPlanSQL, mpID)
 	return err
 }
 
+// ListMealPlansBetween returns a list of all meal plans in the database whose
+// date range (start date to end date) overlaps with the given date range
+// ('from' to 'to').
 func ListMealPlansBetween(q Queryable, from time.Time, to time.Time) (mps []*mpdata.MealPlan, err error) {
 	rows, err := q.Query(ListMealPlansBetweenSQL, from, to)
 	if err != nil {
@@ -156,6 +165,8 @@ func GetServings(q Queryable, mpID uint64) (servings []*mpdata.Serving, err erro
 	return servings, nil
 }
 
+// CountServings returns the number of servings in the meal plan identified by
+// 'mpID'.
 func CountServings(q Queryable, mpID uint64) (numServings int, err error) {
 	err = q.QueryRow(CountServingsSQL, mpID).Scan(&numServings)
 	if err != nil {
@@ -185,21 +196,29 @@ func GetMealPlanWithServings(q Queryable, mpID uint64) (mps *mpdata.MealPlanWith
 	return mps, nil
 }
 
+// DeleteServing deletes the serving at 'date' on the meal plan identified by
+// 'mpID'. If no such serving exists, no error is raised.
 func DeleteServing(q Queryable, mpID uint64, date time.Time) (err error) {
 	_, err = q.Exec(DeleteServingSQL, mpID, date)
 	return err
 }
 
+// DeleteServings deletes all servings on the meal plan identified by 'mpID'. If
+// no such servings exist, no error is raised.
 func DeleteServings(q Queryable, mpID uint64) (err error) {
 	_, err = q.Exec(DeleteServingsSQL, mpID)
 	return err
 }
 
+// DeleteServingsOf deletes all servings of the meal identified by 'mealID'. IF
+// no such servings exist, no error is raised.
 func DeleteServingsOf(q Queryable, mealID uint64) (err error) {
 	_, err = q.Exec(DeleteServingsOfSQL, mealID)
 	return err
 }
 
+// AddServing adds the information containing in 'serving' to a new serving
+// record in the database.
 func AddServing(q Queryable, serving *mpdata.Serving) (err error) {
 	_, err = q.Exec(InsertServingSQL, serving.MealPlanID, serving.Date, serving.MealID)
 	return err

@@ -9,7 +9,8 @@ import (
 	"strconv"
 )
 
-// deleteMeal handles an API call to delete a meal.
+// deleteMeal handles an API call to delete a meal. Expected parameters: mealid.
+// Returns: nothing.
 func deleteMeal(params url.Values) (response JsonResponse) {
 	mealID, err := strconv.ParseUint(params.Get("mealid"), 10, 64)
 	if err != nil {

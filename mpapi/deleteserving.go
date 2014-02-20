@@ -11,7 +11,8 @@ import (
 	"time"
 )
 
-// deleteServing handles an API call to delete a meal serving.
+// deleteServing handles an API call to delete a meal serving. Expected
+// parameters: mealplanid, date. Returns: nothing.
 func deleteServing(params url.Values) (response JsonResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {

@@ -222,7 +222,7 @@ func UpdateMeal(q Queryable, meal *mpdata.Meal) (err error) {
 }
 
 // DeleteMealTags deletes all tags in the database associated with the meal
-// identified by 'mealID'.
+// identified by 'mealID'. If no such tags exist, no error is raised.
 func DeleteMealTags(q Queryable, mealID uint64) (err error) {
 	_, err = q.Exec(DeleteMealTagsSQL, mealID)
 	return err
@@ -262,7 +262,8 @@ func ToggleFavourite(q Queryable, mealID uint64) (isFavourite bool, err error) {
 	return isFavourite, err
 }
 
-// DeleteMeal deletes the meal record identified by 'mealID'.
+// DeleteMeal deletes the meal record identified by 'mealID'. If no such meal
+// exists, no error is raised.
 func DeleteMeal(q Queryable, mealID uint64) (err error) {
 	_, err = q.Exec(DeleteMealSQL, mealID)
 	return err

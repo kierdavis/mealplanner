@@ -10,7 +10,8 @@ import (
 )
 
 // toggleFavourite implements an API call to toggle the "favourite" status of
-// a given meal.
+// a given meal. Expected paramaters: mealid. Returns: the updated "favourite"
+// status of the meal.
 func toggleFavourite(params url.Values) (response JsonResponse) {
 	mealID, err := strconv.ParseUint(params.Get("mealid"), 10, 64)
 	if err != nil {

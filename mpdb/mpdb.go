@@ -7,18 +7,19 @@ import (
 	"fmt"
 )
 
-// Database connection constants.
-const (
-	// The name of the driver to use.
-	DB_DRIVER = "mysql"
+// DBDriver is the driver name used when connecting to the database.
+const DBDriver = "mysql"
 
-	// Additional parameters to use.
-	DB_PARAMS = "?parseTime=true"
-)
+// DBParams are extra parameters required for the database routines to function.
+const DBParams = "?parseTime=true"
 
-var Source = "mealplanner@unix(/var/run/mysqld/mysqld.sock)/mealplanner"
+// DBSource identifies how to connect to the database. It should take the form
+// "USER:PASS@unix(/PATH/TO/SOCKET)/DBNAME" or "USER:PASS@tcp(HOST:PORT)/DBNAME".
+// By default, it will attempt to connect via the local Unix socket to the
+// 'mealplanner' database, with username 'mealplanner' and no password.
+var DBSource = "mealplanner@unix(/var/run/mysqld/mysqld.sock)/mealplanner"
 
-// Interface Queryable represents a type that can be queried (either a *sql.DB
+// Queryable represents a type that can be queried (either a *sql.DB
 // or *sql.Tx). See documentation on 'database/sql#DB' for information on the
 // methods in this interface.
 type Queryable interface {
@@ -28,6 +29,8 @@ type Queryable interface {
 	QueryRow(string, ...interface{}) *sql.Row
 }
 
+// LoggingQueryable wraps a Queryable while logging all executions of its
+// functions to standard output. It is intended for debugging purposes.
 type LoggingQueryable struct {
 	Q Queryable
 }
@@ -56,10 +59,10 @@ func (lq LoggingQueryable) QueryRow(query string, args ...interface{}) (row *sql
 	return row
 }
 
-// Connect creates a new connection to the database using DB_DRIVER and
+// Connect creates a new connection to the database using DBDriver and
 // DB_SOURCE.
 func Connect() (db *sql.DB, err error) {
-	return sql.Open(DB_DRIVER, Source+DB_PARAMS)
+	return sql.Open(DBDriver, DBSource+DBParams)
 }
 
 // Type FailedCloseError contains information regarding a situation where an

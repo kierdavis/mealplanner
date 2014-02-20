@@ -33,7 +33,7 @@ func main() {
 		}
 	}
 
-	mpdb.Source = source
+	mpdb.DBSource = source
 
 	err := mpdb.InitDB(*testdata)
 	if err != nil {

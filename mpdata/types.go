@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Type Meal holds information about a meal in the database.
+// Meal holds information about a meal in the database.
 type Meal struct {
 	ID        uint64 `json:"id"`        // The database's unique identifier for the meal.
 	Name      string `json:"name"`      // The name of the meal.
@@ -12,20 +12,20 @@ type Meal struct {
 	Favourite bool   `json:"favourite"` // Whether or not the meal is marked as a favourite.
 }
 
-// Type MealWithTags pairs a Meal with its associated tags.
+// MealWithTags pairs a Meal with its associated tags.
 type MealWithTags struct {
 	Meal *Meal    `json:"meal"` // The meal.
 	Tags []string `json:"tags"` // The meal's tags.
 }
 
-// Type Suggestion pairs a Meal with its associated tags, closest serving distance and score.
+// Suggestion pairs a Meal with its associated tags, closest serving distance and score.
 type Suggestion struct {
 	MT    MealWithTags `json:"mt"`    // The meal and tags.
 	CSD   int          `json:"-"`     // The closest serving distance (used in computing the score).
 	Score float32      `json:"score"` // The meal's score.
 }
 
-// Type MealPlan holds information about a meal plan in the database. It
+// MealPlan holds information about a meal plan in the database. It
 // contains no JSON field tags as the mealPlanJson struct is actually used for
 // encoding/decoding; however, the MarshalJSON/UnmarshalJSON methods take care
 // of this.
@@ -36,7 +36,7 @@ type MealPlan struct {
 	EndDate   time.Time // The date of the last day in the meal plan.
 }
 
-// Type mealPlanJson is the intermediate struct used for JSON encoding/decoding
+// mealPlanJson is the intermediate struct used for JSON encoding/decoding
 // of a meal plan. An intermediate type is used as the time.Times need to be
 // encoded in a specific format.
 type mealPlanJson struct {
@@ -58,7 +58,7 @@ func (mp *MealPlan) Days() (days []time.Time) {
 	return days
 }
 
-// Type Serving holds information about a serving of a meal in the database.
+// Serving holds information about a serving of a meal in the database.
 // It contains no JSON field tags as the servingJson struct is actually used for
 // encoding/decoding; however, the MarshalJSON/UnmarshalJSON methods take care
 // of this.
@@ -68,7 +68,7 @@ type Serving struct {
 	MealID     uint64
 }
 
-// Type servingJson is the intermediate struct used for JSON encoding/decoding
+// servingJson is the intermediate struct used for JSON encoding/decoding
 // of a meal plan. An intermediate type is used as the time.Time needs to be
 // encoded in a specific format.
 type servingJson struct {
@@ -77,7 +77,7 @@ type servingJson struct {
 	MealID     uint64 `json:"mealid"`
 }
 
-// Type MealPlanWithServings pairs a MealPlan with its associated Servings.
+// MealPlanWithServings pairs a MealPlan with its associated Servings.
 type MealPlanWithServings struct {
 	MealPlan *MealPlan  `json:"mealplan"`
 	Servings []*Serving `json:"servings"`

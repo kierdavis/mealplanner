@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-// Type JsonResponse contains the response structure returned to the client.
+// JsonResponse contains the response structure returned to the client.
 // If the 'Error' field is nonempty, the response indicates an error has
 // occurred, else the response is assumed to be a successful one.
 type JsonResponse struct {

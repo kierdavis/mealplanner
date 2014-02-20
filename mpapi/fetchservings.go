@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-// Type fetchServingsRecord is a structure to hold the result objects returned
+// fetchServingsRecord is a structure to hold the result objects returned
 // by the fetch servings API call in order for them to be encoded as JSON.
 type fetchServingsRecord struct {
 	Date     string `json:"date"`

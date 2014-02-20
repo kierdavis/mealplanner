@@ -1,6 +1,6 @@
 package mpdata
 
-// Type SuggestionSlice is an implementation of 'sort.Interface', allowing a
+// SuggestionSlice is an implementation of 'sort.Interface', allowing a
 // list of suggestions to be sorted by their score.
 type SuggestionSlice []*Suggestion
 

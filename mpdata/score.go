@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-// Type Scorer encapsulates the scoring algorithm used for suggestion
+// Scorer encapsulates the scoring algorithm used for suggestion
 // generation.
 type Scorer struct {
 	tagScores map[string]float32

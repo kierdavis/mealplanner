@@ -282,17 +282,6 @@ var MealListView = (function() {
         
         this.tbody = tbody;
         this.renderCurrentPage();
-        
-        if (MPUtil.nonNull(this.highlightRowNum)) {
-            var row = $(tbody.find("tr")[this.highlightRowNum]);
-            var bg = row.css("background");
-            row.css("background", "orange");
-            row.animate({
-                backgroundColor: bg,
-            }, 1000);
-            
-            this.highlightRowNum = null;
-        }
     };
     
     MealListView.prototype.renderCurrentPage = function() {
@@ -310,6 +299,17 @@ var MealListView = (function() {
         var i;
         for (i = start; i < end; i++) {
             this.renderItem(this.items[i]);
+        }
+        
+        if (MPUtil.nonNull(this.highlightRowNum)) {
+            var row = $(tbody.find("tr")[this.highlightRowNum]);
+            var bg = row.css("background");
+            row.css("background", "orange");
+            row.animate({
+                backgroundColor: bg,
+            }, 1000);
+            
+            this.highlightRowNum = null;
         }
     };
     

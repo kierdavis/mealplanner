@@ -43,7 +43,7 @@ func fetchServings(params url.Values) (response JSONResponse) {
 
 			for _, date := range mps.MealPlan.Days() {
 				ts := &fetchServingsRecord{
-					Date: date.Format(mpdata.JsonDateFormat),
+					Date: date.Format(mpdata.JSONDateFormat),
 				}
 
 				for _, serving := range mps.Servings {

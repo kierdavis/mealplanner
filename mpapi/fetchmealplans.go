@@ -14,12 +14,12 @@ import (
 // overlap with a specified inclusive date range. Expected parameters: from, to.
 // Returns: an array of meal plan objects.
 func fetchMealPlans(params url.Values) (response JSONResponse) {
-	from, err := time.Parse(mpdata.JsonDateFormat, params.Get("from"))
+	from, err := time.Parse(mpdata.JSONDateFormat, params.Get("from"))
 	if err != nil {
 		return JSONResponse{Error: "Invalid or missing 'from' parameter"}
 	}
 
-	to, err := time.Parse(mpdata.JsonDateFormat, params.Get("to"))
+	to, err := time.Parse(mpdata.JSONDateFormat, params.Get("to"))
 	if err != nil {
 		return JSONResponse{Error: "Invalid or missing 'to' parameter"}
 	}

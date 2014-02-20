@@ -20,7 +20,7 @@ func updateServing(params url.Values) (response JSONResponse) {
 		return JSONResponse{Error: "Invalid or missing 'mealplanid' parameter"}
 	}
 
-	dateServed, err := time.Parse(mpdata.JsonDateFormat, params.Get("date"))
+	dateServed, err := time.Parse(mpdata.JSONDateFormat, params.Get("date"))
 	if err != nil {
 		return JSONResponse{Error: "Invalid or missing 'date' parameter"}
 	}

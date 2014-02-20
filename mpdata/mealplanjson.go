@@ -7,11 +7,11 @@ import (
 
 // MarshalJSON encodes a meal plan into its JSON form.
 func (mp *MealPlan) MarshalJSON() (text []byte, err error) {
-	mpj := mealPlanJson{
+	mpj := mealPlanJSON{
 		ID:        mp.ID,
 		Notes:     mp.Notes,
-		StartDate: mp.StartDate.Format(JsonDateFormat),
-		EndDate:   mp.EndDate.Format(JsonDateFormat),
+		StartDate: mp.StartDate.Format(JSONDateFormat),
+		EndDate:   mp.EndDate.Format(JSONDateFormat),
 	}
 
 	return json.Marshal(mpj)
@@ -20,7 +20,7 @@ func (mp *MealPlan) MarshalJSON() (text []byte, err error) {
 // UnmarshalJSON populates the fields of the receiver with values parsed from
 // the input JSON.
 func (mp *MealPlan) UnmarshalJSON(text []byte) (err error) {
-	var mpj mealPlanJson
+	var mpj mealPlanJSON
 	err = json.Unmarshal(text, &mpj)
 	if err != nil {
 		return err
@@ -29,12 +29,12 @@ func (mp *MealPlan) UnmarshalJSON(text []byte) (err error) {
 	mp.ID = mpj.ID
 	mp.Notes = mpj.Notes
 
-	mp.StartDate, err = time.Parse(JsonDateFormat, mpj.StartDate)
+	mp.StartDate, err = time.Parse(JSONDateFormat, mpj.StartDate)
 	if err != nil {
 		return err
 	}
 
-	mp.EndDate, err = time.Parse(JsonDateFormat, mpj.EndDate)
+	mp.EndDate, err = time.Parse(JSONDateFormat, mpj.EndDate)
 	if err != nil {
 		return err
 	}
@@ -44,9 +44,9 @@ func (mp *MealPlan) UnmarshalJSON(text []byte) (err error) {
 
 // MarshalJSON encodes a meal serving into its JSON form.
 func (s *Serving) MarshalJSON() (text []byte, err error) {
-	sj := servingJson{
+	sj := servingJSON{
 		MealPlanID: s.MealPlanID,
-		Date:       s.Date.Format(JsonDateFormat),
+		Date:       s.Date.Format(JSONDateFormat),
 		MealID:     s.MealID,
 	}
 
@@ -56,7 +56,7 @@ func (s *Serving) MarshalJSON() (text []byte, err error) {
 // UnmarshalJSON populates the fields of the receiver with values parsed from
 // the input JSON.
 func (s *Serving) UnmarshalJSON(text []byte) (err error) {
-	var sj servingJson
+	var sj servingJSON
 	err = json.Unmarshal(text, &sj)
 	if err != nil {
 		return err
@@ -65,7 +65,7 @@ func (s *Serving) UnmarshalJSON(text []byte) (err error) {
 	s.MealPlanID = sj.MealPlanID
 	s.MealID = sj.MealID
 
-	s.Date, err = time.Parse(JsonDateFormat, sj.Date)
+	s.Date, err = time.Parse(JSONDateFormat, sj.Date)
 	if err != nil {
 		return err
 	}

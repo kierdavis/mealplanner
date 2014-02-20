@@ -24,16 +24,12 @@
                     view.addColumn(new MealListViewColumns.NameColumn("meal-list-name"));
                     view.addColumn(new MealListViewColumns.TagsColumn("meal-list-tags"));
                     view.addColumn(new MealListViewColumns.ActionsColumn("meal-list-action", "meal-list-actions"));
-                    view.render();
                     
-                    
-                    /*
                     {{if .Highlight}}
-                        MPUtil.renderMealListHighlight(meals, $("#results"), {{.MealID}});
-                    {{else}}
-                        MPUtil.renderMealList(meals, $("#results"));
+                        view.highlightItemByID({{.MealID}})
                     {{end}}
-                    */
+                    
+                    view.render();
                 });
             });
         </script>

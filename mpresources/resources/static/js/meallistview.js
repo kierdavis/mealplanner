@@ -183,6 +183,7 @@ var MealListView = (function() {
         this.tbody = null;
         this.pageNumSpan = null;
         this.numPagesSpan = null;
+        this.highlightRowNum = null;
     };
     
     MealListView.prototype.getCurrentPage = function() {
@@ -206,13 +207,20 @@ var MealListView = (function() {
         this.setCurrentPage(this.currentPage + amt);
     };
     
-    MealListView.prototype.deleteItemByID = function(id) {
+    MealListView.prototype.lookup = function(id) {
         var i;
         for (i = 0; i < this.items.length; i++) {
-            if (item.id == id) {
-                this.deleteItemByIndex(i);
-                break;
+            if (this.items[i].id == id) {
+                return i;
             }
+        }
+        return null;
+    };
+    
+    MealListView.prototype.deleteItemByID = function(id) {
+        var idx = this.lookup(id);
+        if (MPUtil.nonNull(idx)) {
+            this.deleteItemByIndex(idx);
         }
     };
     
@@ -229,6 +237,18 @@ var MealListView = (function() {
         
         // Check that currentPage is within the new bounds, and redraw the list.
         this.setCurrentPage(this.currentPage);
+    };
+    
+    MealListView.prototype.highlightItemByID = function(id) {
+        var idx = this.lookup(id);
+        if (MPUtil.nonNull(idx)) {
+            this.highlightItemByIndex(idx);
+        }
+    };
+    
+    MealListView.prototype.highlightItemByIndex = function(idx) {
+        this.currentPage = Math.floor(idx / 10);
+        this.highlightRowNum = idx % 10;
     };
     
     MealListView.prototype.setItemCallback = function(cb) {
@@ -262,6 +282,17 @@ var MealListView = (function() {
         
         this.tbody = tbody;
         this.renderCurrentPage();
+        
+        if (MPUtil.nonNull(this.highlightRowNum)) {
+            var row = $(tbody.find("tr")[this.highlightRowNum]);
+            var bg = row.css("background");
+            row.css("background", "orange");
+            row.animate({
+                backgroundColor: bg,
+            }, 1000);
+            
+            this.highlightRowNum = null;
+        }
     };
     
     MealListView.prototype.renderCurrentPage = function() {

@@ -35,6 +35,10 @@ variable. Example:
     export MPDBSOURCE='web:hello123@tcp(db.example.net:3306)/mealplanner'
     mealplanner
 
+# API documentation
+
+Hosted on [GoDoc](http://godoc.org/github.com/kierdavis/mealplanner).
+
 # Code structure
 
 * `github.com/kierdavis/mealplanner` - Main application command

@@ -10,13 +10,13 @@ import (
 
 type highlightData struct {
 	Highlight bool
-	MealID uint64
+	MealID    uint64
 }
 
 // handleBrowseMeals handles HTTP requests for the meal list.
 func handleBrowseMeals(w http.ResponseWriter, r *http.Request) {
 	var hd highlightData
-	
+
 	highlightStr := r.FormValue("highlight")
 	if highlightStr != "" {
 		mealID, err := strconv.ParseUint(highlightStr, 10, 64)
@@ -24,10 +24,10 @@ func handleBrowseMeals(w http.ResponseWriter, r *http.Request) {
 			httpError(w, BadRequestError)
 			return
 		}
-		
+
 		hd.Highlight = true
 		hd.MealID = mealID
 	}
-	
+
 	renderTemplate(w, "browse-meals.html", hd)
 }

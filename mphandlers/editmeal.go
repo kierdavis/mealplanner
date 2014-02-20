@@ -78,5 +78,5 @@ func handleEditMealAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect to list of meals
-	redirect(w, http.StatusSeeOther, "/meals?highlight=" + strconv.FormatUint(mealID, 10))
+	redirect(w, http.StatusSeeOther, "/meals?highlight="+strconv.FormatUint(mealID, 10))
 }

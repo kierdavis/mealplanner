@@ -136,3 +136,72 @@ table.mplist thead tr th, table.mplist tbody tr td {
     font-size: x-small;
     color: #666;
 }
+
+.meal-list-name {
+    width: 40%;
+}
+
+.meal-list-tags {
+    width: 40%;
+}
+
+.meal-list-actions {
+    width: 20%;
+}
+
+.meal-list-action {
+    width: 5%;
+}
+
+.sugg-list {
+    table-layout: fixed;
+}
+
+.sugg-list-name {
+    width: 35%;
+}
+
+.sugg-list-tags {
+    width: 35%;
+}
+
+.sugg-list-score {
+    width: 10%;
+}
+
+.sugg-list-actions {
+    width: 20%;
+}
+
+.sugg-list-action {
+    width: 5%;
+}
+
+.table-nav {
+    float: left;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.table-nav-left {
+    width: 20%;
+    text-align: left;
+}
+
+.table-nav-center {
+    width: 60%;
+    text-align: center;
+}
+
+.table-nav-right {
+    width: 20%;
+    text-align: right;
+}
+
+tr.alt {
+    background: #eef;
+}
+
+#page-num, #num-pages {
+    font-weight: bold;
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/kierdavis/mealplanner/mpdata"
 	"github.com/kierdavis/mealplanner/mpdb"
 	"net/http"
+	"strconv"
 )
 
 // handleEditMealForm handles HTTP requests for the "edit meal" form.
@@ -77,5 +78,5 @@ func handleEditMealAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect to list of meals
-	redirect(w, http.StatusSeeOther, "/meals")
+	redirect(w, http.StatusSeeOther, "/meals?highlight=" + strconv.FormatUint(mealID, 10))
 }

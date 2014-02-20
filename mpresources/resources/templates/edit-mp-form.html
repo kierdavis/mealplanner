@@ -11,7 +11,32 @@
         
         {{template "common-head.inc.html"}}
         
+        <script type="text/javascript" src="/static/js/meallistview.js"></script>
         <script type="text/javascript">
+            function updateServing(a, date, item) {
+                MPAjax.updateServing({{.ID}}, date, item.id, function() {
+                    a.text(item.name);
+                });
+                
+                $("#dialog").dialog("close");
+            }
+            
+            function loadSuggestions(a, date) {
+                MealResult.fetchSuggestions(date, function(items) {
+                    var view = new MealListView($("#results"), items);
+                    view.addColumn(new MealListViewColumns.NameColumn("sugg-list-name"));
+                    view.addColumn(new MealListViewColumns.TagsColumn("sugg-list-tags"));
+                    view.addColumn(new MealListViewColumns.ScoreColumn("sugg-list-score"));
+                    view.addColumn(new MealListViewColumns.ActionsColumn("sugg-list-action", "sugg-list-actions"));
+                    view.setItemCallback(function(item) {
+                        updateServing(a, date, item);
+                    });
+                    view.render();
+                });
+                
+                $("#dialog").dialog("open");
+            }
+            
             function addServingRow(result) {
                 var date = new Date(Date.parse(result.date));
                 var row = $("<tr>");
@@ -25,7 +50,9 @@
                     .appendTo($("<td>").appendTo(row))
                     .click(function(event) {
                         event.preventDefault();
+                        loadSuggestions(a, date);
                         
+                        /*
                         MPAjax.fetchSuggestions(date, function(suggs) {
                             MPUtil.renderSuggestions(suggs, $("#meal-list"), function(mt) {
                                 MPAjax.updateServing({{.ID}}, date, mt.meal.id, function() {
@@ -39,6 +66,7 @@
                             
                             $("#dialog").dialog("open");
                         });
+                        */
                     });
                 
                 $("<button title='Delete this serving'><img src='/static/img/delete_24x24.png' height='16' alt='Delete'/></button>")
@@ -110,6 +138,7 @@
                 <div class="row">
                     <div class="col-md-8">
                         <h1>Edit Meal Plan</h1>
+                        <h3>{{.StartDate.Format "02 Jan"}} - {{.EndDate.Format "02 Jan"}}</h3>
                     </div>
                     <div class="col-md-4">
                         <a href="/mealplans/{{.ID}}">Return to meal plan</a>
@@ -150,7 +179,7 @@
         </div>
         
         <div id="dialog">
-            <div id="meal-list"></div>
+            <div id="results"></div>
         </div>
     </body>
 </html>

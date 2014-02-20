@@ -1,5 +1,8 @@
 {{/*
     browse-meals.html contains the list of meals page.
+    
+    Dot is expected to be a struct/map containing a field 'Highlight' of type
+    bool and a field 'MealID' of integral type.
 */}}
 
 <!DOCTYPE html>
@@ -9,14 +12,28 @@
         
         {{template "common-head.inc.html"}}
         
+        <script type="text/javascript" src="/static/js/meallistview.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#add-meal").click(function() {
                     location.href = "/meals/new";
                 });
                 
-                MPAjax.fetchMealList(function(meals) {
-                    MPUtil.renderMealList(meals, $("#results"));
+                MealResult.fetchMealList(function(items) {
+                    var view = new MealListView($("#results"), items);
+                    view.addColumn(new MealListViewColumns.NameColumn("meal-list-name"));
+                    view.addColumn(new MealListViewColumns.TagsColumn("meal-list-tags"));
+                    view.addColumn(new MealListViewColumns.ActionsColumn("meal-list-action", "meal-list-actions"));
+                    view.render();
+                    
+                    
+                    /*
+                    {{if .Highlight}}
+                        MPUtil.renderMealListHighlight(meals, $("#results"), {{.MealID}});
+                    {{else}}
+                        MPUtil.renderMealList(meals, $("#results"));
+                    {{end}}
+                    */
                 });
             });
         </script>
@@ -47,9 +64,11 @@
                 </div>
             </div>
             
-            <div id="results">
-                <img src="/static/img/loading.gif" alt=""/>
-                Loading results...
+            <div class="row">
+                <div class="col-md-8" id="results">
+                    <img src="/static/img/loading.gif" alt=""/>
+                    Loading results...
+                </div>
             </div>
             
             {{template "footer.inc.html"}}

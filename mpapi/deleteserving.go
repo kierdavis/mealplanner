@@ -13,15 +13,15 @@ import (
 
 // deleteServing handles an API call to delete a meal serving. Expected
 // parameters: mealplanid, date. Returns: nothing.
-func deleteServing(params url.Values) (response JsonResponse) {
+func deleteServing(params url.Values) (response JSONResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'mealplanid' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'mealplanid' parameter"}
 	}
 
 	servingDate, err := time.Parse(mpdata.JsonDateFormat, params.Get("date"))
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'date' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'date' parameter"}
 	}
 
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
@@ -32,8 +32,8 @@ func deleteServing(params url.Values) (response JsonResponse) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
-		return JsonResponse{Error: "Database error"}
+		return JSONResponse{Error: "Database error"}
 	}
 
-	return JsonResponse{Success: nil}
+	return JSONResponse{Success: nil}
 }

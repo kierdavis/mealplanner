@@ -12,10 +12,10 @@ import (
 
 // fetchSuggestions handles an API call to generate suggestions for a given date.
 // Expected parameters: date. Returns: an array of suggestion objects.
-func fetchSuggestions(params url.Values) (response JsonResponse) {
+func fetchSuggestions(params url.Values) (response JSONResponse) {
 	dateServed, err := time.Parse(mpdata.JsonDateFormat, params.Get("date"))
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'date' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'date' parameter"}
 	}
 
 	var suggs []*mpdata.Suggestion
@@ -29,8 +29,8 @@ func fetchSuggestions(params url.Values) (response JsonResponse) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
-		return JsonResponse{Error: "Database error"}
+		return JSONResponse{Error: "Database error"}
 	}
 
-	return JsonResponse{Success: suggs}
+	return JSONResponse{Success: suggs}
 }

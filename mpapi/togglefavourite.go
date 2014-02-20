@@ -12,10 +12,10 @@ import (
 // toggleFavourite implements an API call to toggle the "favourite" status of
 // a given meal. Expected paramaters: mealid. Returns: the updated "favourite"
 // status of the meal.
-func toggleFavourite(params url.Values) (response JsonResponse) {
+func toggleFavourite(params url.Values) (response JSONResponse) {
 	mealID, err := strconv.ParseUint(params.Get("mealid"), 10, 64)
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'mealid' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'mealid' parameter"}
 	}
 
 	var isFavourite bool
@@ -29,8 +29,8 @@ func toggleFavourite(params url.Values) (response JsonResponse) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
-		return JsonResponse{Error: "Database error"}
+		return JSONResponse{Error: "Database error"}
 	}
 
-	return JsonResponse{Success: isFavourite}
+	return JSONResponse{Success: isFavourite}
 }

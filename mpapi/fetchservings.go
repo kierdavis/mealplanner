@@ -22,10 +22,10 @@ type fetchServingsRecord struct {
 // fetchServings handles an API call to list all the servings for a given meal
 // plan. Expected parameters: mealplanid. Returns: an array of
 // fetchServingsRecord objects.
-func fetchServings(params url.Values) (response JsonResponse) {
+func fetchServings(params url.Values) (response JSONResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'mealplanid' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'mealplanid' parameter"}
 	}
 
 	var results []*fetchServingsRecord
@@ -76,8 +76,8 @@ func fetchServings(params url.Values) (response JsonResponse) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
-		return JsonResponse{Error: "Database error"}
+		return JSONResponse{Error: "Database error"}
 	}
 
-	return JsonResponse{Success: results}
+	return JSONResponse{Success: results}
 }

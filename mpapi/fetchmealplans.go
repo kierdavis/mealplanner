@@ -13,15 +13,15 @@ import (
 // fetchMealPlans handles an API call to return a list of meal plans that
 // overlap with a specified inclusive date range. Expected parameters: from, to.
 // Returns: an array of meal plan objects.
-func fetchMealPlans(params url.Values) (response JsonResponse) {
+func fetchMealPlans(params url.Values) (response JSONResponse) {
 	from, err := time.Parse(mpdata.JsonDateFormat, params.Get("from"))
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'from' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'from' parameter"}
 	}
 
 	to, err := time.Parse(mpdata.JsonDateFormat, params.Get("to"))
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'to' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'to' parameter"}
 	}
 
 	var mps []*mpdata.MealPlan
@@ -35,8 +35,8 @@ func fetchMealPlans(params url.Values) (response JsonResponse) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
-		return JsonResponse{Error: "Database error"}
+		return JSONResponse{Error: "Database error"}
 	}
 
-	return JsonResponse{Success: mps}
+	return JSONResponse{Success: mps}
 }

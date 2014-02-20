@@ -11,15 +11,15 @@ import (
 
 // updateNotes implements an API call to update the notes associated with a
 // meal plan. Expected parameters: mealplanid, notes. Returns: nothing.
-func updateNotes(params url.Values) (response JsonResponse) {
+func updateNotes(params url.Values) (response JSONResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'mealplanid' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'mealplanid' parameter"}
 	}
 
 	notes := params.Get("notes")
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'notes' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'notes' parameter"}
 	}
 
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
@@ -30,8 +30,8 @@ func updateNotes(params url.Values) (response JsonResponse) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
-		return JsonResponse{Error: "Database error"}
+		return JSONResponse{Error: "Database error"}
 	}
 
-	return JsonResponse{Success: nil}
+	return JSONResponse{Success: nil}
 }

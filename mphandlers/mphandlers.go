@@ -23,7 +23,7 @@ func CreateMux() (m *mux.Router) {
 	m.Path("/mealplans").Methods("GET", "HEAD").HandlerFunc(handleBrowseMealPlans)
 	m.Path("/mealplans/{mealplanid:[0-9]+}").Methods("GET", "HEAD").HandlerFunc(handleViewMealPlan)
 	m.Path("/mealplans/{mealplanid:[0-9]+}/edit").Methods("GET", "HEAD").HandlerFunc(handleEditMealPlan)
-	m.Path("/api").Methods("POST").HandlerFunc(mpapi.HandleApiCall)
+	m.Path("/api").Methods("POST").HandlerFunc(mpapi.HandleAPICall)
 
 	addMeal := m.Path("/meals/new").Subrouter()
 	addMeal.Methods("GET", "HEAD").HandlerFunc(handleAddMealForm)

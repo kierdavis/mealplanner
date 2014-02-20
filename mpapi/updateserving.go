@@ -14,20 +14,20 @@ import (
 // updateServing implements an API call to update a meal serving for a meal
 // plan with a new meal ID, removing the old serving if it already exists.
 // Expected parameters: mealplanid, date, mealid. Returns: nothing.
-func updateServing(params url.Values) (response JsonResponse) {
+func updateServing(params url.Values) (response JSONResponse) {
 	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'mealplanid' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'mealplanid' parameter"}
 	}
 
 	dateServed, err := time.Parse(mpdata.JsonDateFormat, params.Get("date"))
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'date' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'date' parameter"}
 	}
 
 	mealID, err := strconv.ParseUint(params.Get("mealid"), 10, 64)
 	if err != nil {
-		return JsonResponse{Error: "Invalid or missing 'mealid' parameter"}
+		return JSONResponse{Error: "Invalid or missing 'mealid' parameter"}
 	}
 
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
@@ -49,8 +49,8 @@ func updateServing(params url.Values) (response JsonResponse) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
-		return JsonResponse{Error: "Database error"}
+		return JSONResponse{Error: "Database error"}
 	}
 
-	return JsonResponse{Success: nil}
+	return JSONResponse{Success: nil}
 }

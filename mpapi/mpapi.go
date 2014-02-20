@@ -8,23 +8,23 @@ import (
 	"os"
 )
 
-// JsonResponse contains the response structure returned to the client.
+// JSONResponse contains the response structure returned to the client.
 // If the 'Error' field is nonempty, the response indicates an error has
 // occurred, else the response is assumed to be a successful one.
-type JsonResponse struct {
+type JSONResponse struct {
 	Error   string      `json:"error"`   // The error message, in the event of an unsuccessful response.
 	Success interface{} `json:"success"` // The response payload, in the event of a successful response.
 }
 
-// HandleApiCall handles an HTTP request for an API call. It obtains the form
+// HandleAPICall handles an HTTP request for an API call. It obtains the form
 // values, passes them through Dispatch and sends the resulting JSON response
 // to the client.
-func HandleApiCall(w http.ResponseWriter, r *http.Request) {
-	var response JsonResponse
+func HandleAPICall(w http.ResponseWriter, r *http.Request) {
+	var response JSONResponse
 
 	err := r.ParseForm()
 	if err != nil {
-		response = JsonResponse{Error: "Could not parse request body."}
+		response = JSONResponse{Error: "Could not parse request body."}
 	} else {
 		response = Dispatch(r.Form)
 	}
@@ -39,7 +39,7 @@ func HandleApiCall(w http.ResponseWriter, r *http.Request) {
 
 // Dispatch inspects the "command" parameter and dispatches the request to the
 // appropriate handler function.
-func Dispatch(params url.Values) (response JsonResponse) {
+func Dispatch(params url.Values) (response JSONResponse) {
 	switch params.Get("command") {
 	case "fetch-meal-list":
 		return fetchMealList(params)
@@ -63,5 +63,5 @@ func Dispatch(params url.Values) (response JsonResponse) {
 		return fetchMealPlans(params)
 	}
 
-	return JsonResponse{Error: "Invalid or missing command"}
+	return JSONResponse{Error: "Invalid or missing command"}
 }

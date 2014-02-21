@@ -19,14 +19,15 @@ func getSourceDir() (dir string) {
 	return pkginfo.Dir
 }
 
-// The directory that all resources are stored in.
+// ResourcesDir is the directory that all resources are stored in.
 var ResourcesDir = filepath.Join(getSourceDir(), "resources")
 
-// The directory that the templates are stored in.
+// TemplatesDir is the directory that the templates are stored in.
 var TemplatesDir = filepath.Join(ResourcesDir, "templates")
 
-// The directory that static files are stored in.
+// StaticDir is the directory that static files are stored in.
 var StaticDir = filepath.Join(ResourcesDir, "static")
 
-// The parsed templates. See also: documentation on 'html/template'.
+// Templates contains the parsed templates. See also: documentation on
+// 'html/template'.
 var Templates = template.Must(template.ParseGlob(filepath.Join(TemplatesDir, "*")))

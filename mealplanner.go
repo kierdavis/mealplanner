@@ -46,7 +46,7 @@ func main() {
 
 	app := http.Handler(m)
 	if *debug {
-		app = mphandlers.LoggingHandler{app}
+		app = mphandlers.LoggingHandler{Handler: app}
 
 		fmt.Printf("Listening on %s\n", listenAddr)
 	}

@@ -164,7 +164,7 @@ func GetMealWithTags(q Queryable, mealID uint64) (mt mpdata.MealWithTags, err er
 		return mpdata.MealWithTags{}, err
 	}
 
-	return mpdata.MealWithTags{meal, tags}, nil
+	return mpdata.MealWithTags{Meal: meal, Tags: tags}, nil
 }
 
 // AddMeal adds the information in 'meal' to the database as a new record, then

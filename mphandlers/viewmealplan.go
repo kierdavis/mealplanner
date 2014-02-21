@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// handleViewMealPlan handles HTTP requests for the meal plan viewer.
 func handleViewMealPlan(w http.ResponseWriter, r *http.Request) {
 	mpID, ok := getUint64Var(r, "mealplanid")
 	if !ok {

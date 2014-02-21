@@ -8,6 +8,8 @@ import (
 	"strconv"
 )
 
+// highlightData contains information passed to the meal browser template
+// regarding which meal, if any, should be highlighted in the list.
 type highlightData struct {
 	Highlight bool
 	MealID    uint64

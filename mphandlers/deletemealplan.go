@@ -7,11 +7,15 @@ import (
 	"net/http"
 )
 
-type deleteMPFormValues struct {
+// deleteMPData contains information passed to the meal plan deletion template
+// regarding the meal plan that is being deleted.
+type deleteMPData struct {
 	MP          *mpdata.MealPlan
 	NumServings int
 }
 
+// handleDeleteMealPlanForm handles HTTP requests for the meal plan deletion
+// confirmation page.
 func handleDeleteMealPlanForm(w http.ResponseWriter, r *http.Request) {
 	mpID, ok := getUint64Var(r, "mealplanid")
 	if !ok {
@@ -44,9 +48,11 @@ func handleDeleteMealPlanForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, "delete-mp-form.html", deleteMPFormValues{mp, numServings})
+	renderTemplate(w, "delete-mp-form.html", deleteMPData{mp, numServings})
 }
 
+// handleDeleteMealPlanAction handles HTTP requests for submission of the
+// meal plan deletion form.
 func handleDeleteMealPlanAction(w http.ResponseWriter, r *http.Request) {
 	mpID, ok := getUint64Var(r, "mealplanid")
 	if !ok {

@@ -9,10 +9,14 @@ import (
 	"time"
 )
 
+// handleCreateMealPlanForm handles HTTP requests for the meal plan creation
+// form.
 func handleCreateMealPlanForm(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "create-mp-form.html", nil)
 }
 
+// handleCreateMealPlanAction handles HTTP requests for the submission of the
+// meal plan creation form.
 func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 	// Parse the POST request body
 	err := r.ParseForm()

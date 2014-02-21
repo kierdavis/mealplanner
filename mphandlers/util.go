@@ -12,7 +12,7 @@ import (
 
 // httpError sends an HTTP error code to the client followed by an HTML error
 // page explaining the error.
-func httpError(w http.ResponseWriter, h *HttpError) {
+func httpError(w http.ResponseWriter, h *HTTPError) {
 	w.Header().Set("Content-Type", "text/html; charset=utf8")
 	w.WriteHeader(h.Status)
 

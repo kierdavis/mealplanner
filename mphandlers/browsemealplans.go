@@ -5,11 +5,14 @@ import (
 	"time"
 )
 
-type showingDate struct {
+// showingData contains the information passed to the meal plan browser
+// template regarding which year/month to display.
+type showingData struct {
 	Year  int
 	Month int
 }
 
+// handleBrowseMealPlans handles HTTP requests for the meal plan browser.
 func handleBrowseMealPlans(w http.ResponseWriter, r *http.Request) {
 	showing := time.Now()
 	showingStr := r.FormValue("showing")
@@ -22,6 +25,6 @@ func handleBrowseMealPlans(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sd := showingDate{showing.Year(), int(showing.Month() - 1)}
+	sd := showingData{showing.Year(), int(showing.Month() - 1)}
 	renderTemplate(w, "browse-mps.html", sd)
 }

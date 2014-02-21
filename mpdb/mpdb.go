@@ -35,24 +35,34 @@ type LoggingQueryable struct {
 	Q Queryable
 }
 
+// Exec executes a query without returning any rows. The args are for any
+// placeholder parameters in the query.
 func (lq LoggingQueryable) Exec(query string, args ...interface{}) (result sql.Result, err error) {
 	result, err = lq.Q.Exec(query, args...)
 	fmt.Printf("SQL: Exec(%v, %v) -> %v\n", query, args, err)
 	return result, err
 }
 
+// Prepare creates a prepared statement for later queries or executions.
+// Multiple queries or executions may be run concurrently from the returned
+// statement.
 func (lq LoggingQueryable) Prepare(query string) (stmt *sql.Stmt, err error) {
 	stmt, err = lq.Q.Prepare(query)
 	fmt.Printf("SQL: Prepare(%v) -> %v\n", query, err)
 	return stmt, err
 }
 
+// Query executes a query that returns rows, typically a SELECT. The args are
+// for any placeholder parameters in the query.
 func (lq LoggingQueryable) Query(query string, args ...interface{}) (rows *sql.Rows, err error) {
 	rows, err = lq.Q.Query(query, args...)
 	fmt.Printf("SQL: Query(%v, %v) -> %v\n", query, args, err)
 	return rows, err
 }
 
+// QueryRow executes a query that is expected to return at most one row.
+// QueryRow always return a non-nil value. Errors are deferred until Row's Scan
+// method is called.
 func (lq LoggingQueryable) QueryRow(query string, args ...interface{}) (row *sql.Row) {
 	row = lq.Q.QueryRow(query, args...)
 	fmt.Printf("SQL: QueryRow(%v, %v) -> %v\n", query, args, row)
@@ -65,8 +75,8 @@ func Connect() (db *sql.DB, err error) {
 	return sql.Open(DBDriver, DBSource+DBParams)
 }
 
-// Type FailedCloseError contains information regarding a situation where an
-// error occurs when closing a resource in response to an earlier error.
+// FailedCloseError contains information regarding a situation where an error
+// occurs when closing a resource in response to an earlier error.
 type FailedCloseError struct {
 	What          string // A string used in the error message to identify what resource was being closed.
 	CloseError    error  // The error returned when the resource was closed.
@@ -78,11 +88,11 @@ func (err *FailedCloseError) Error() (msg string) {
 	return fmt.Sprintf("%s\nAdditionally, when attempting to %s: %s", err.OriginalError.Error(), err.What, err.CloseError.Error())
 }
 
-// Type WithConnectionFunc represents a function that can be used with
+// WithConnectionFunc represents a function that can be used with
 // WithConnection.
 type WithConnectionFunc func(*sql.DB) error
 
-// Type WithTransactionFunc represents a function that can be used with
+// WithTransactionFunc represents a function that can be used with
 // WithTransaction.
 type WithTransactionFunc func(*sql.Tx) error
 

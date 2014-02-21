@@ -106,6 +106,8 @@ func InitDB(debug bool) (err error) {
 	})
 }
 
+// InsertTestData inserts some predefined meals and meal plans into the
+// database for testing purposes.
 func InsertTestData(q Queryable) (err error) {
 	err = AddMealWithTags(q, mpdata.MealWithTags{
 		Meal: &mpdata.Meal{

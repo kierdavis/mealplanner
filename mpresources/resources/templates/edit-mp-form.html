@@ -21,23 +21,15 @@
                 $("#dialog").dialog("close");
             }
             
-            function loadSuggestions(a, date) {
+            function loadSuggestions(view, a, date) {
                 MealResult.fetchSuggestions(date, function(items) {
-                    var view = new MealListView($("#results"), items);
-                    view.addColumn(new MealListViewColumns.NameColumn("sugg-list-name"));
-                    view.addColumn(new MealListViewColumns.TagsColumn("sugg-list-tags"));
-                    view.addColumn(new MealListViewColumns.ScoreColumn("sugg-list-score"));
-                    view.addColumn(new MealListViewColumns.ActionsColumn("sugg-list-action", "sugg-list-actions"));
-                    view.setItemCallback(function(item) {
-                        updateServing(a, date, item);
-                    });
-                    view.render();
+                    view.setData(items);
                 });
                 
                 $("#dialog").dialog("open");
             }
             
-            function addServingRow(result) {
+            function addServingRow(view, result) {
                 var date = new Date(Date.parse(result.date));
                 var row = $("<tr>");
                 
@@ -50,7 +42,7 @@
                     .appendTo($("<td>").appendTo(row))
                     .click(function(event) {
                         event.preventDefault();
-                        loadSuggestions(a, date);
+                        loadSuggestions(view, a, date);
                         
                         /*
                         MPAjax.fetchSuggestions(date, function(suggs) {
@@ -107,6 +99,16 @@
                     });
                 });
                 
+                var view = new MealListView($("#results"));
+                view.addColumn(new MealListViewColumns.NameColumn("sugg-list-name"));
+                view.addColumn(new MealListViewColumns.TagsColumn("sugg-list-tags"));
+                view.addColumn(new MealListViewColumns.ScoreColumn("sugg-list-score"));
+                view.addColumn(new MealListViewColumns.ActionsColumn("sugg-list-action", "sugg-list-actions"));
+                view.setItemCallback(function(item) {
+                    updateServing(a, date, item);
+                });
+                view.render();
+                
                 MPAjax.fetchServings({{.ID}}, function(results) {
                     results = results || [];
                     
@@ -114,7 +116,7 @@
                     
                     var i;
                     for (i = 0; i < results.length; i++) {
-                        container.append(addServingRow(results[i]));
+                        container.append(addServingRow(view, results[i]));
                     }
                 });
             });

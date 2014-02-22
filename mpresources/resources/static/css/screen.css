@@ -177,10 +177,21 @@ table.mplist thead tr th, table.mplist tbody tr td {
     width: 5%;
 }
 
+.table-search-container {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.table-nav-container {
+    width: 100%;
+}
+
 .table-nav {
     float: left;
     margin-top: 10px;
     margin-bottom: 20px;
+    height: 40px;
+    border-bottom: 1px solid #ccc;
 }
 
 .table-nav-left {

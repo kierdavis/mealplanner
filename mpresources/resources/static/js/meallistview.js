@@ -8,8 +8,8 @@ var MealResult = (function() {
         this.score = score;
     };
     
-    MealResult.fetchMealList = function(callback) {
-        MPAjax.fetchMealList(function(mts) {
+    MealResult.fetchMealList = function(query, callback) {
+        MPAjax.fetchMealList(query, function(mts) {
             var i, results = [];
             for (i = 0; i < mts.length; i++) {
                 results.push(new MealResult(mts[i], null));
@@ -173,17 +173,27 @@ var MealListViewColumns = (function() {
 })();
 
 var MealListView = (function() {
-    var MealListView = function(parent, items) {
+    var MealListView = function(parent) {
         this.parent = parent;
-        this.items = items;
-        this.numPages = Math.floor((items.length + 9) / 10);
+        this.items = [];
+        this.numPages = 0;
         this.currentPage = 0;
         this.columns = [];
         this.itemCallback = null;
+        this.searchCallback = null;
         this.tbody = null;
         this.pageNumSpan = null;
         this.numPagesSpan = null;
-        this.highlightRowNum = null;
+    };
+    
+    MealListView.prototype.setData = function(items) {
+        this.items = items;
+        this.touchData();
+    };
+    
+    MealListView.prototype.touchData = function() {
+        this.numPages = Math.floor((this.items.length + 9) / 10);
+        this.renderCurrentPage();
     };
     
     MealListView.prototype.getCurrentPage = function() {
@@ -191,20 +201,13 @@ var MealListView = (function() {
     };
     
     MealListView.prototype.setCurrentPage = function(p) {
-        if (p < 0) {
-            p = 0;
-        }
-        
-        if (p >= this.numPages) {
-            p = this.numPages - 1;
-        }
-        
         this.currentPage = p;
         this.renderCurrentPage();
     };
     
     MealListView.prototype.incrCurrentPage = function(amt) {
-        this.setCurrentPage(this.currentPage + amt);
+        this.currentPage += amt;
+        this.renderCurrentPage();
     };
     
     MealListView.prototype.lookup = function(id) {
@@ -226,17 +229,7 @@ var MealListView = (function() {
     
     MealListView.prototype.deleteItemByIndex = function(idx) {
         this.items.splice(idx, 1);
-        
-        if (this.items.length == 0) {
-            this.parent.text("No results to display.");
-            return;
-        }
-        
-        // Update the number of pages.
-        this.numPages = Math.floor((items.length + 9) / 10);
-        
-        // Check that currentPage is within the new bounds, and redraw the list.
-        this.setCurrentPage(this.currentPage);
+        this.touchData();
     };
     
     MealListView.prototype.highlightItemByID = function(id) {
@@ -247,12 +240,23 @@ var MealListView = (function() {
     };
     
     MealListView.prototype.highlightItemByIndex = function(idx) {
-        this.currentPage = Math.floor(idx / 10);
-        this.highlightRowNum = idx % 10;
+        var newCurrentPage = Math.floor(idx / 10);
+        if (this.currentPage != newCurrentPage) {
+            this.setCurrentPage(newCurrentPage);
+        }
+        
+        var row = $(this.tbody.find("tr")[idx % 10]);
+        var bg = row.css("background");
+        row.css("background", "orange");
+        row.animate({backgroundColor: bg}, 1000);
     };
     
     MealListView.prototype.setItemCallback = function(cb) {
         this.itemCallback = cb;
+    };
+    
+    MealListView.prototype.setSearchCallback = function(cb) {
+        this.searchCallback = cb;
     };
     
     MealListView.prototype.addColumn = function(col) {
@@ -263,12 +267,15 @@ var MealListView = (function() {
     MealListView.prototype.render = function() {
         this.parent.empty();
         
+        /*
         if (this.items.length == 0) {
             this.parent.text("No results to display.");
             return;
         }
+        */
         
-        this.renderNav($("<div style='width: 100%'></div>").appendTo(this.parent));
+        this.renderSearch(this.parent);
+        this.renderNav(this.parent);
         
         var table = $("<table style='width: 100%; table-layout: fixed'></table>").appendTo(this.parent);
         var thead = $("<thead></thead>").appendTo(table);
@@ -285,6 +292,14 @@ var MealListView = (function() {
     };
     
     MealListView.prototype.renderCurrentPage = function() {
+        if (this.currentPage >= this.numPages) {
+            this.currentPage = this.numPages - 1;
+        }
+        
+        if (this.currentPage < 0) {
+            this.currentPage = 0;
+        }
+        
         this.tbody.empty();
         
         this.pageNumSpan.text(this.currentPage + 1);
@@ -300,17 +315,6 @@ var MealListView = (function() {
         for (i = start; i < end; i++) {
             this.renderItem(this.items[i]);
         }
-        
-        if (MPUtil.nonNull(this.highlightRowNum)) {
-            var row = $(tbody.find("tr")[this.highlightRowNum]);
-            var bg = row.css("background");
-            row.css("background", "orange");
-            row.animate({
-                backgroundColor: bg,
-            }, 1000);
-            
-            this.highlightRowNum = null;
-        }
     };
     
     MealListView.prototype.renderItem = function(item) {
@@ -321,7 +325,34 @@ var MealListView = (function() {
         }
     };
     
-    MealListView.prototype.renderNav = function(nav) {
+    MealListView.prototype.renderSearch = function(parent) {
+        if (MPUtil.nonNull(this.searchCallback)) {
+            var container = $("<div class='table-search-container'></div>").appendTo(parent);
+            var img = $("<img src='/static/img/loading.gif' height='16' alt='Searching...' style='margin-right: 10px'/>").appendTo(container).hide();
+            var input = $("<input type='text' placeholder='Type to search...' width='30'/>").appendTo(container);
+            
+            var tid = null;
+            var view = this;
+            
+            input.keydown(function() {
+                if (MPUtil.nonNull(tid)) {
+                    window.clearTimeout(tid);
+                }
+                
+                tid = window.setTimeout(function() {
+                    tid = null;
+                
+                    img.show();
+                    view.searchCallback(input.val(), function() {
+                        img.hide();
+                    });
+                }, 1200);
+            });
+        }
+    };
+    
+    MealListView.prototype.renderNav = function(parent) {
+        var nav = $("<div class='table-nav-container'></div>").appendTo(parent);
         var left = $("<div class='table-nav table-nav-left'></div>").appendTo(nav);
         var center = $("<div class='table-nav table-nav-center'></div>").appendTo(nav);
         var right = $("<div class='table-nav table-nav-right'></div>").appendTo(nav);

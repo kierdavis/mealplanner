@@ -37,9 +37,10 @@ var MPAjax = (function() {
     }
     
     // Fetch the list of meals and pass them to a callback function.
-    MPAjax.fetchMealList = function(callback) {
+    MPAjax.fetchMealList = function(query, callback) {
         var params = {
             "command": "fetch-meal-list",
+            "query": query,
         };
         
         doAjax(params, callback);

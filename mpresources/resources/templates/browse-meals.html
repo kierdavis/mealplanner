@@ -19,17 +19,24 @@
                     location.href = "/meals/new";
                 });
                 
-                MealResult.fetchMealList(function(items) {
-                    var view = new MealListView($("#results"), items);
-                    view.addColumn(new MealListViewColumns.NameColumn("meal-list-name"));
-                    view.addColumn(new MealListViewColumns.TagsColumn("meal-list-tags"));
-                    view.addColumn(new MealListViewColumns.ActionsColumn("meal-list-action", "meal-list-actions"));
-                    
+                var view = new MealListView($("#results"));
+                view.addColumn(new MealListViewColumns.NameColumn("meal-list-name"));
+                view.addColumn(new MealListViewColumns.TagsColumn("meal-list-tags"));
+                view.addColumn(new MealListViewColumns.ActionsColumn("meal-list-action", "meal-list-actions"));
+                
+                view.setSearchCallback(function(query, cb) {
+                    MealResult.fetchMealList(query, function(items) {
+                        view.setData(items);
+                        cb();
+                    });
+                });
+                
+                view.render();
+                
+                view.searchCallback("", function() {
                     {{if .Highlight}}
-                        view.highlightItemByID({{.MealID}})
+                        view.highlightItemByID({{.MealID}});
                     {{end}}
-                    
-                    view.render();
                 });
             });
         </script>

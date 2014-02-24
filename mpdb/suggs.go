@@ -48,6 +48,15 @@ func GenerateSuggestions(q Queryable, mpID uint64, date time.Time) (suggs []*mpd
 	}
 
 	sort.Sort(mpdata.SuggestionSlice(suggs))
+	
+	// Scale the scores to between 0 and 1
+	maxScore := suggs[0].Score
+	minScore := suggs[len(suggs)-1].Score
+	scoreRange := maxScore - minScore
+	
+	for _, sugg := range suggs {
+		sugg.Score = (sugg.Score - minScore) / scoreRange
+	}
 
 	return suggs, nil
 }

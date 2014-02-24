@@ -13,15 +13,18 @@
         
         <script type="text/javascript" src="/static/js/meallistview.js"></script>
         <script type="text/javascript">
-            function updateServing(a, date, item) {
-                MPAjax.updateServing({{.ID}}, date, item.id, function() {
-                    a.text(item.name);
+            var selectedServingDate = null;
+            var selectedServingLink = null;
+            
+            function updateServing(item) {
+                MPAjax.updateServing({{.ID}}, selectedServingDate, item.id, function() {
+                    selectedServingLink.text(item.name);
                 });
                 
                 $("#dialog").dialog("close");
             }
             
-            function loadSuggestions(view, a, date) {
+            function loadSuggestions(view, date) {
                 MealResult.fetchSuggestions(date, function(items) {
                     view.setData(items);
                 });
@@ -42,7 +45,9 @@
                     .appendTo($("<td>").appendTo(row))
                     .click(function(event) {
                         event.preventDefault();
-                        loadSuggestions(view, a, date);
+                        selectedServingDate = date;
+                        selectedServingLink = a;
+                        loadSuggestions(view, date);
                         
                         /*
                         MPAjax.fetchSuggestions(date, function(suggs) {
@@ -104,9 +109,7 @@
                 view.addColumn(new MealListViewColumns.TagsColumn("sugg-list-tags"));
                 view.addColumn(new MealListViewColumns.ScoreColumn("sugg-list-score"));
                 view.addColumn(new MealListViewColumns.ActionsColumn("sugg-list-action", "sugg-list-actions"));
-                view.setItemCallback(function(item) {
-                    updateServing(a, date, item);
-                });
+                view.setItemCallback(updateServing);
                 view.render();
                 
                 MPAjax.fetchServings({{.ID}}, function(results) {

@@ -7,12 +7,18 @@ import (
 	"github.com/kierdavis/mealplanner/mpdb"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 )
 
 // fetchSuggestions handles an API call to generate suggestions for a given date.
 // Expected parameters: date. Returns: an array of suggestion objects.
 func fetchSuggestions(params url.Values) (response JSONResponse) {
+	mpID, err := strconv.ParseUint(params.Get("mealplanid"), 10, 64)
+	if err != nil {
+		return JSONResponse{Error: "Invalid or missing 'mealplanid' parameter"}
+	}
+	
 	dateServed, err := time.Parse(mpdata.JSONDateFormat, params.Get("date"))
 	if err != nil {
 		return JSONResponse{Error: "Invalid or missing 'date' parameter"}
@@ -22,7 +28,7 @@ func fetchSuggestions(params url.Values) (response JSONResponse) {
 
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
-			suggs, err = mpdb.GenerateSuggestions(tx, dateServed)
+			suggs, err = mpdb.GenerateSuggestions(tx, mpID, dateServed)
 			return err
 		})
 	})

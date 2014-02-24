@@ -102,9 +102,10 @@ var MPAjax = (function() {
         doAjax(params, callback);
     };
     
-    MPAjax.fetchSuggestions = function(date, callback) {
+    MPAjax.fetchSuggestions = function(mpID, date, callback) {
         var params = {
             "command": "fetch-suggestions",
+            "mealplanid": mpID,
             "date": MPUtil.formatDateJSON(date),
         };
         

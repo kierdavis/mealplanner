@@ -19,8 +19,8 @@ var MealResult = (function() {
         });
     };
     
-    MealResult.fetchSuggestions = function(date, callback) {
-        MPAjax.fetchSuggestions(date, function(suggs) {
+    MealResult.fetchSuggestions = function(mpID, date, callback) {
+        MPAjax.fetchSuggestions(mpID, date, function(suggs) {
             var i, results = [];
             for (i = 0; i < suggs.length; i++) {
                 results.push(new MealResult(suggs[i].mt, suggs[i].score));

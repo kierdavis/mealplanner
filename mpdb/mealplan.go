@@ -240,7 +240,7 @@ func AutoFillMealPlan(q Queryable, mp *mpdata.MealPlan) (err error) {
 // AutoFillMealPlanDay assigns a serving to day 'date' on the meal plan
 // identified by 'mpID' using the top suggestion.
 func AutoFillMealPlanDay(q Queryable, mpID uint64, date time.Time) (err error) {
-	suggs, err := GenerateSuggestions(q, date)
+	suggs, err := GenerateSuggestions(q, mpID, date)
 	if err != nil {
 		return err
 	}

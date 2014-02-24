@@ -41,8 +41,10 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 		httpError(w, BadRequestError)
 		return
 	}
+	
+	auto := r.FormValue("auto") == "true"
 
-	// Create a MealPlan
+	// Create a MealPlan object
 	mp := &mpdata.MealPlan{
 		StartDate: startDate,
 		EndDate:   endDate,
@@ -50,7 +52,21 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 
 	err = mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
-			return mpdb.AddMealPlan(tx, mp)
+			// Add mp to the database
+			err = mpdb.AddMealPlan(tx, mp)
+			if err != nil {
+				return err
+			}
+			
+			// Optionally fill the meal plan automatically
+			if auto {
+				err = mpdb.AutoFillMealPlan(tx, mp)
+				if err != nil {
+					return err
+				}
+			}
+			
+			return nil
 		})
 	})
 	if err != nil {

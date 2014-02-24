@@ -223,3 +223,38 @@ func AddServing(q Queryable, serving *mpdata.Serving) (err error) {
 	_, err = q.Exec(InsertServingSQL, serving.MealPlanID, serving.Date, serving.MealID)
 	return err
 }
+
+// AutoFillMealPlan assigns servings to every day in 'mp' using the top
+// suggestion for each day.
+func AutoFillMealPlan(q Queryable, mp *mpdata.MealPlan) (err error) {
+	for _, date := range mp.Days() {
+		err = AutoFillMealPlanDay(q, mp.ID, date)
+		if err != nil {
+			return err
+		}
+	}
+	
+	return nil
+}
+
+// AutoFillMealPlanDay assigns a serving to day 'date' on the meal plan
+// identified by 'mpID' using the top suggestion.
+func AutoFillMealPlanDay(q Queryable, mpID uint64, date time.Time) (err error) {
+	suggs, err := GenerateSuggestions(q, date)
+	if err != nil {
+		return err
+	}
+	
+	err = DeleteServing(q, mpID, date)
+	if err != nil {
+		return err
+	}
+	
+	serving := &mpdata.Serving{
+		MealPlanID: mpID,
+		Date: date,
+		MealID: suggs[0].MT.Meal.ID,
+	}
+	
+	return AddServing(q, serving)
+}

@@ -63,8 +63,10 @@
                 return validateStartDate(start) && validateEndDate(start, end);
             }
             
-            $("#form").submit(function() {
-                if (!validateDates()) return false;
+            $(document).ready(function() {
+                $("#form").submit(function() {
+                    if (!validateDates()) return false;
+                });
             });
         </script>
     </head>

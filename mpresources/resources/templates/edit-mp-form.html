@@ -79,6 +79,21 @@
                 return row;
             }
             
+            function loadServings(deletedItem) {
+                var view = this;
+                
+                MPAjax.fetchServings({{.ID}}, function(results) {
+                    results = results || [];
+                    
+                    var container = $("#servings").empty();
+                    
+                    var i;
+                    for (i = 0; i < results.length; i++) {
+                        container.append(addServingRow(view, results[i]));
+                    }
+                });
+            }
+            
             $(document).ready(function() {
                 $("#dialog").dialog({
                     autoOpen: false,
@@ -110,18 +125,10 @@
                 view.addColumn(new MealListViewColumns.ScoreColumn("sugg-list-score"));
                 view.addColumn(new MealListViewColumns.ActionsColumn("sugg-list-action", "sugg-list-actions"));
                 view.setItemCallback(updateServing);
+                view.setDeleteCallback(loadServings);
                 view.render();
                 
-                MPAjax.fetchServings({{.ID}}, function(results) {
-                    results = results || [];
-                    
-                    var container = $("#servings");
-                    
-                    var i;
-                    for (i = 0; i < results.length; i++) {
-                        container.append(addServingRow(view, results[i]));
-                    }
-                });
+                loadServings.call(view, null);
             });
         </script>
     </head>

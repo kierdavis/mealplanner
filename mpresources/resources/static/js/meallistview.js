@@ -54,7 +54,7 @@ var MealListViewColumns = (function() {
             var view = this.view;
             var link = $("<a href='#'></a>").text(item.name).appendTo(cell).click(function(event) {
                 event.preventDefault();
-                view.itemCallback(item);
+                view.itemCallback.call(view, item);
             });
         }
         
@@ -163,12 +163,13 @@ var MealListViewColumns = (function() {
     o.ActionsColumn.prototype.renderDeleteButton = function(row, item) {
         var cell = $("<td></td>").addClass(this.individualClassName).appendTo(row);
         var button = $("<button title='Delete this meal from the database' class='action-button'><img src='/static/img/delete_24x24.png' height='16' alt=''/></button>");
+        var view = this.view;
         button.appendTo(cell).click(function(event) {
             event.preventDefault();
             
             if (confirm("Are you sure that you want to delete the meal '" + item.name + "'?")) {
                 MPAjax.deleteMeal(item.id, function(response) {
-                    this.view.deleteItemByID(item.id);
+                    view.deleteItemByID(item.id);
                 });
             }
         });
@@ -186,6 +187,7 @@ var MealListView = (function() {
         this.columns = [];
         this.itemCallback = null;
         this.searchCallback = null;
+        this.deleteCallback = null;
         this.tbody = null;
         this.pageNumSpan = null;
         this.numPagesSpan = null;
@@ -233,6 +235,10 @@ var MealListView = (function() {
     };
     
     MealListView.prototype.deleteItemByIndex = function(idx) {
+        if (MPUtil.nonNull(this.deleteCallback)) {
+            this.deleteCallback.call(this, this.items[idx]);
+        }
+        
         this.items.splice(idx, 1);
         this.touchData();
     };
@@ -262,6 +268,10 @@ var MealListView = (function() {
     
     MealListView.prototype.setSearchCallback = function(cb) {
         this.searchCallback = cb;
+    };
+    
+    MealListView.prototype.setDeleteCallback = function(cb) {
+        this.deleteCallback = cb;
     };
     
     MealListView.prototype.addColumn = function(col) {
@@ -348,7 +358,7 @@ var MealListView = (function() {
                     tid = null;
                 
                     img.show();
-                    view.searchCallback(input.val(), function() {
+                    view.searchCallback.call(view, input.val(), function() {
                         img.hide();
                     });
                 }, 1200);

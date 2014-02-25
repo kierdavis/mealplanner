@@ -336,5 +336,9 @@ var MPUtil = (function() {
         return typeof value !== "undefined" && value !== null;
     };
     
+    MPUtil.round1dp = function(x) {
+        return Math.round(x * 10) / 10;
+    };
+    
     return MPUtil;
 })();

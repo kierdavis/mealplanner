@@ -83,7 +83,7 @@ var MealListViewColumns = (function() {
         $("<th>Score</th>").addClass(this.className).appendTo(row);
     };
     o.ScoreColumn.prototype.renderData = function(row, item) {
-        var scoreStr = "" + (Math.round(item.score * 100) / 10);
+        var scoreStr = "" + MPUtil.round1dp(item.score * 9 + 1);
         if (scoreStr.indexOf(".") < 0) {
             scoreStr += ".0";
         }

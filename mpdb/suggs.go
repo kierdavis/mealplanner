@@ -9,9 +9,10 @@ import (
 
 // SQL statement to obtain a list of all tags and their distances to every
 // serving of the meals they are attached to.
-const CalculateTagScoresSQL = "SELECT tag.tag, ABS(DATEDIFF(serving.dateserved, ?)) " +
+const CalculateTagScoresSQL = "SELECT tag.tag, MIN(ABS(DATEDIFF(serving.dateserved, ?))) " +
 	"FROM tag " +
-	"INNER JOIN serving ON serving.mealid = tag.mealid"
+	"INNER JOIN serving ON serving.mealid = tag.mealid " +
+	"GROUP BY tag.tag"
 	//"WHERE NOT (serving.mealplanid = ? AND serving.dateserved = ?)"
 
 // SQL statement to obtain a list of meals along with the distances to their
@@ -111,7 +112,7 @@ func listSuggestions(q Queryable, mpID uint64, date time.Time) (suggs []*mpdata.
 			return nil, err
 		}
 
-		if csd.Valid {
+		if csd.Valid && csd.Int64 != 0 {
 			sugg.CSD = int(csd.Int64)
 		} else {
 			sugg.CSD = -1

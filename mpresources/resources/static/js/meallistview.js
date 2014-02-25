@@ -195,6 +195,7 @@ var MealListView = (function() {
     
     MealListView.prototype.setData = function(items) {
         this.items = items;
+        this.currentPage = 0;
         this.touchData();
     };
     

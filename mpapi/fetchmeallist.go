@@ -7,16 +7,31 @@ import (
 	"github.com/kierdavis/mealplanner/mpdb"
 	"net/url"
 	"os"
+	"regexp"
 )
+
+var wordRegexp = regexp.MustCompile("\\w+")
 
 // fetchMealList handles an API call to fetch a list of all meals in the
 // database. Expected parameters: none. Returns: an array of meal/tags objects.
 func fetchMealList(params url.Values) (response JSONResponse) {
-	var mts []mpdata.MealWithTags
+	query := params.Get("query")
+	var words []string
+	
+	if query != "" {
+		words = wordRegexp.FindAllString(query, -1)
+	}
 
+	var mts []mpdata.MealWithTags
+	
 	err := mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
-			mts, err = mpdb.ListMealsWithTags(tx, true)
+			if query == "" {
+				mts, err = mpdb.ListMealsWithTags(tx, true)
+			} else {
+				mts, err = mpdb.SearchMealsWithTags(tx, words, true)
+			}
+			
 			return err
 		})
 	})

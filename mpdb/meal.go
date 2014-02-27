@@ -9,7 +9,17 @@ import (
 const ListMealsSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite FROM meal"
 
 // SQL statement for listing meals sorted by name.
-const ListMealsByNameSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite FROM meal ORDER BY meal.name ASC"
+const ListMealsByNameSQL = ListMealsSQL + " ORDER BY meal.name"
+
+const CreateSearchPatternsTableSQL = "CREATE TEMPORARY TABLE search_patterns (pattern VARCHAR(255))"
+
+const InsertSearchPatternSQL = "INSERT INTO search_patterns VALUES (?)"
+
+const SearchMealsSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite FROM meal INNER JOIN search_patterns ON ((meal.name LIKE search_patterns.pattern) OR (meal.recipe LIKE search_patterns.pattern))"
+
+const SearchMealsByNameSQL = SearchMealsSQL + " ORDER BY meal.name"
+
+const DropSearchPatternsTableSQL = "DROP TABLE search_patterns"
 
 // SQL statement for fetching information about a meal.
 const GetMealSQL = "SELECT meal.name, meal.recipe, meal.favourite FROM meal WHERE meal.id = ?"
@@ -54,13 +64,86 @@ func ListMeals(q Queryable, sortByName bool) (meals []*mpdata.Meal, err error) {
 	} else {
 		query = ListMealsSQL
 	}
+	
+	return readMeals(q, query)
+}
 
+// ListMealsWithTags fetches and returns a list of all meals in the database
+// with their associated tags. If the parameter 'sortByName' is true, the meals
+// are sorted in alphabetical order by name.
+func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags, err error) {
+	meals, err := ListMeals(q, sortByName)
+	if err != nil {
+		return nil, err
+	}
+	
+	return AttachMealTags(q, meals)
+}
+
+func insertSearchWords(q Queryable, words []string) (err error) {
+	stmt, err := q.Prepare(InsertSearchPatternSQL)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	
+	for _, word := range words {
+		_, err = stmt.Exec("%" + word + "%")
+		if err != nil {
+			return err
+		}
+	}
+	
+	return nil
+}
+
+func SearchMeals(q Queryable, words []string, sortByName bool) (meals []*mpdata.Meal, err error) {
+	_, err = q.Exec(CreateSearchPatternsTableSQL)
+	if err != nil {
+		return nil, err
+	}
+	
+	err = insertSearchWords(q, words)
+	if err != nil {
+		return nil, err
+	}
+	
+	var query string
+	if sortByName {
+		query = SearchMealsByNameSQL
+	} else {
+		query = SearchMealsSQL
+	}
+	
+	meals, err = readMeals(q, query)
+	if err != nil {
+		return nil, err
+	}
+	
+	_, err = q.Exec(DropSearchPatternsTableSQL)
+	if err != nil {
+		return nil, err
+	}
+	
+	return meals, nil
+}
+
+func SearchMealsWithTags(q Queryable, words []string, sortByName bool) (mts []mpdata.MealWithTags, err error) {
+	meals, err := SearchMeals(q, words, sortByName)
+	if err != nil {
+		return nil, err
+	}
+	
+	return AttachMealTags(q, meals)
+}
+
+func readMeals(q Queryable, query string) (meals []*mpdata.Meal, err error) {
 	rows, err := q.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-
+	
 	for rows.Next() {
 		meal := &mpdata.Meal{}
 
@@ -80,15 +163,7 @@ func ListMeals(q Queryable, sortByName bool) (meals []*mpdata.Meal, err error) {
 	return meals, nil
 }
 
-// ListMealsWithTags fetches and returns a list of all meals in the database
-// with their associated tags. If the parameter 'sortByName' is true, the meals
-// are sorted in alphabetical order by name.
-func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags, err error) {
-	meals, err := ListMeals(q, sortByName)
-	if err != nil {
-		return nil, err
-	}
-
+func AttachMealTags(q Queryable, meals []*mpdata.Meal) (mts []mpdata.MealWithTags, err error) {
 	getTagsStmt, err := q.Prepare(GetMealTagsSQL)
 	if err != nil {
 		return nil, err

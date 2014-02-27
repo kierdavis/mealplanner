@@ -4,6 +4,7 @@ package mpdb
 
 import (
 	"database/sql"
+	"github.com/go-sql-driver/mysql"
 	"fmt"
 )
 
@@ -155,4 +156,9 @@ func WithTransaction(db *sql.DB, f WithTransactionFunc) (err error) {
 	}
 
 	return err
+}
+
+func isNonexistentTableError(err error) bool {
+	mysqlError, isMysqlError := err.(*mysql.MySQLError)
+	return isMysqlError && mysqlError.Number == 1146
 }

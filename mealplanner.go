@@ -35,7 +35,7 @@ func main() {
 
 	mpdb.DBSource = source
 
-	err := mpdb.InitDB(*testdata)
+	err := mpdb.InitDB(*debug, *testdata)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Database Error: %s\n", err)
 		os.Exit(1)

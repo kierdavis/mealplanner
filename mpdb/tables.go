@@ -74,22 +74,80 @@ func CreateTables(q Queryable) (err error) {
 	return execList(q, CreateTablesSQLs)
 }
 
+func InitialiseVersion(q Queryable, debug bool) (err error) {
+	var version uint
+	err = q.QueryRow("SELECT version FROM version").Scan(&version)
+	isNTE := isNonexistentTableError(err)
+	
+	if err == nil { // All is fine.
+		if debug {fmt.Printf("Version check: OK, current version is %d\n", version)}
+		return nil
+	
+	} else if isNTE || err == sql.ErrNoRows { // No version set.
+		if debug {fmt.Printf("Version check: version not set yet\n")}
+		
+		if isNTE { // 'version' table does not exist.
+			if debug {fmt.Printf("Version check: creating version table\n")}
+			_, err = q.Exec("CREATE TABLE version (version INT UNSIGNED NOT NULL)")
+			if err != nil {
+				return err
+			}
+		}
+		
+		// Check if other tables exist.
+		_, err = q.Exec("SELECT meal.id FROM meal LIMIT 1")
+		if err == nil { // Table 'meal' exists.
+			if debug {fmt.Printf("Version check: assuming first startup since introduction of versioning\n")}
+			version = 0
+		
+		} else if isNonexistentTableError(err) { // Table 'meal' does not exist.
+			if debug {fmt.Printf("Version check: assuming empty database\n")}
+			version = LatestVersion
+		
+		} else { // Unknown error.
+			return err
+		}
+	
+	} else { // Unknown error.
+		return err
+	}
+	
+	if debug {fmt.Printf("Version check: setting version to %d\n", version)}
+	_, err = q.Exec("INSERT INTO version VALUES (?)", version)
+	return err
+}
+
 // ClearTables deletes all records from the entire database.
 func ClearTables(q Queryable) (err error) {
 	return execList(q, ClearTablesSQLs)
 }
 
-// InitDB creates the database tables if they don't exist. If 'clear' is true,
-// the tables are also cleared (in the event that they did exist).
-func InitDB(debug bool) (err error) {
+// InitDB creates the database tables if they don't exist. If 'debug' is true,
+// debug messages are printed. If 'testData' is true, the tables are also
+// cleared and test data are added to them.
+func InitDB(debug bool, testData bool) (err error) {
 	return WithConnection(func(db *sql.DB) (err error) {
 		return WithTransaction(db, func(tx *sql.Tx) (err error) {
+			err = InitialiseVersion(tx, debug)
+			if err != nil {
+				return err
+			}
+			
 			err = CreateTables(tx)
 			if err != nil {
 				return err
 			}
+			
+			err = Migrate(tx, LatestVersion, debug)
+			if err != nil {
+				return err
+			}
 
-			if debug {
+			if testData {
+				if debug {
+					fmt.Printf("Clearing database and inserting test data.\n")
+				}
+				
 				err = ClearTables(tx)
 				if err != nil {
 					return err

@@ -2,10 +2,9 @@ package mpapi
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/kierdavis/mealplanner/mpdb"
+	"log"
 	"net/url"
-	"os"
 )
 
 // fetchAllTags handles an API call to obtain a list of all tags present in the
@@ -22,7 +21,7 @@ func fetchAllTags(params url.Values) (response JSONResponse) {
 	})
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
+		log.Printf("Database error: %s\n", err.Error())
 		return JSONResponse{Error: "Database error"}
 	}
 

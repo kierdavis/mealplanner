@@ -2,11 +2,10 @@ package mpapi
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/kierdavis/mealplanner/mpdata"
 	"github.com/kierdavis/mealplanner/mpdb"
+	"log"
 	"net/url"
-	"os"
 	"strconv"
 )
 
@@ -57,7 +56,7 @@ func fetchServings(params url.Values) (response JSONResponse) {
 						}
 
 						if meal == nil {
-							fmt.Fprintf(os.Stderr, "Warning: meal plan %d -> serving %s points to nonexistent meal %d\n", mpID, date.Format("2006-01-02"), serving.MealID)
+							log.Printf("Warning: meal plan %d -> serving %s points to nonexistent meal %d\n", mpID, date.Format("2006-01-02"), serving.MealID)
 							ts.MealName = "???"
 						} else {
 							ts.MealName = meal.Name
@@ -75,7 +74,7 @@ func fetchServings(params url.Values) (response JSONResponse) {
 	})
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
+		log.Printf("Database error: %s\n", err.Error())
 		return JSONResponse{Error: "Database error"}
 	}
 

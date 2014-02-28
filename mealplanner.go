@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"github.com/kierdavis/mealplanner/mpdb"
 	"github.com/kierdavis/mealplanner/mphandlers"
+	"log"
 	"net/http"
 	"os"
-
+	
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -28,7 +29,7 @@ func main() {
 	if source == "" {
 		source = os.Getenv("MPDBSOURCE")
 		if source == "" {
-			fmt.Fprintf(os.Stderr, "Please specify a non-empty -dbsource flag or set the MPDBSOURCE environment variable.\n")
+			fmt.Println("Please specify a non-empty -dbsource flag or set the MPDBSOURCE environment variable.")
 			os.Exit(1)
 		}
 	}
@@ -37,7 +38,7 @@ func main() {
 
 	err := mpdb.InitDB(*debug, *testdata)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Database Error: %s\n", err)
+		log.Printf("Database error during startup: %s\n", err)
 		os.Exit(1)
 	}
 
@@ -48,12 +49,12 @@ func main() {
 	if *debug {
 		app = mphandlers.LoggingHandler{Handler: app}
 
-		fmt.Printf("Listening on %s\n", listenAddr)
+		log.Printf("Listening on %s\n", listenAddr)
 	}
 
 	err = http.ListenAndServe(listenAddr, app)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Server Error: %s\n", err)
+		log.Printf("Server error in HTTP listener: %s\n", err)
 		os.Exit(1)
 	}
 }

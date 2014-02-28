@@ -2,10 +2,9 @@ package mpapi
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/kierdavis/mealplanner/mpdb"
+	"log"
 	"net/url"
-	"os"
 	"strconv"
 )
 
@@ -28,7 +27,7 @@ func toggleFavourite(params url.Values) (response JSONResponse) {
 	})
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Database error: %s\n", err.Error())
+		log.Printf("Database error: %s\n", err.Error())
 		return JSONResponse{Error: "Database error"}
 	}
 

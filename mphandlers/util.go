@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/kierdavis/mealplanner/mpresources"
+	"log"
 	"net/http"
-	"os"
 	"runtime"
 	"strconv"
 )
@@ -18,18 +18,18 @@ func httpError(w http.ResponseWriter, h *HTTPError) {
 
 	err := mpresources.Templates.ExecuteTemplate(w, "error.html", h)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Internal error when rendering error.html: %s\n", err.Error())
+		log.Printf("Internal error when rendering error.html: %s\n", err.Error())
 	}
 }
 
 // serverError logs 'err' to the console, then sends a 500 Internal Server Error
 // response to the client.
 func serverError(w http.ResponseWriter, err error) {
-	fmt.Fprintf(os.Stderr, "Internal error: %s\n", err.Error())
+	log.Printf("Internal error: %s\n", err.Error())
 
 	_, filename, lineno, ok := runtime.Caller(1)
 	if ok {
-		fmt.Fprintf(os.Stderr, "  at %s line %d\n", filename, lineno)
+		log.Printf("  at %s line %d\n", filename, lineno)
 	}
 
 	httpError(w, InternalServerError)

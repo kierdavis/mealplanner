@@ -2,6 +2,7 @@ package mpdb
 
 import (
 	"fmt"
+	"log"
 )
 
 type MigrationError struct {
@@ -69,7 +70,7 @@ func Migrate(q Queryable, targetVersion uint, debug bool) (err error) {
 	}
 	
 	if debug {
-		fmt.Printf("Migration: Database is at version %d, migration target is %d. Checking for available migrations.\n", currentVersion, targetVersion)
+		log.Printf("Migration: Database is at version %d, migration target is %d. Checking for available migrations.\n", currentVersion, targetVersion)
 	}
 	
 	for currentVersion < targetVersion {
@@ -83,7 +84,7 @@ func Migrate(q Queryable, targetVersion uint, debug bool) (err error) {
 		}
 		
 		if debug {
-			fmt.Printf("Migration: Executing migration from version %d to %d.\n", m.From, m.To)
+			log.Printf("Migration: Executing migration from version %d to %d.\n", m.From, m.To)
 		}
 		
 		err = m.Apply(q)
@@ -99,7 +100,7 @@ func Migrate(q Queryable, targetVersion uint, debug bool) (err error) {
 	}
 	
 	if debug {
-		fmt.Printf("Migration: Done. Database is now at version %d.\n", currentVersion)
+		log.Printf("Migration: Done. Database is now at version %d.\n", currentVersion)
 	}
 	
 	return nil

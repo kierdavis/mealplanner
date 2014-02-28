@@ -2,10 +2,9 @@ package mpapi
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 // JSONResponse contains the response structure returned to the client.
@@ -33,7 +32,7 @@ func HandleAPICall(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: Could not write JSON response: %s\n", err.Error())
+		log.Printf("Error: Could not write JSON response: %s\n", err.Error())
 	}
 }
 

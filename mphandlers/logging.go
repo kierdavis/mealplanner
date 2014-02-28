@@ -1,9 +1,8 @@
 package mphandlers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
-	"time"
 )
 
 // LoggingHandler wraps an http.Handler, printing a message to standard output
@@ -21,8 +20,7 @@ func (lh LoggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // logRequest logs a request to standard output.
 func (lh LoggingHandler) logRequest(lw *loggingWriter, r *http.Request) {
-	t := time.Now().Format("2006-01-02 15:04:05 -07:00")
-	fmt.Printf("[%s] %s %s -> %d %s from %s\n", t, r.Method, r.URL.String(), lw.status, http.StatusText(lw.status), r.RemoteAddr)
+	log.Printf("%s %s -> %d %s from %s\n", r.Method, r.URL.String(), lw.status, http.StatusText(lw.status), r.RemoteAddr)
 }
 
 // loggingWriter wraps an http.ResponseWriter, recording the status code sent

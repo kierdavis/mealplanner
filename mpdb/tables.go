@@ -2,8 +2,8 @@ package mpdb
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/kierdavis/mealplanner/mpdata"
+	"log"
 	"time"
 )
 
@@ -80,14 +80,14 @@ func InitialiseVersion(q Queryable, debug bool) (err error) {
 	isNTE := isNonexistentTableError(err)
 	
 	if err == nil { // All is fine.
-		if debug {fmt.Printf("Version check: OK, current version is %d\n", version)}
+		if debug {log.Printf("Version check: OK, current version is %d\n", version)}
 		return nil
 	
 	} else if isNTE || err == sql.ErrNoRows { // No version set.
-		if debug {fmt.Printf("Version check: version not set yet\n")}
+		if debug {log.Printf("Version check: version not set yet\n")}
 		
 		if isNTE { // 'version' table does not exist.
-			if debug {fmt.Printf("Version check: creating version table\n")}
+			if debug {log.Printf("Version check: creating version table\n")}
 			_, err = q.Exec("CREATE TABLE version (version INT UNSIGNED NOT NULL)")
 			if err != nil {
 				return err
@@ -97,11 +97,11 @@ func InitialiseVersion(q Queryable, debug bool) (err error) {
 		// Check if other tables exist.
 		_, err = q.Exec("SELECT meal.id FROM meal LIMIT 1")
 		if err == nil { // Table 'meal' exists.
-			if debug {fmt.Printf("Version check: assuming first startup since introduction of versioning\n")}
+			if debug {log.Printf("Version check: assuming first startup since introduction of versioning\n")}
 			version = 0
 		
 		} else if isNonexistentTableError(err) { // Table 'meal' does not exist.
-			if debug {fmt.Printf("Version check: assuming empty database\n")}
+			if debug {log.Printf("Version check: assuming empty database\n")}
 			version = LatestVersion
 		
 		} else { // Unknown error.
@@ -112,7 +112,7 @@ func InitialiseVersion(q Queryable, debug bool) (err error) {
 		return err
 	}
 	
-	if debug {fmt.Printf("Version check: setting version to %d\n", version)}
+	if debug {log.Printf("Version check: setting version to %d\n", version)}
 	_, err = q.Exec("INSERT INTO version VALUES (?)", version)
 	return err
 }
@@ -145,7 +145,7 @@ func InitDB(debug bool, testData bool) (err error) {
 
 			if testData {
 				if debug {
-					fmt.Printf("Clearing database and inserting test data.\n")
+					log.Printf("Clearing database and inserting test data.\n")
 				}
 				
 				err = ClearTables(tx)
@@ -239,7 +239,7 @@ func InsertTestData(q Queryable) (err error) {
 		return err
 	}
 
-	fmt.Printf("Test meal plans are %d and %d\n", mp1.ID, mp2.ID)
+	log.Printf("Test meal plans are %d and %d\n", mp1.ID, mp2.ID)
 
 	return nil
 }

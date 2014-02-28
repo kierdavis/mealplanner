@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"github.com/go-sql-driver/mysql"
 	"fmt"
+	"log"
 )
 
 // DBDriver is the driver name used when connecting to the database.
@@ -40,7 +41,7 @@ type LoggingQueryable struct {
 // placeholder parameters in the query.
 func (lq LoggingQueryable) Exec(query string, args ...interface{}) (result sql.Result, err error) {
 	result, err = lq.Q.Exec(query, args...)
-	fmt.Printf("SQL: Exec(%v, %v) -> %v\n", query, args, err)
+	log.Printf("SQL: Exec(%v, %v) -> %v\n", query, args, err)
 	return result, err
 }
 
@@ -49,7 +50,7 @@ func (lq LoggingQueryable) Exec(query string, args ...interface{}) (result sql.R
 // statement.
 func (lq LoggingQueryable) Prepare(query string) (stmt *sql.Stmt, err error) {
 	stmt, err = lq.Q.Prepare(query)
-	fmt.Printf("SQL: Prepare(%v) -> %v\n", query, err)
+	log.Printf("SQL: Prepare(%v) -> %v\n", query, err)
 	return stmt, err
 }
 
@@ -57,7 +58,7 @@ func (lq LoggingQueryable) Prepare(query string) (stmt *sql.Stmt, err error) {
 // for any placeholder parameters in the query.
 func (lq LoggingQueryable) Query(query string, args ...interface{}) (rows *sql.Rows, err error) {
 	rows, err = lq.Q.Query(query, args...)
-	fmt.Printf("SQL: Query(%v, %v) -> %v\n", query, args, err)
+	log.Printf("SQL: Query(%v, %v) -> %v\n", query, args, err)
 	return rows, err
 }
 
@@ -66,7 +67,7 @@ func (lq LoggingQueryable) Query(query string, args ...interface{}) (rows *sql.R
 // method is called.
 func (lq LoggingQueryable) QueryRow(query string, args ...interface{}) (row *sql.Row) {
 	row = lq.Q.QueryRow(query, args...)
-	fmt.Printf("SQL: QueryRow(%v, %v) -> %v\n", query, args, row)
+	log.Printf("SQL: QueryRow(%v, %v) -> %v\n", query, args, row)
 	return row
 }
 

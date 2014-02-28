@@ -17,10 +17,6 @@ const CreateSearchPatternsTableSQL = "CREATE TEMPORARY TABLE search_patterns (pa
 
 const InsertSearchPatternSQL = "INSERT INTO search_patterns VALUES (?)"
 
-const SearchMealsSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite FROM meal INNER JOIN search_patterns ON ((meal.name LIKE search_patterns.pattern) OR (meal.recipe LIKE search_patterns.pattern))"
-
-const SearchMealsByNameSQL = SearchMealsSQL + " ORDER BY meal.name"
-
 const DropSearchPatternsTableSQL = "DROP TABLE search_patterns"
 
 // SQL statement for fetching information about a meal.
@@ -69,7 +65,13 @@ func ListMeals(q Queryable, sortByName bool) (meals []*mpdata.Meal, err error) {
 		query = ListMealsSQL
 	}
 	
-	return readMeals(q, query)
+	rows, err := q.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	
+	return readMeals(rows)
 }
 
 // ListMealsWithTags fetches and returns a list of all meals in the database
@@ -84,52 +86,27 @@ func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags,
 	return AttachMealTags(q, meals)
 }
 
-func insertSearchWords(q Queryable, words []string) (err error) {
-	stmt, err := q.Prepare(InsertSearchPatternSQL)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-	
-	for _, word := range words {
-		_, err = stmt.Exec("%" + word + "%")
-		if err != nil {
-			return err
-		}
-	}
-	
-	return nil
-}
-
 func SearchMeals(q Queryable, words []string, sortByName bool) (meals []*mpdata.Meal, err error) {
-	_, err = q.Exec(CreateSearchPatternsTableSQL)
-	if err != nil {
-		return nil, err
+	query := "SELECT meal.id, meal.name, meal.recipe, meal.favourite FROM meal"
+	conjuctive := "WHERE"
+	args := make([]interface{}, len(words))
+	for i, word := range words {
+		query += " " + conjuctive + " meal.searchtext LIKE ?"
+		args[i] = "%" + word + "%"
+		conjuctive = "AND"
 	}
 	
-	err = insertSearchWords(q, words)
-	if err != nil {
-		return nil, err
-	}
-	
-	var query string
 	if sortByName {
-		query = SearchMealsByNameSQL
-	} else {
-		query = SearchMealsSQL
+		query += " ORDER BY meal.name"
 	}
 	
-	meals, err = readMeals(q, query)
+	rows, err := q.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	
-	_, err = q.Exec(DropSearchPatternsTableSQL)
-	if err != nil {
-		return nil, err
-	}
-	
-	return meals, nil
+	return readMeals(rows)
 }
 
 func SearchMealsWithTags(q Queryable, words []string, sortByName bool) (mts []mpdata.MealWithTags, err error) {
@@ -141,13 +118,7 @@ func SearchMealsWithTags(q Queryable, words []string, sortByName bool) (mts []mp
 	return AttachMealTags(q, meals)
 }
 
-func readMeals(q Queryable, query string) (meals []*mpdata.Meal, err error) {
-	rows, err := q.Query(query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	
+func readMeals(rows *sql.Rows) (meals []*mpdata.Meal, err error) {
 	for rows.Next() {
 		meal := &mpdata.Meal{}
 

@@ -41,7 +41,7 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 		httpError(w, BadRequestError)
 		return
 	}
-	
+
 	auto := r.FormValue("auto") == "true"
 
 	// Create a MealPlan object
@@ -57,7 +57,7 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				return err
 			}
-			
+
 			// Optionally fill the meal plan automatically
 			if auto {
 				err = mpdb.AutoFillMealPlan(tx, mp)
@@ -65,7 +65,7 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 					return err
 				}
 			}
-			
+
 			return nil
 		})
 	})

@@ -17,7 +17,7 @@ func fetchSuggestions(params url.Values) (response JSONResponse) {
 	if err != nil {
 		return JSONResponse{Error: "Invalid or missing 'mealplanid' parameter"}
 	}
-	
+
 	dateServed, err := time.Parse(mpdata.JSONDateFormat, params.Get("date"))
 	if err != nil {
 		return JSONResponse{Error: "Invalid or missing 'date' parameter"}

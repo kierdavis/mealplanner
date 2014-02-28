@@ -4,8 +4,8 @@ package mpdb
 
 import (
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
 	"fmt"
+	"github.com/go-sql-driver/mysql"
 	"log"
 )
 

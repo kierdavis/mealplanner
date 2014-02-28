@@ -64,13 +64,13 @@ func ListMeals(q Queryable, sortByName bool) (meals []*mpdata.Meal, err error) {
 	} else {
 		query = ListMealsSQL
 	}
-	
+
 	rows, err := q.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	return readMeals(rows)
 }
 
@@ -82,7 +82,7 @@ func ListMealsWithTags(q Queryable, sortByName bool) (mts []mpdata.MealWithTags,
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return AttachMealTags(q, meals)
 }
 
@@ -95,17 +95,17 @@ func SearchMeals(q Queryable, words []string, sortByName bool) (meals []*mpdata.
 		args[i] = "%" + word + "%"
 		conjuctive = "AND"
 	}
-	
+
 	if sortByName {
 		query += " ORDER BY meal.name"
 	}
-	
+
 	rows, err := q.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	return readMeals(rows)
 }
 
@@ -114,7 +114,7 @@ func SearchMealsWithTags(q Queryable, words []string, sortByName bool) (mts []mp
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return AttachMealTags(q, meals)
 }
 

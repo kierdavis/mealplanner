@@ -78,41 +78,53 @@ func InitialiseVersion(q Queryable, debug bool) (err error) {
 	var version uint
 	err = q.QueryRow("SELECT version FROM version").Scan(&version)
 	isNTE := isNonexistentTableError(err)
-	
+
 	if err == nil { // All is fine.
-		if debug {log.Printf("Version check: OK, current version is %d\n", version)}
+		if debug {
+			log.Printf("Version check: OK, current version is %d\n", version)
+		}
 		return nil
-	
+
 	} else if isNTE || err == sql.ErrNoRows { // No version set.
-		if debug {log.Printf("Version check: version not set yet\n")}
-		
+		if debug {
+			log.Printf("Version check: version not set yet\n")
+		}
+
 		if isNTE { // 'version' table does not exist.
-			if debug {log.Printf("Version check: creating version table\n")}
+			if debug {
+				log.Printf("Version check: creating version table\n")
+			}
 			_, err = q.Exec("CREATE TABLE version (version INT UNSIGNED NOT NULL)")
 			if err != nil {
 				return err
 			}
 		}
-		
+
 		// Check if other tables exist.
 		_, err = q.Exec("SELECT meal.id FROM meal LIMIT 1")
 		if err == nil { // Table 'meal' exists.
-			if debug {log.Printf("Version check: assuming first startup since introduction of versioning\n")}
+			if debug {
+				log.Printf("Version check: assuming first startup since introduction of versioning\n")
+			}
 			version = 0
-		
+
 		} else if isNonexistentTableError(err) { // Table 'meal' does not exist.
-			if debug {log.Printf("Version check: assuming empty database\n")}
+			if debug {
+				log.Printf("Version check: assuming empty database\n")
+			}
 			version = LatestVersion
-		
+
 		} else { // Unknown error.
 			return err
 		}
-	
+
 	} else { // Unknown error.
 		return err
 	}
-	
-	if debug {log.Printf("Version check: setting version to %d\n", version)}
+
+	if debug {
+		log.Printf("Version check: setting version to %d\n", version)
+	}
 	_, err = q.Exec("INSERT INTO version VALUES (?)", version)
 	return err
 }
@@ -132,12 +144,12 @@ func InitDB(debug bool, testData bool) (err error) {
 			if err != nil {
 				return err
 			}
-			
+
 			err = CreateTables(tx)
 			if err != nil {
 				return err
 			}
-			
+
 			err = Migrate(tx, LatestVersion, debug)
 			if err != nil {
 				return err
@@ -147,7 +159,7 @@ func InitDB(debug bool, testData bool) (err error) {
 				if debug {
 					log.Printf("Clearing database and inserting test data.\n")
 				}
-				
+
 				err = ClearTables(tx)
 				if err != nil {
 					return err

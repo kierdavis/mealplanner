@@ -16,13 +16,13 @@ var wordRegexp = regexp.MustCompile("\\w+")
 func fetchMealList(params url.Values) (response JSONResponse) {
 	query := params.Get("query")
 	var words []string
-	
+
 	if query != "" {
 		words = wordRegexp.FindAllString(query, -1)
 	}
 
 	var mts []mpdata.MealWithTags
-	
+
 	err := mpdb.WithConnection(func(db *sql.DB) (err error) {
 		return mpdb.WithTransaction(db, func(tx *sql.Tx) (err error) {
 			if query == "" {
@@ -30,7 +30,7 @@ func fetchMealList(params url.Values) (response JSONResponse) {
 			} else {
 				mts, err = mpdb.SearchMealsWithTags(tx, words, true)
 			}
-			
+
 			return err
 		})
 	})

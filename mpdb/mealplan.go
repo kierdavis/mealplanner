@@ -233,7 +233,7 @@ func AutoFillMealPlan(q Queryable, mp *mpdata.MealPlan) (err error) {
 			return err
 		}
 	}
-	
+
 	return nil
 }
 
@@ -244,17 +244,17 @@ func AutoFillMealPlanDay(q Queryable, mpID uint64, date time.Time) (err error) {
 	if err != nil {
 		return err
 	}
-	
+
 	err = DeleteServing(q, mpID, date)
 	if err != nil {
 		return err
 	}
-	
+
 	serving := &mpdata.Serving{
 		MealPlanID: mpID,
-		Date: date,
-		MealID: suggs[0].MT.Meal.ID,
+		Date:       date,
+		MealID:     suggs[0].MT.Meal.ID,
 	}
-	
+
 	return AddServing(q, serving)
 }

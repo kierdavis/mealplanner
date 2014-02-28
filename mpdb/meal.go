@@ -5,6 +5,8 @@ import (
 	"github.com/kierdavis/mealplanner/mpdata"
 )
 
+const SearchTextFunc = "CONCAT(meal.name, ' ', meal.recipe, ' ', IFNULL((SELECT GROUP_CONCAT(tag.tag SEPARATOR ' ') FROM tag WHERE tag.mealid = meal.id), ''))"
+
 // SQL statement for listing meals.
 const ListMealsSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite FROM meal"
 
@@ -27,8 +29,10 @@ const GetMealSQL = "SELECT meal.name, meal.recipe, meal.favourite FROM meal WHER
 // SQL statement for fetching tags associated with a meal.
 const GetMealTagsSQL = "SELECT tag.tag FROM tag WHERE tag.mealid = ?"
 
+const UpdateSearchTextSQL = "UPDATE meal SET meal.searchtext = " + SearchTextFunc + " WHERE meal.id = ?"
+
 // SQL statement for adding a meal.
-const AddMealSQL = "INSERT INTO meal VALUES (NULL, ?, ?, ?)"
+const AddMealSQL = "INSERT INTO meal VALUES (NULL, ?, ?, ?, '')"
 
 // SQL statement for updating the information about a meal.
 const UpdateMealSQL = "UPDATE meal SET meal.name = ?, meal.recipe = ?, meal.favourite = ? WHERE meal.id = ?"
@@ -245,6 +249,14 @@ func GetMealWithTags(q Queryable, mealID uint64) (mt mpdata.MealWithTags, err er
 // AddMeal adds the information in 'meal' to the database as a new record, then
 // sets 'meal.ID' to the identifier of this new record.
 func AddMeal(q Queryable, meal *mpdata.Meal) (err error) {
+	err = addMeal(q, meal)
+	if err != nil {
+		return err
+	}
+	return UpdateSearchText(q, meal.ID)
+}
+
+func addMeal(q Queryable, meal *mpdata.Meal) (err error) {
 	result, err := q.Exec(AddMealSQL, meal.Name, meal.RecipeURL, meal.Favourite)
 	if err != nil {
 		return err
@@ -260,9 +272,22 @@ func AddMeal(q Queryable, meal *mpdata.Meal) (err error) {
 	return nil
 }
 
+func UpdateSearchText(q Queryable, mealID uint64) (err error) {
+	_, err = q.Exec(UpdateSearchTextSQL, mealID)
+	return err
+}
+
 // AddMealTags adds the the list of tags given in 'tags' to the meal identified
 // by 'mealID'.
 func AddMealTags(q Queryable, mealID uint64, tags []string) (err error) {
+	err = addMealTags(q, mealID, tags)
+	if err != nil {
+		return err
+	}
+	return UpdateSearchText(q, mealID)
+}
+
+func addMealTags(q Queryable, mealID uint64, tags []string) (err error) {
 	stmt, err := q.Prepare(AddMealTagSQL)
 	if err != nil {
 		return err
@@ -281,17 +306,33 @@ func AddMealTags(q Queryable, mealID uint64, tags []string) (err error) {
 
 // AddMealWithTags combines 'AddMeal' and 'AddMealTags'.
 func AddMealWithTags(q Queryable, mt mpdata.MealWithTags) (err error) {
-	err = AddMeal(q, mt.Meal)
+	err = addMealWithTags(q, mt)
+	if err != nil {
+		return err
+	}
+	return UpdateSearchText(q, mt.Meal.ID)
+}
+
+func addMealWithTags(q Queryable, mt mpdata.MealWithTags) (err error) {
+	err = addMeal(q, mt.Meal)
 	if err != nil {
 		return err
 	}
 
-	return AddMealTags(q, mt.Meal.ID, mt.Tags)
+	return addMealTags(q, mt.Meal.ID, mt.Tags)
 }
 
 // UpdateMeal replaces with the information in the database for the meal
 // identified by 'meal.ID' with the information in 'meal'.
 func UpdateMeal(q Queryable, meal *mpdata.Meal) (err error) {
+	err = updateMeal(q, meal)
+	if err != nil {
+		return err
+	}
+	return UpdateSearchText(q, meal.ID)
+}
+
+func updateMeal(q Queryable, meal *mpdata.Meal) (err error) {
 	_, err = q.Exec(UpdateMealSQL, meal.Name, meal.RecipeURL, meal.Favourite, meal.ID)
 	return err
 }
@@ -299,6 +340,14 @@ func UpdateMeal(q Queryable, meal *mpdata.Meal) (err error) {
 // DeleteMealTags deletes all tags in the database associated with the meal
 // identified by 'mealID'. If no such tags exist, no error is raised.
 func DeleteMealTags(q Queryable, mealID uint64) (err error) {
+	err = deleteMealTags(q, mealID)
+	if err != nil {
+		return err
+	}
+	return UpdateSearchText(q, mealID)
+}
+
+func deleteMealTags(q Queryable, mealID uint64) (err error) {
 	_, err = q.Exec(DeleteMealTagsSQL, mealID)
 	return err
 }
@@ -306,22 +355,38 @@ func DeleteMealTags(q Queryable, mealID uint64) (err error) {
 // UpdateMealTags replaces the tags associated with the meal identified by
 // 'mealID' with the list given by 'tags'.
 func UpdateMealTags(q Queryable, mealID uint64, tags []string) (err error) {
-	err = DeleteMealTags(q, mealID)
+	err = updateMealTags(q, mealID, tags)
+	if err != nil {
+		return err
+	}
+	return UpdateSearchText(q, mealID)
+}
+
+func updateMealTags(q Queryable, mealID uint64, tags []string) (err error) {
+	err = deleteMealTags(q, mealID)
 	if err != nil {
 		return err
 	}
 
-	return AddMealTags(q, mealID, tags)
+	return addMealTags(q, mealID, tags)
 }
 
 // UpdateMealWithTags combines UpdateMeal and UpdateMealTags.
 func UpdateMealWithTags(q Queryable, mt mpdata.MealWithTags) (err error) {
-	err = UpdateMeal(q, mt.Meal)
+	err = updateMealWithTags(q, mt)
+	if err != nil {
+		return err
+	}
+	return UpdateSearchText(q, mt.Meal.ID)
+}
+
+func updateMealWithTags(q Queryable, mt mpdata.MealWithTags) (err error) {
+	err = updateMeal(q, mt.Meal)
 	if err != nil {
 		return err
 	}
 
-	return UpdateMealTags(q, mt.Meal.ID, mt.Tags)
+	return updateMealTags(q, mt.Meal.ID, mt.Tags)
 }
 
 // ToggleFavourite toggles the "favourite" status of the meal identified by
@@ -352,7 +417,7 @@ func DeleteMealWithTags(q Queryable, mealID uint64) (err error) {
 		return err
 	}
 
-	return DeleteMealTags(q, mealID)
+	return deleteMealTags(q, mealID)
 }
 
 // ListAllTags returns a list (without duplicates) of all tags that appear in

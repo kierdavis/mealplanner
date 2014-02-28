@@ -105,8 +105,12 @@ func Migrate(q Queryable, targetVersion uint, debug bool) (err error) {
 	return nil
 }
 
-const LatestVersion = 0
+const LatestVersion = 1
 
 var Migrations = []*Migration{
-	
+	// 2014-02-27 - Add 'searchtext' column to 'meal' table.
+	&Migration{0, 1, []string{
+		"ALTER TABLE meal ADD COLUMN searchtext TEXT NOT NULL",
+		"UPDATE meal SET meal.searchtext = " + SearchTextFunc,
+	}},
 }

@@ -74,5 +74,5 @@ func handleCreateMealPlanAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirect(w, http.StatusSeeOther, "/mealplans/"+strconv.FormatUint(mp.ID, 10))
+	redirect(w, http.StatusSeeOther, "/mealplans/"+strconv.FormatUint(mp.ID, 10)+"/edit")
 }

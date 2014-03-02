@@ -22,6 +22,7 @@ var CreateTablesSQLs = []string{
 		"name VARCHAR(255) NOT NULL, " +
 		"recipe TEXT, " +
 		"favourite BOOLEAN NOT NULL, " +
+		"searchtext TEXT NOT NULL, " +
 		"PRIMARY KEY (id) " +
 		")",
 	"CREATE TABLE IF NOT EXISTS tag ( " +

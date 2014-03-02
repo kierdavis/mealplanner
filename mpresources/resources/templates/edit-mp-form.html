@@ -24,14 +24,6 @@
                 $("#dialog").dialog("close");
             }
             
-            function loadSuggestions(view, date) {
-                MealResult.fetchSuggestions({{.ID}}, date, function(items) {
-                    view.setData(items);
-                });
-                
-                $("#dialog").dialog("open");
-            }
-            
             function addServingRow(view, result) {
                 var date = new Date(Date.parse(result.date));
                 var row = $("<tr>");
@@ -47,7 +39,14 @@
                         event.preventDefault();
                         selectedServingDate = date;
                         selectedServingLink = a;
-                        loadSuggestions(view, date);
+                        
+                        view.setFetchDataCallback(function(params, cb) {
+                            MealResult.fetchSuggestions({{.ID}}, date, function(items) {
+                                cb(items);
+                                $("#dialog").dialog("open");
+                            });
+                        });
+                        view.fetchData();
                         
                         /*
                         MPAjax.fetchSuggestions(date, function(suggs) {

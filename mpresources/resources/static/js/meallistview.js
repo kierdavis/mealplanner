@@ -8,8 +8,9 @@ var MealResult = (function() {
         this.score = score;
     };
     
-    MealResult.fetchMealList = function(query, callback) {
-        MPAjax.fetchMealList(query, function(mts) {
+    MealResult.fetchMealList = function(params, callback) {
+        MPAjax.fetchMealList(params, function(mts) {
+            mts = mts || [];
             var i, results = [];
             for (i = 0; i < mts.length; i++) {
                 results.push(new MealResult(mts[i], null));
@@ -21,6 +22,7 @@ var MealResult = (function() {
     
     MealResult.fetchSuggestions = function(mpID, date, callback) {
         MPAjax.fetchSuggestions(mpID, date, function(suggs) {
+            suggs = suggs || [];
             var i, results = [];
             for (i = 0; i < suggs.length; i++) {
                 results.push(new MealResult(suggs[i].mt, suggs[i].score));
@@ -45,6 +47,13 @@ var MealListViewColumns = (function() {
         this.className = className;
     };
     o.NameColumn.prototype.renderHeader = function(row) {
+        /*
+        var view = this.view;
+        var th = $("<th></th>").addClass(this.className).appendTo(row);
+        $("<a href='#'>Name</a>").appendTo(th).click(function() {
+            view.sort("name");
+        });
+        */
         $("<th>Name</th>").addClass(this.className).appendTo(row);
     };
     o.NameColumn.prototype.renderData = function(row, item) {
@@ -80,7 +89,14 @@ var MealListViewColumns = (function() {
         this.className = className;
     };
     o.ScoreColumn.prototype.renderHeader = function(row) {
-        $("<th>Score</th>").addClass(this.className).appendTo(row);
+        /*
+        var view = this.view;
+        var th = $("<th></th>").addClass(this.className).appendTo(row);
+        $("<a href='#'>Score</a>").appendTo(th).click(function() {
+            view.sort("score");
+        });
+        */
+        return $("<th>Score</th>").addClass(this.className).appendTo(row);
     };
     o.ScoreColumn.prototype.renderData = function(row, item) {
         var scoreStr = "" + MPUtil.round1dp(item.score * 9 + 1);
@@ -186,11 +202,16 @@ var MealListView = (function() {
         this.currentPage = 0;
         this.columns = [];
         this.itemCallback = null;
-        this.searchCallback = null;
+        this.fetchDataCallback = null;
         this.deleteCallback = null;
         this.tbody = null;
         this.pageNumSpan = null;
         this.numPagesSpan = null;
+        this.dataParams = {
+            query: "",
+            sortColumn: "",
+            sortReversed: false,
+        };
     };
     
     MealListView.prototype.setData = function(items) {
@@ -267,8 +288,8 @@ var MealListView = (function() {
         this.itemCallback = cb;
     };
     
-    MealListView.prototype.setSearchCallback = function(cb) {
-        this.searchCallback = cb;
+    MealListView.prototype.setFetchDataCallback = function(cb) {
+        this.fetchDataCallback = cb;
     };
     
     MealListView.prototype.setDeleteCallback = function(cb) {
@@ -278,6 +299,16 @@ var MealListView = (function() {
     MealListView.prototype.addColumn = function(col) {
         col.view = this;
         this.columns.push(col);
+    };
+    
+    MealListView.prototype.sort = function(column) {
+        if (this.dataParams.sortColumn == column) {
+            this.dataParams.sortReversed = !this.dataParams.sortReversed;
+        }
+        else {
+            this.dataParams.sortColumn = column;
+            this.dataParama.sortReversed = false;
+        }
     };
     
     MealListView.prototype.render = function() {
@@ -304,7 +335,17 @@ var MealListView = (function() {
         }
         
         this.tbody = tbody;
-        this.renderCurrentPage();
+        
+        if (MPUtil.nonNull(this.fetchDataCallback)) {
+            this.fetchData();
+        }
+    };
+    
+    MealListView.prototype.fetchData = function() {
+        var view = this;
+        this.fetchDataCallback.call(this, this.dataParams, function(items) {
+            view.setData(items);
+        });
     };
     
     MealListView.prototype.renderCurrentPage = function() {
@@ -342,29 +383,31 @@ var MealListView = (function() {
     };
     
     MealListView.prototype.renderSearch = function(parent) {
-        if (MPUtil.nonNull(this.searchCallback)) {
-            var container = $("<div class='table-search-container'></div>").appendTo(parent);
-            var img = $("<img src='/static/img/loading.gif' height='16' alt='Searching...' style='margin-right: 10px'/>").appendTo(container).hide();
-            var input = $("<input type='text' placeholder='Type to search...' width='30'/>").appendTo(container);
+        var container = $("<div class='table-search-container'></div>").appendTo(parent);
+        var img = $("<img src='/static/img/loading.gif' height='16' alt='Searching...' style='margin-right: 10px'/>").appendTo(container).hide();
+        var input = $("<input type='text' placeholder='Type to search...' width='30'/>").appendTo(container);
+        
+        var tid = null;
+        var view = this;
+        
+        input.keydown(function() {
+            if (MPUtil.nonNull(tid)) {
+                window.clearTimeout(tid);
+            }
             
-            var tid = null;
-            var view = this;
-            
-            input.keydown(function() {
-                if (MPUtil.nonNull(tid)) {
-                    window.clearTimeout(tid);
-                }
+            tid = window.setTimeout(function() {
+                tid = null;
+                img.show();
                 
-                tid = window.setTimeout(function() {
-                    tid = null;
-                
-                    img.show();
-                    view.searchCallback.call(view, input.val(), function() {
+                view.dataParams.query = input.val();
+                if (MPUtil.nonNull(view.fetchDataCallback)) {
+                    view.fetchDataCallback.call(view, view.dataParams, function(items) {
+                        view.setData(items);
                         img.hide();
                     });
-                }, 1200);
-            });
-        }
+                }
+            }, 1200);
+        });
     };
     
     MealListView.prototype.renderNav = function(parent) {

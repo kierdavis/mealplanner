@@ -24,20 +24,22 @@
                 view.addColumn(new MealListViewColumns.TagsColumn("meal-list-tags"));
                 view.addColumn(new MealListViewColumns.ActionsColumn("meal-list-action", "meal-list-actions"));
                 
-                view.setSearchCallback(function(query, cb) {
-                    MealResult.fetchMealList(query, function(items) {
-                        view.setData(items);
-                        cb();
+                var highlighted = false;
+                
+                view.setFetchDataCallback(function(params, cb) {
+                    MealResult.fetchMealList(params, function(items) {
+                        cb(items);
+                        
+                        if (!highlighted) {
+                            {{if .Highlight}}
+                                view.highlightItemByID({{.MealID}});
+                            {{end}}
+                            highlighted = true;
+                        }
                     });
                 });
                 
                 view.render();
-                
-                view.searchCallback("", function() {
-                    {{if .Highlight}}
-                        view.highlightItemByID({{.MealID}});
-                    {{end}}
-                });
             });
         </script>
     </head>

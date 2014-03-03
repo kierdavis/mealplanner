@@ -18,15 +18,26 @@
         
         <script type="text/javascript">
             function addTag(tag) {
-                var row = $("<tr>").data("tag", tag).appendTo($("#tags"));
-                $("<td>").text(tag).appendTo(row);
+                var ok = true;
                 
-                $("<button title='Remove this tag from the list' class='remove-tag'><img src='/static/img/delete_24x24.png' height='16' alt='Remove'/></button>")
-                    .appendTo($("<td>").appendTo(row))
-                    .click(function(event) {
-                        event.preventDefault();
-                        row.remove();
-                    });
+                $("#tags tr").each(function() {
+                    var thisTag = $(this).data("tag");
+                    if (thisTag.toLowerCase() == tag.toLowerCase()) {
+                        ok = false;
+                    }
+                });
+                
+                if (ok) {
+                    var row = $("<tr>").data("tag", tag).appendTo($("#tags"));
+                    $("<td>").text(tag).appendTo(row);
+                    
+                    $("<button title='Remove this tag from the list' class='remove-tag'><img src='/static/img/delete_24x24.png' height='16' alt='Remove'/></button>")
+                        .appendTo($("<td>").appendTo(row))
+                        .click(function(event) {
+                            event.preventDefault();
+                            row.remove();
+                        });
+                }
             }
             
             function validateMealName(input) {

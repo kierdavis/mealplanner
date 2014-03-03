@@ -22,7 +22,7 @@
                 var view = new MealListView($("#results"));
                 view.addColumn(new MealListViewColumns.NameColumn("meal-list-name"));
                 view.addColumn(new MealListViewColumns.TagsColumn("meal-list-tags"));
-                view.addColumn(new MealListViewColumns.ActionsColumn("meal-list-action", "meal-list-actions"));
+                view.addColumn(new MealListViewColumns.ActionsColumn("meal-list-actions"));
                 
                 var highlighted = false;
                 
@@ -70,10 +70,14 @@
             </div>
             
             <div class="row">
+                <div class="col-md-2"></div>
                 <div class="col-md-8" id="results">
+                    <!--
                     <img src="/static/img/loading.gif" alt=""/>
                     Loading results...
+                -->
                 </div>
+                <div class="col-md-2"></div>
             </div>
             
             {{template "footer.inc.html"}}

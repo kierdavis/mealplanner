@@ -8,13 +8,13 @@ button.header-button {
 button.homepage-button {
     font-size: x-large;
     padding: 10px;
+    width: 300px;
+    margin-bottom: 5px;
 }
 
-/*
 button.action-button {
-    margin-right: 10px;
+    margin-bottom: 3px;
 }
-*/
 
 .error {
     font-weight: bold;
@@ -31,12 +31,22 @@ button.action-button {
 
 td, th {
     padding-right: 20px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+th {
+    text-align: center;
 }
 
 table.tags-list {
-    /*border: 1px solid black;*/
+    border: 1px solid #eee;
+}
+
+table.tags-list tbody tr td {
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-bottom: 5px;
 }
 
 button.remove-tag {
@@ -137,20 +147,20 @@ table.mplist thead tr th, table.mplist tbody tr td {
     color: #666;
 }
 
+.meal-list {
+    table-layout: fixed;
+}
+
 .meal-list-name {
-    width: 40%;
+    width: 45%;
 }
 
 .meal-list-tags {
-    width: 40%;
+    width: 35%;
 }
 
 .meal-list-actions {
     width: 20%;
-}
-
-.meal-list-action {
-    width: 5%;
 }
 
 .sugg-list {
@@ -173,8 +183,9 @@ table.mplist thead tr th, table.mplist tbody tr td {
     width: 20%;
 }
 
-.sugg-list-action {
-    width: 5%;
+
+div.action-button-container {
+    display: inline;
 }
 
 .table-search-container {
@@ -191,7 +202,7 @@ table.mplist thead tr th, table.mplist tbody tr td {
     margin-top: 10px;
     margin-bottom: 20px;
     height: 40px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #eee;
 }
 
 .table-nav-left {

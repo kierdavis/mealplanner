@@ -107,23 +107,23 @@ var MealListViewColumns = (function() {
         $("<td></td>").text(scoreStr).addClass(this.className).appendTo(row);
     };
     
-    o.ActionsColumn = function(individualClassName, spannedClassName) {
+    o.ActionsColumn = function(className) {
         this.view = null;
-        this.individualClassName = individualClassName;
-        this.spannedClassName = spannedClassName;
+        this.className = className;
     };
     o.ActionsColumn.prototype.renderHeader = function(row) {
-        $("<th colspan='4'>Actions</th>").addClass(this.spannedClassName).appendTo(row);
+        $("<th>Actions</th>").addClass(this.className).appendTo(row);
     };
     o.ActionsColumn.prototype.renderData = function(row, item) {
-        this.renderRecipeButton(row, item);
-        this.renderFavButton(row, item);
-        this.renderEditButton(row, item);
-        this.renderDeleteButton(row, item);
+        var cell = $("<td></td>").addClass(this.className).appendTo(row);
+        this.renderRecipeButton(cell, item);
+        this.renderFavButton(cell, item);
+        this.renderEditButton(cell, item);
+        this.renderDeleteButton(cell, item);
     };
     
-    o.ActionsColumn.prototype.renderRecipeButton = function(row, item) {
-        var cell = $("<td></td>").addClass(this.individualClassName).appendTo(row);
+    o.ActionsColumn.prototype.renderRecipeButton = function(cell, item) {
+        var cell = $("<div class='action-button-container'></div>").addClass(this.individualClassName).appendTo(cell);
         
         if (item.recipe) {
             var button = $("<button title='Open the recipe page listed for this meal' class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/></button>");
@@ -134,8 +134,8 @@ var MealListViewColumns = (function() {
         }
     };
     
-    o.ActionsColumn.prototype.renderFavButton = function(row, item) {
-        var cell = $("<td></td>").addClass(this.individualClassName).appendTo(row);
+    o.ActionsColumn.prototype.renderFavButton = function(cell, item) {
+        var cell = $("<div class='action-button-container'></div>").addClass(this.individualClassName).appendTo(cell);
         
         var favButton   = $("<button title='Mark this meal as a favourite' class='action-button'><img src='/static/img/favourite_16x16.png' height='16' alt=''/></button>");
         var unfavButton = $("<button title='Remove the favourite mark from this meal' class='action-button'><img src='/static/img/unfavourite_16x16.png' height='16' alt=''/></button>");
@@ -167,8 +167,8 @@ var MealListViewColumns = (function() {
         }
     };
     
-    o.ActionsColumn.prototype.renderEditButton = function(row, item) {
-        var cell = $("<td></td>").addClass(this.individualClassName).appendTo(row);
+    o.ActionsColumn.prototype.renderEditButton = function(cell, item) {
+        var cell = $("<div class='action-button-container'></div>").addClass(this.individualClassName).appendTo(cell);
         var button = $("<button title='Edit this meal' class='action-button'><img src='/static/img/edit_24x24.png' height='16' alt=''/></button>");
         button.appendTo(cell).click(function(event) {
             event.preventDefault();
@@ -176,8 +176,8 @@ var MealListViewColumns = (function() {
         });
     };
     
-    o.ActionsColumn.prototype.renderDeleteButton = function(row, item) {
-        var cell = $("<td></td>").addClass(this.individualClassName).appendTo(row);
+    o.ActionsColumn.prototype.renderDeleteButton = function(cell, item) {
+        var cell = $("<div class='action-button-container'></div>").addClass(this.individualClassName).appendTo(cell);
         var button = $("<button title='Delete this meal from the database' class='action-button'><img src='/static/img/delete_24x24.png' height='16' alt=''/></button>");
         var view = this.view;
         button.appendTo(cell).click(function(event) {

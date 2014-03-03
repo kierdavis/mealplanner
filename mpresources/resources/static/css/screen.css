@@ -92,27 +92,27 @@ table.mplist thead tr th, table.mplist tbody tr td {
 }
 
 .mpstart div {
-    margin-left: 8px;
+    margin-left: 6px;
     border-left: 1px solid #f00;
     padding-left: 5px;
-    padding-right: 15px;
+    padding-right: 13px;
 }
 
 .mpmid div {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 13px;
+    padding-right: 13px;
 }
 
 .mpnone div {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 13px;
+    padding-right: 13px;
 }
 
 .mpend div {
-    padding-left: 15px;
+    padding-left: 13px;
     padding-right: 5px;
     border-right: 1px solid #f00;
-    margin-right: 8px;
+    margin-right: 6px;
 }
 
 .mpstart.hover div, .mpmid.hover div, .mpend.hover div {
@@ -156,11 +156,11 @@ table.mplist thead tr th, table.mplist tbody tr td {
 }
 
 .meal-list-tags {
-    width: 35%;
+    width: 40%;
 }
 
 .meal-list-actions {
-    width: 20%;
+    width: 15%;
 }
 
 .sugg-list {
@@ -176,11 +176,11 @@ table.mplist thead tr th, table.mplist tbody tr td {
 }
 
 .sugg-list-score {
-    width: 10%;
+    width: 15%;
 }
 
 .sugg-list-actions {
-    width: 20%;
+    width: 15%;
 }
 
 

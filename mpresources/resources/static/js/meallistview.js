@@ -124,13 +124,16 @@ var MealListViewColumns = (function() {
     
     o.ActionsColumn.prototype.renderRecipeButton = function(cell, item) {
         var cell = $("<div class='action-button-container'></div>").addClass(this.individualClassName).appendTo(cell);
+        var button = $("<button title='Open the recipe page listed for this meal' class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/></button>");
         
         if (item.recipe) {
-            var button = $("<button title='Open the recipe page listed for this meal' class='action-button'><img src='/static/img/open-recipe_16x16.png' height='16' alt=''/></button>");
             button.appendTo(cell).click(function(event) {
                 event.preventDefault();
                 location.href = item.recipe;
             });
+        }
+        else {
+            button.attr("disabled", "disabled");
         }
     };
     

@@ -14,7 +14,7 @@ func CreateMux() (m *mux.Router) {
 	m = mux.NewRouter()
 
 	// Static files
-	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(mpresources.StaticDir)))
+	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(mpresources.GetStaticDir())))
 	m.PathPrefix("/static/").Handler(staticHandler)
 
 	// Dynamic handlers

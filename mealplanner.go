@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/kierdavis/mealplanner/mpdb"
 	"github.com/kierdavis/mealplanner/mphandlers"
+	"github.com/kierdavis/mealplanner/mpresources"
 	"log"
 	"net/http"
 	"os"
@@ -15,11 +16,12 @@ import (
 )
 
 var (
-	dbSource = flag.String("dbsource", "", "database source, in the form USER:PASS@unix(/PATH/TO/SOCKET)/DB or USER:PASS@tcp(HOST:PORT)/DB")
-	host     = flag.String("host", "", "hostname to listen on")
-	port     = flag.Int("port", 8080, "port to listen on")
-	debug    = flag.Bool("debug", false, "debug mode")
-	testdata = flag.Bool("testdata", false, "clear the database and insert test data")
+	dbSource    = flag.String("dbsource", "", "database source, in the form USER:PASS@unix(/PATH/TO/SOCKET)/DB or USER:PASS@tcp(HOST:PORT)/DB")
+	host        = flag.String("host", "", "hostname to listen on")
+	port        = flag.Int("port", 8080, "port to listen on")
+	debug       = flag.Bool("debug", false, "debug mode")
+	testdata    = flag.Bool("testdata", false, "clear the database and insert test data")
+	resourceDir = flag.String("resourcedir", "", "path to directory containing the resources used by the application")
 )
 
 func main() {
@@ -33,8 +35,15 @@ func main() {
 			os.Exit(1)
 		}
 	}
+	
+	resDir := *resourceDir
+	if resDir == "" {
+		resDir = os.Getenv("MPRESDIR")
+	}
 
 	mpdb.DBSource = source
+	mpresources.SetResourceDir(resDir)
+	mpresources.GetTemplates() // Check that the templates load correctly
 
 	err := mpdb.InitDB(*debug, *testdata)
 	if err != nil {

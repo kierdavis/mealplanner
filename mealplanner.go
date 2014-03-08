@@ -35,7 +35,7 @@ func main() {
 			os.Exit(1)
 		}
 	}
-	
+
 	resDir := *resourceDir
 	if resDir == "" {
 		resDir = os.Getenv("MPRESDIR")

@@ -30,7 +30,7 @@ func GetResourceDir() (dir string) {
 	if resourceDir == "" {
 		resourceDir = filepath.Join(getSourceDir(), "resources")
 	}
-	
+
 	return resourceDir
 }
 
@@ -53,7 +53,7 @@ func GetTemplates() (t *template.Template) {
 		pattern := filepath.Join(GetResourceDir(), "templates", "*")
 		templates = template.Must(template.ParseGlob(pattern))
 	}
-	
+
 	return templates
 }
 

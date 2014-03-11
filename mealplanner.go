@@ -18,7 +18,7 @@ import (
 var (
 	dbSource    = flag.String("dbsource", "", "database source, in the form USER:PASS@unix(/PATH/TO/SOCKET)/DB or USER:PASS@tcp(HOST:PORT)/DB")
 	host        = flag.String("host", "", "hostname to listen on")
-	port        = flag.Int("port", 8080, "port to listen on")
+	port        = flag.Int("port", 80, "port to listen on")
 	debug       = flag.Bool("debug", false, "debug mode")
 	testdata    = flag.Bool("testdata", false, "clear the database and insert test data")
 	resourceDir = flag.String("resourcedir", "", "path to directory containing the resources used by the application")

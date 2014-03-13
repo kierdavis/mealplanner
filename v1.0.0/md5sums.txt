@@ -1,0 +1,5 @@
+a7a76c30793dcb7d9be24f7f4bd66ded  mealplanner_1.0.0_linux_32.bin
+7e32db2b539d26534186d6f8e119e977  mealplanner_1.0.0_linux_64.bin
+400fd559b020936c622c446f66772a16  mealplanner_1.0.0_windows_32.exe
+7b9212d2b3d90c81d4700d648047f495  mealplanner_1.0.0_windows_64.exe
+93bd82229eb296a00cb731c668463f7d  resources.zip

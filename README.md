@@ -17,4 +17,10 @@ Alternatively, on Windows systems an installer is available. This will install b
 variables.
 
 * [32 bit Windows installer](v1.0.1/mealplanner_1.0.1_windows_32_install.exe?raw=true)
-* [64 bit Windows installer](v1.0.1/mealplanner_1.0.1_windows_64_install.exe?raw=tue)
+* [64 bit Windows installer](v1.0.1/mealplanner_1.0.1_windows_64_install.exe?raw=true)
+
+## Linux installer
+
+On Linux systems, a shell scriot is available that will download and install the necessary files. [Download](v1.0.1/mealplanner_1.0.1_linux_install.sh?raw=true) it, mark it as executable and then run it in a terminal to begin the 
+installation process.
+

@@ -58,6 +58,9 @@ fi
 
 dbsource="$dbusername:$dbpassword@tcp($dbhostname:$dbport)/$dbname"
 
+export MPDBSOURCE="$dbsource"
+export MPRESDIR="/usr/local/share/mealplanner/resources"
+
 echo
 echo "The installation is now complete."
 echo "Please place the following lines into a startup shell script, such as your .bashrc:"

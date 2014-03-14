@@ -1,6 +1,6 @@
 d8b8b18b8037b46dcadb1a13b6e1a8f8  mealplanner_1.0.1_linux_32
 5330a0a9879a77a52ebada1d6a8acecf  mealplanner_1.0.1_linux_64
-cae9da1e0bb0887b343d6095e01287c4  mealplanner_1.0.1_linux_install.sh
+fe3a32f53300fdb2939fc6af54515971  mealplanner_1.0.1_linux_install.sh
 10e905d2c7ba32b94a46694d7e98e316  mealplanner_1.0.1_windows_32.exe
 94fdb553bccf75f9cb9a7980d6887d3e  mealplanner_1.0.1_windows_32_install.exe
 fe2be84311ccfce848427a786fe44538  mealplanner_1.0.1_windows_64.exe

@@ -163,6 +163,10 @@ table.mplist thead tr th, table.mplist tbody tr td {
     width: 15%;
 }
 
+td.meal-list-actions {
+    text-align: right;
+}
+
 .sugg-list {
     table-layout: fixed;
 }
@@ -181,6 +185,10 @@ table.mplist thead tr th, table.mplist tbody tr td {
 
 .sugg-list-actions {
     width: 15%;
+}
+
+td.sugg-list-actions {
+    text-align: right;
 }
 
 

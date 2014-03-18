@@ -103,6 +103,11 @@
                     width: 400,
                 });
                 
+                $("#return").click(function(event) {
+                    event.preventDefault();
+                    location.href = "/mealplans/{{.ID}}";
+                });
+                
                 $("#save-notes").click(function(event) {
                     event.preventDefault();
                     
@@ -172,9 +177,9 @@
             </p>
             
             <p>
-                <button title="Return to the list of meal plans" id="return">
+                <button title="Return to the meal plan view" id="return">
                     <img src="/static/img/back_16x16.png" height="16" alt=""/>
-                    Return to calendar
+                    Return to viewing meal plan
                 </button>
             </p>
         

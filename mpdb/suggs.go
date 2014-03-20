@@ -7,22 +7,6 @@ import (
 	"time"
 )
 
-// SQL statement to obtain a list of all tags and their distances to every
-// serving of the meals they are attached to.
-const CalculateTagScoresSQL = "SELECT tag.tag, MIN(ABS(DATEDIFF(serving.dateserved, ?))) " +
-	"FROM tag " +
-	"INNER JOIN serving ON serving.mealid = tag.mealid " +
-	"GROUP BY tag.tag"
-	//"WHERE NOT (serving.mealplanid = ? AND serving.dateserved = ?)"
-
-// SQL statement to obtain a list of meals along with the distances to their
-// closest servings.
-const ListSuggestionsSQL = "SELECT meal.id, meal.name, meal.recipe, meal.favourite, MIN(ABS(DATEDIFF(serving.dateserved, ?))) " +
-	"FROM meal " +
-	"LEFT JOIN serving ON meal.id = serving.mealid " +
-	//"WHERE NOT (serving.mealplanid = ? AND serving.dateserved = ?) " +
-	"GROUP BY meal.id"
-
 // GenerateSuggestions calculates a score for each meal in the database based on
 // their suitability for serving on 'date'. These are returned as a list of
 // Suggestions.
@@ -65,7 +49,7 @@ func GenerateSuggestions(q Queryable, mpID uint64, date time.Time) (suggs []*mpd
 // calculateTagScores prepares the scorer 's' by adding a score for each usage
 // of a tag.
 func calculateTagScores(q Queryable, s *mpdata.Scorer, mpID uint64, date time.Time) (err error) {
-	rows, err := q.Query(CalculateTagScoresSQL, date)
+	rows, err := q.Query("SELECT tag.tag, MIN(ABS(DATEDIFF(serving.dateserved, ?))) FROM tag INNER JOIN serving ON serving.mealid = tag.mealid GROUP BY tag.tag", date)
 	if err != nil {
 		return err
 	}
@@ -94,7 +78,7 @@ func calculateTagScores(q Queryable, s *mpdata.Scorer, mpID uint64, date time.Ti
 // listSuggestions returns a list of meals (without tags) and the distance
 // between 'date' and their closest serving to 'date'.
 func listSuggestions(q Queryable, mpID uint64, date time.Time) (suggs []*mpdata.Suggestion, err error) {
-	rows, err := q.Query(ListSuggestionsSQL, date)
+	rows, err := q.Query("SELECT meal.id, meal.name, meal.recipe, meal.favourite, MIN(ABS(DATEDIFF(serving.dateserved, ?))) FROM meal LEFT JOIN serving ON meal.id = serving.mealid GROUP BY meal.id", date)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +115,7 @@ func listSuggestions(q Queryable, mpID uint64, date time.Time) (suggs []*mpdata.
 
 // getTagsForSuggestions fills the tags field of each suggestion in 'suggs'.
 func getTagsForSuggestions(q Queryable, suggs []*mpdata.Suggestion) (err error) {
-	getTagsStmt, err := q.Prepare(GetMealTagsSQL)
+	getTagsStmt, err := q.Prepare("SELECT tag.tag FROM tag WHERE tag.mealid = ?")
 	if err != nil {
 		return err
 	}

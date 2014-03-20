@@ -8,7 +8,7 @@ import (
 )
 
 // SQL statements to delete tables.
-var DeleteTablesSQLs = []string{
+var deleteTablesSQLs = []string{
 	"DROP TABLE IF EXISTS meal",
 	"DROP TABLE IF EXISTS tag",
 	"DROP TABLE IF EXISTS mealplan",
@@ -16,7 +16,7 @@ var DeleteTablesSQLs = []string{
 }
 
 // SQL statements to create tables.
-var CreateTablesSQLs = []string{
+var createTablesSQLs = []string{
 	"CREATE TABLE IF NOT EXISTS meal ( " +
 		"id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, " +
 		"name VARCHAR(255) NOT NULL, " +
@@ -46,7 +46,7 @@ var CreateTablesSQLs = []string{
 }
 
 // SQL statements to clear tables.
-var ClearTablesSQLs = []string{
+var clearTablesSQLs = []string{
 	"DELETE FROM meal",
 	"DELETE FROM tag",
 	"DELETE FROM mealplan",
@@ -67,14 +67,18 @@ func execList(q Queryable, queries []string) (err error) {
 
 // DeleteTables drops the database tables if they exist.
 func DeleteTables(q Queryable) (err error) {
-	return execList(q, DeleteTablesSQLs)
+	return execList(q, deleteTablesSQLs)
 }
 
 // CreateTables creates the database tables if they do not exist.
 func CreateTables(q Queryable) (err error) {
-	return execList(q, CreateTablesSQLs)
+	return execList(q, createTablesSQLs)
 }
 
+// InitialiseVersion ensures that the database version is set. If it is not
+// present, it is decided whether it is an empty database or the first startup
+// since the introduction of versioning. The database can now be safely
+// migrated to the latest version after calling this function.
 func InitialiseVersion(q Queryable, debug bool) (err error) {
 	var version uint
 	err = q.QueryRow("SELECT version FROM version").Scan(&version)
@@ -132,7 +136,7 @@ func InitialiseVersion(q Queryable, debug bool) (err error) {
 
 // ClearTables deletes all records from the entire database.
 func ClearTables(q Queryable) (err error) {
-	return execList(q, ClearTablesSQLs)
+	return execList(q, clearTablesSQLs)
 }
 
 // InitDB creates the database tables if they don't exist. If 'debug' is true,
